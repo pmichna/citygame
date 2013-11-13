@@ -5,7 +5,11 @@
 
 create table checkpoint (
   id                        bigint not null,
-  scenario_id               bigint not null,
+  title                     varchar(255),
+  longitude                 float,
+  latitude                  float,
+  points                    integer,
+  scenario_id               bigint,
   constraint pk_checkpoint primary key (id))
 ;
 

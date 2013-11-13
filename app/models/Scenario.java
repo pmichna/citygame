@@ -5,7 +5,6 @@ import java.util.*;
 import javax.persistence.*;
 
 import play.db.ebean.*;
-import play.db.ebean.Model.Finder;
 
 @Entity
 public class Scenario extends Model {
@@ -47,5 +46,12 @@ public class Scenario extends Model {
 		return find.where()
 				.eq("members.email", user)
 				.findList();
+	}
+	
+	public static List<Scenario> findNotExpired(Date date) {
+		return find.where().or(
+				com.avaje.ebean.Expr.lt("expirationDate", date),
+				com.avaje.ebean.Expr.isNull("expirationDate")
+				).findList();
 	}
 }
