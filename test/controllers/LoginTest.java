@@ -29,4 +29,16 @@ public class LoginTest extends BaseControllerTest {
     	assertEquals(303, status(result));
     	assertEquals("test@test.pl", session(result).get("email"));
     }
+
+    @Test
+	public void authenticateFailure() {
+	    Result result = callAction(
+        	controllers.routes.ref.Application.authenticate(),
+        	fakeRequest().withFormUrlEncodedBody(ImmutableMap.of(
+	            "email", "bob@example.com",
+            	"password", "badpassword"))
+    		);
+    	assertEquals(400, status(result));
+    	assertNull(session(result).get("email"));
+	}
 }

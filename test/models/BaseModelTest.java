@@ -23,11 +23,7 @@ public class BaseModelTest {
 		app = Helpers.fakeApplication();
 		Helpers.start(app);
 
-		String serverName = "default";
- 		EbeanServer server = Ebean.getServer(serverName);
- 		ServerConfig config = new ServerConfig();
-		ddl = new DdlGenerator();
-		ddl.setup((SpiEbeanServer) server, new MySqlPlatform(), config);
+		
 	}
 
  	@AfterClass
@@ -37,7 +33,11 @@ public class BaseModelTest {
  
 	@Before
 	public void dropCreateDb() throws IOException {
-		
+		String serverName = "default";
+ 		EbeanServer server = Ebean.getServer(serverName);
+ 		ServerConfig config = new ServerConfig();
+		ddl = new DdlGenerator();
+		ddl.setup((SpiEbeanServer) server, new MySqlPlatform(), config);
  		// Drop
 		ddl.runScript(false, ddl.generateDropDdl());
 		// Create
