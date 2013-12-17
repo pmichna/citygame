@@ -1,6 +1,5 @@
 package models;
 
-//import models.USER_PRIVILEGE;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;

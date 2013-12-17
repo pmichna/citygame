@@ -1,4 +1,4 @@
-package models;
+package controllers;
 
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.EbeanServer;
