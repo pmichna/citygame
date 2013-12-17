@@ -27,6 +27,14 @@ public class Application extends Controller {
     	);
     }
 
+    public static Result logout() {
+        session().clear();
+        flash("success","You've been logged out");
+        return redirect(
+            routes.Application.login()
+        );
+    }
+
     public static Result createAccount() {
     	Form<Registration> signupForm = form(Registration.class).bindFromRequest();
     	String email = signupForm.get().email;
