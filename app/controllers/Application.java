@@ -13,6 +13,12 @@ public class Application extends Controller {
         return ok(index.render());
     }
 
+    public static Result login() {
+        return ok(
+            login.render(form(Login.class))
+        );
+    }
+
     public static Result signup() {
     	return ok(
     		signup.render(form(Registration.class))
@@ -29,10 +35,36 @@ public class Application extends Controller {
     	return redirect(routes.Application.index());
     }
 
+    public static Result authenticate() {
+        Form<Login> loginForm = form(Login.class).bindFromRequest();
+        if(loginForm.hasErrors()) {
+            return badRequest(login.render(loginForm));
+        } else {
+            session().clear();
+            session("email", loginForm.get().email);
+            return redirect(
+                routes.Application.index()
+            );
+        }
+    }
+
     public static class Registration {
     	public String email;
     	public String password;
     	public String alias;
     	public String phoneNumber;
+    }
+    
+
+    public static class Login {
+        public String email;
+        public String password;
+
+        public String validate() {
+            if (User.authenticate(email, password) == null) {
+                return "Invalid email or password";
+            }
+            return null;
+        }
     }
 }

@@ -14,7 +14,7 @@ import play.test.Helpers;
 
 import java.io.IOException;
 
-public class BaseModelTest {
+public class BaseControllerTest {
 	public static FakeApplication app;
 	public static DdlGenerator ddl;
 
