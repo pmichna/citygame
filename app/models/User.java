@@ -4,7 +4,7 @@ import java.util.*;
 import javax.persistence.*;
 import play.db.ebean.*;
 import com.avaje.ebean.*;
-import play.data.validation.Constraints;
+import play.data.validation.Constraints.*;
 
 @Entity
 public class User extends Model {
