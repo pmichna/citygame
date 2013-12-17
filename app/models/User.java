@@ -18,6 +18,10 @@ public class User extends Model {
     @Required
     public String alias;
 
+    @Column(length=9,nullable=false,unique=true)
+    @Required
+    public String phoneNumber;
+
     @Column(length=60,nullable=false)
     public String passwordHash;
 
@@ -31,10 +35,11 @@ public class User extends Model {
     @OneToMany
     public List<Game> games = new ArrayList<Game>();
     
-    public User(String email, String alias, String password, USER_PRIVILEGE privilege) {
+    public User(String email, String alias, String password, String phoneNumber, USER_PRIVILEGE privilege) {
       this.email = email;
       this.alias = alias;
       this.passwordHash = BCrypt.hashpw(password, BCrypt.gensalt());
+      this.phoneNumber = phoneNumber;
       this.privilege = privilege;
     }
 

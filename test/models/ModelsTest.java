@@ -23,8 +23,8 @@ public class ModelsTest extends BaseModelTest {
     
     @Test
     public void createAndRetrieveUser() {
-        new User("bob@gmail.com", "Bob", "secret1", USER_PRIVILEGE.regular).save();
-        new User("alice@gmail.com", "Alice", "secret2", USER_PRIVILEGE.admin).save();
+        new User("bob@gmail.com", "Bob", "secret1", "111111111", USER_PRIVILEGE.regular).save();
+        new User("alice@gmail.com", "Alice", "secret2", "222222222", USER_PRIVILEGE.admin).save();
         User bob = User.find.where().eq("email", "bob@gmail.com").findUnique();
         User alice = User.find.where().eq("email", "alice@gmail.com").findUnique();
         assertNotNull(bob);
@@ -37,14 +37,14 @@ public class ModelsTest extends BaseModelTest {
 
     @Test(expected=javax.persistence.PersistenceException.class)
     public void tryRegisterTheSameEmail() {
-        new User("bob@gmail.com", "Bob1", "secret1", USER_PRIVILEGE.regular).save();
-        new User("bob@gmail.com", "Bob2", "secret2", USER_PRIVILEGE.regular).save();
+        new User("bob@gmail.com", "Bob1", "secret1", "111111111", USER_PRIVILEGE.regular).save();
+        new User("bob@gmail.com", "Bob2", "secret2", "222222222", USER_PRIVILEGE.regular).save();
     }
 
     @Test(expected=javax.persistence.PersistenceException.class)
     public void tryRegisterTheSameAlias() {
-        new User("bob1@gmail.com", "Bob", "secret1", USER_PRIVILEGE.regular).save();
-        new User("bob2@gmail.com", "Bob", "secret2", USER_PRIVILEGE.regular).save();
+        new User("bob1@gmail.com", "Bob", "secret1", "111111111", USER_PRIVILEGE.regular).save();
+        new User("bob2@gmail.com", "Bob", "secret2", "222222222", USER_PRIVILEGE.regular).save();
     }
     
   //   @Test

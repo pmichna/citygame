@@ -45,10 +45,12 @@ create table scenario (
 create table user (
   email                     varchar(254) not null,
   alias                     varchar(20) not null,
+  phone_number              varchar(9) not null,
   password_hash             varchar(60) not null,
   privilege                 varchar(7) not null,
   constraint ck_user_privilege check (privilege in ('regular','admin')),
   constraint uq_user_alias unique (alias),
+  constraint uq_user_phone_number unique (phone_number),
   constraint pk_user primary key (email))
 ;
 

@@ -28,7 +28,8 @@ public class Application extends Controller
     	String email = signupForm.get().email;
     	String password = signupForm.get().password;
     	String alias = signupForm.get().alias;
-    	new User(email, alias, password, USER_PRIVILEGE.regular).save();
+    	String phoneNumber = signupForm.get().phoneNumber;
+    	new User(email, alias, password, phoneNumber, USER_PRIVILEGE.regular).save();
     	return redirect(routes.Application.index());
     }
 
@@ -37,5 +38,6 @@ public class Application extends Controller
     	public String email;
     	public String password;
     	public String alias;
+    	public String phoneNumber;
     }
 }
