@@ -59,4 +59,17 @@ public class User extends Model {
     	}
     	return null;
     }
+    
+    public static User editUserData(String oldEmail, String newEmail, String newPasswordNotHash, String newAlias, String newPhoneNumber){
+    	User user = find.where().eq("email", oldEmail).findUnique();
+    	if(user == null){
+    		return null;
+    	}
+    	user.email = newEmail;
+    	user.alias = newAlias;
+    	user.passwordHash = BCrypt.hashpw(newPasswordNotHash, BCrypt.gensalt());
+    	user.phoneNumber = newPhoneNumber;
+    	user.update();
+    	return user;
+    }
 }
