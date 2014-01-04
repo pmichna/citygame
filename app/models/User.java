@@ -69,7 +69,8 @@ public class User extends Model {
     	user.alias = newAlias;
     	user.passwordHash = BCrypt.hashpw(newPasswordNotHash, BCrypt.gensalt());
     	user.phoneNumber = newPhoneNumber;
-    	user.update();
+    	user.save();
+    	
     	return user;
     }
 }
