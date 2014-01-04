@@ -1,4 +1,4 @@
-@(title: String)(content: Html)
+@(title: String, user: User)(content: Html)
 
 <!DOCTYPE html>
 <html>
@@ -21,8 +21,8 @@
 	
     <body>
     	<header>
-    		@if(title != "Sign in") {
-    			<a href="@routes.Application.logout()">Logout</a>
+    		@if(user != null) {
+    			<a href="@routes.Application.logout()">Logout @user.email</a>
     		}
     	</header>
         @content

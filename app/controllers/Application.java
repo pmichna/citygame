@@ -13,10 +13,13 @@ public class Application extends Controller {
 
     @Security.Authenticated(Secured.class)
     public static Result index() {
-        return ok(index.render());
+        return ok(index.render(User.find.byId(request().username())));
     }
 
     public static Result login() {
+		if(session("email") != null) {
+			return redirect(routes.Application.index());
+		}
         return ok(
             login.render(Form.form(Login.class))
         );
