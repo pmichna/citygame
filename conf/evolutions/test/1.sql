@@ -23,7 +23,7 @@ create table checkpoint_answer (
 
 create table game (
   id                        bigint auto_increment not null,
-  user_email                varchar(254),
+  user_id                   double,
   scenario_id               bigint,
   status                    varchar(7) not null,
   start_date                datetime,
@@ -38,20 +38,22 @@ create table scenario (
   is_public                 tinyint(1) default 0 not null,
   is_accepted               tinyint(1) default 0 not null,
   expiration_date           datetime,
-  owner_email               varchar(254),
+  owner_id                  double,
   constraint pk_scenario primary key (id))
 ;
 
 create table user (
+  id                        double not null,
   email                     varchar(254) not null,
   alias                     varchar(20) not null,
   phone_number              varchar(9) not null,
   password_hash             varchar(60) not null,
   privilege                 varchar(7) not null,
   constraint ck_user_privilege check (privilege in ('regular','admin')),
+  constraint uq_user_email unique (email),
   constraint uq_user_alias unique (alias),
   constraint uq_user_phone_number unique (phone_number),
-  constraint pk_user primary key (email))
+  constraint pk_user primary key (id))
 ;
 
 
@@ -63,19 +65,19 @@ create table game_checkpoint (
 
 create table scenario_user (
   scenario_id                    bigint not null,
-  user_email                     varchar(254) not null,
-  constraint pk_scenario_user primary key (scenario_id, user_email))
+  user_id                        double not null,
+  constraint pk_scenario_user primary key (scenario_id, user_id))
 ;
 alter table checkpoint add constraint fk_checkpoint_scenario_1 foreign key (scenario_id) references scenario (id) on delete restrict on update restrict;
 create index ix_checkpoint_scenario_1 on checkpoint (scenario_id);
 alter table checkpoint_answer add constraint fk_checkpoint_answer_checkpoint_2 foreign key (checkpoint_id) references checkpoint (id) on delete restrict on update restrict;
 create index ix_checkpoint_answer_checkpoint_2 on checkpoint_answer (checkpoint_id);
-alter table game add constraint fk_game_user_3 foreign key (user_email) references user (email) on delete restrict on update restrict;
-create index ix_game_user_3 on game (user_email);
+alter table game add constraint fk_game_user_3 foreign key (user_id) references user (id) on delete restrict on update restrict;
+create index ix_game_user_3 on game (user_id);
 alter table game add constraint fk_game_scenario_4 foreign key (scenario_id) references scenario (id) on delete restrict on update restrict;
 create index ix_game_scenario_4 on game (scenario_id);
-alter table scenario add constraint fk_scenario_owner_5 foreign key (owner_email) references user (email) on delete restrict on update restrict;
-create index ix_scenario_owner_5 on scenario (owner_email);
+alter table scenario add constraint fk_scenario_owner_5 foreign key (owner_id) references user (id) on delete restrict on update restrict;
+create index ix_scenario_owner_5 on scenario (owner_id);
 
 
 
@@ -85,7 +87,7 @@ alter table game_checkpoint add constraint fk_game_checkpoint_checkpoint_02 fore
 
 alter table scenario_user add constraint fk_scenario_user_scenario_01 foreign key (scenario_id) references scenario (id) on delete restrict on update restrict;
 
-alter table scenario_user add constraint fk_scenario_user_user_02 foreign key (user_email) references user (email) on delete restrict on update restrict;
+alter table scenario_user add constraint fk_scenario_user_user_02 foreign key (user_id) references user (id) on delete restrict on update restrict;
 
 # --- !Downs
 

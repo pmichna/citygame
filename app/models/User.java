@@ -1,16 +1,22 @@
 package models;
 
 import java.util.*;
+
 import javax.persistence.*;
+
 import play.db.ebean.*;
+
 import com.avaje.ebean.*;
+
 import play.data.validation.Constraints.*;
 
 @Entity
 public class User extends Model {
 
     @Id
-    @Column(length=254)
+    public double Id;
+    
+    @Column(length=254, unique=true, nullable=false)
     @Required
     public String email;
 
@@ -34,6 +40,7 @@ public class User extends Model {
 
     @OneToMany
     public List<Game> games = new ArrayList<Game>();
+    
     
     public User(String email, String alias, String password, String phoneNumber, USER_PRIVILEGE privilege) {
       this.email = email;
@@ -60,16 +67,27 @@ public class User extends Model {
     	return null;
     }
     
-    public static User editUserData(String oldEmail, String newEmail, String newPasswordNotHash, String newAlias, String newPhoneNumber){
+    public static User editUserData(String email, String newPasswordNotHash, String newAlias, String newPhoneNumber){
+    	User user = find.where().eq("email", email).findUnique();
+    	if(user == null){
+    		return null;
+    	}
+    	
+    	user.alias = newAlias;
+    	user.passwordHash = BCrypt.hashpw(newPasswordNotHash, BCrypt.gensalt());
+    	user.phoneNumber = newPhoneNumber;
+    	user.save();
+    	
+    	return user;
+    }
+    
+    public static User editUserEmail(String oldEmail, String newEmail){
     	User user = find.where().eq("email", oldEmail).findUnique();
     	if(user == null){
     		return null;
     	}
     	user.email = newEmail;
-    	user.alias = newAlias;
-    	user.passwordHash = BCrypt.hashpw(newPasswordNotHash, BCrypt.gensalt());
-    	user.phoneNumber = newPhoneNumber;
-    	user.save();
+    	user.update();
     	
     	return user;
     }
