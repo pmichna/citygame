@@ -67,28 +67,26 @@ public class User extends Model {
     	return null;
     }
     
-    public static User editUserData(String email, String newPasswordNotHash, String newAlias, String newPhoneNumber){
+    public static User editUser(String email, String newEmail, String newPasswordNotHash, String newAlias, String newPhoneNumber){
     	User user = find.where().eq("email", email).findUnique();
     	if(user == null){
     		return null;
     	}
-    	
-    	user.alias = newAlias;
-    	user.passwordHash = BCrypt.hashpw(newPasswordNotHash, BCrypt.gensalt());
-    	user.phoneNumber = newPhoneNumber;
+    	if(newAlias!=null && !newAlias.equals(user.alias)){
+    		user.alias = newAlias;
+    	}
+    	if(newPasswordNotHash!=null && !newPasswordNotHash.equals("")){
+    		user.passwordHash = BCrypt.hashpw(newPasswordNotHash, BCrypt.gensalt());
+    	}
+    	if(newPhoneNumber!=null && !newPhoneNumber.equals(user.phoneNumber)){
+    		user.phoneNumber = newPhoneNumber;
+    	}
+    	if(newEmail!=null && !newEmail.equals(user.email)){
+    		user.email = newEmail;
+    	}
     	user.save();
     	
     	return user;
     }
     
-    public static User editUserEmail(String oldEmail, String newEmail){
-    	User user = find.where().eq("email", oldEmail).findUnique();
-    	if(user == null){
-    		return null;
-    	}
-    	user.email = newEmail;
-    	user.update();
-    	
-    	return user;
-    }
 }

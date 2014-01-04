@@ -56,24 +56,19 @@ public class UsersTest extends BaseModelTest {
 	}
     
     @Test
-    public void editUserData(){
+    public void editUser(){
     	new User("bob@gmail.com", "Bob", "secret", "123456789", USER_PRIVILEGE.regular).save();
-    	User.editUserData("bob@gmail.com", "newSecret", "Robert", "987654321");
-    	User bob = User.find.where().eq("email", "bob@gmail.com").findUnique();
-    	assertNotNull(bob);
-    	
-    	assertEquals("Robert", bob.alias);
-    	assertEquals("987654321", bob.phoneNumber);
-    	assertNull(User.authenticate("bob@gmail.com", "secret"));
-    	assertNotNull(User.authenticate("bob@gmail.com", "newSecret"));
-    }
-    @Test
-    public void editUserEmail(){
-    	new User("bob@gmail.com", "Bob", "secret", "123456789", USER_PRIVILEGE.regular).save();
-    	User.editUserEmail("bob@gmail.com", "bob2@gmail.com");
+    	User.editUser("bob@gmail.com", "bob2@gmail.com", "newSecret", "Robert", "987654321");
     	User bobOld = User.find.where().eq("email", "bob@gmail.com").findUnique();
     	assertNull(bobOld);
     	User bobNew = User.find.where().eq("email", "bob2@gmail.com").findUnique();
     	assertNotNull(bobNew);
+    	
+    	assertEquals("Robert", bobNew.alias);
+    	assertEquals("987654321", bobNew.phoneNumber);
+    	assertNull(User.authenticate("bob2@gmail.com", "secret"));
+    	assertNotNull(User.authenticate("bob2@gmail.com", "newSecret"));
+    	
     }
+   
 }

@@ -23,7 +23,7 @@ create table checkpoint_answer (
 
 create table game (
   id                        bigint auto_increment not null,
-  user_id                   double,
+  user_id                   bigint,
   scenario_id               bigint,
   status                    varchar(7) not null,
   start_date                datetime,
@@ -38,12 +38,12 @@ create table scenario (
   is_public                 tinyint(1) default 0 not null,
   is_accepted               tinyint(1) default 0 not null,
   expiration_date           datetime,
-  owner_id                  double,
+  owner_id                  bigint,
   constraint pk_scenario primary key (id))
 ;
 
 create table user (
-  id                        double not null,
+  id                        bigint auto_increment not null,
   email                     varchar(254) not null,
   alias                     varchar(20) not null,
   phone_number              varchar(9) not null,
@@ -65,7 +65,7 @@ create table game_checkpoint (
 
 create table scenario_user (
   scenario_id                    bigint not null,
-  user_id                        double not null,
+  user_id                        bigint not null,
   constraint pk_scenario_user primary key (scenario_id, user_id))
 ;
 alter table checkpoint add constraint fk_checkpoint_scenario_1 foreign key (scenario_id) references scenario (id) on delete restrict on update restrict;
