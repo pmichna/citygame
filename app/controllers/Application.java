@@ -13,7 +13,7 @@ public class Application extends Controller {
 
     @Security.Authenticated(Secured.class)
     public static Result index() {
-        return ok(index.render(User.find.byId(request().username())));
+        return ok(index.render(User.find.where().eq("email", request().username()).findUnique()));
     }
 
     public static Result login() {
