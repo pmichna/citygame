@@ -14,7 +14,7 @@ import play.data.validation.Constraints.*;
 public class User extends Model {
 
     @Id
-    public double Id;
+    public Long Id;
     
     @Column(length=254, unique=true, nullable=false)
     @Required
