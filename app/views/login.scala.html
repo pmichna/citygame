@@ -2,7 +2,9 @@
 
 @main("Sign in", null) {
 	<div class="container">
-		<h1>Sign in</h1>
+		<div class="page-header">
+			<h1>Sign in</h1>
+		</div>
 		@helper.form(routes.Application.authenticate) {
 			@if(form.hasGlobalErrors) {
 				<div class="alert alert-danger">
