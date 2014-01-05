@@ -41,6 +41,8 @@ public class Application extends Controller {
 		flash("success", "You've been logged out");
 		return redirect(routes.Application.loginGET());
 	}
+	
+	
 
 	public static class Login {
 		public String email;
