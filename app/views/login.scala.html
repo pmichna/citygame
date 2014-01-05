@@ -5,7 +5,7 @@
 		<div class="page-header">
 			<h1>Sign in</h1>
 		</div>
-		@helper.form(routes.Application.authenticate) {
+		@helper.form(routes.Application.loginPOST) {
 			@if(form.hasGlobalErrors) {
 				<div class="alert alert-danger">
 					@form.globalError.message
@@ -27,7 +27,7 @@
 			</div>
 			<p>or</p>
 			<div class="form-group">
-				<a href="@routes.Application.signup">Sign up</a>
+				<a href="@routes.UserAccountController.createAccountGET()">Sign up</a>
 			</div>
 		}	
 	</div>

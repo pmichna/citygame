@@ -1,13 +1,9 @@
 package models;
 
 import java.util.*;
-
 import javax.persistence.*;
-
 import play.db.ebean.*;
-
 import com.avaje.ebean.*;
-
 import play.data.validation.Constraints.*;
 
 @Entity
@@ -67,26 +63,25 @@ public class User extends Model {
     	return null;
     }
     
-    public static User editUser(String email, String newEmail, String newPasswordNotHash, String newAlias, String newPhoneNumber){
-    	User user = find.where().eq("email", email).findUnique();
-    	if(user == null){
+    public static User editUser(String oldEmail, String newEmail, String newPasswordNotHash, String newAlias, String newPhoneNumber) {
+    	User user = find.where().eq("email", oldEmail).findUnique();
+    	if(user == null) {
     		return null;
     	}
-    	if(newAlias!=null && !newAlias.equals(user.alias)){
+    	if(newAlias != null && !newAlias.equals(user.alias)) {
     		user.alias = newAlias;
     	}
-    	if(newPasswordNotHash!=null && !newPasswordNotHash.equals("")){
+    	if(newPasswordNotHash != null && !newPasswordNotHash.equals("")) {
     		user.passwordHash = BCrypt.hashpw(newPasswordNotHash, BCrypt.gensalt());
     	}
-    	if(newPhoneNumber!=null && !newPhoneNumber.equals(user.phoneNumber)){
+    	if(newPhoneNumber != null && !newPhoneNumber.equals(user.phoneNumber)) {
     		user.phoneNumber = newPhoneNumber;
     	}
-    	if(newEmail!=null && !newEmail.equals(user.email)){
+    	if(newEmail != null && !newEmail.equals(user.email)) {
     		user.email = newEmail;
     	}
     	user.save();
     	
     	return user;
     }
-    
 }
