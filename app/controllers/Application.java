@@ -61,6 +61,13 @@ public class Application extends Controller {
 				.where().eq("email", request().username()).findUnique()));
 	}
 
+	@Security.Authenticated(Secured.class)
+	public static Result viewAccount() {
+
+		return ok(viewAccount.render(User.find.where().eq("email", request().username())
+				.findUnique()));
+	}
+
 	public static Result saveAccountChanges() {
 		/*
 		 * String t=session("email"); Form<SaveChanges> editForm =
@@ -111,23 +118,18 @@ public class Application extends Controller {
 			Matcher emailMatcher = emailPattern.matcher(email);
 			Pattern phonePattern = Pattern.compile(PHONE_PATTERN);
 			Matcher phoneMatcher = phonePattern.matcher(phoneNumber);
-			String loggedEmail = session("email");
-			User loggedUser = User.find.where().eq("email", loggedEmail)
-					.findUnique();
-
+			
 			if (!emailMatcher.matches()) {
 				return "Invalid  email address";
 			}
 
 			// check if email already registered
-			if (!loggedEmail.equals(email)
-					&& User.find.where().eq("email", email).findUnique() != null) {
+			if (User.find.where().eq("email", email).findUnique() != null) {
 				return "Email already registered";
 			}
 
 			// check if alias already registered
-			if (!loggedUser.alias.equals(alias)
-					&& User.find.where().eq("alias", alias).findUnique() != null) {
+			if (User.find.where().eq("alias", alias).findUnique() != null) {
 				return "Alias already registered";
 			}
 
@@ -142,8 +144,7 @@ public class Application extends Controller {
 			}
 
 			// check if phone number already exists
-			if (!loggedUser.phoneNumber.equals(phoneNumber)
-					&& User.find.where().eq("phoneNumber", phoneNumber)
+			if (User.find.where().eq("phoneNumber", phoneNumber)
 							.findUnique() != null) {
 				return "Phone number already registered";
 			}
@@ -168,13 +169,19 @@ public class Application extends Controller {
 			Matcher emailMatcher = emailPattern.matcher(email);
 			Pattern phonePattern = Pattern.compile(PHONE_PATTERN);
 			Matcher phoneMatcher = phonePattern.matcher(phoneNumber);
+			
+			String loggedEmail = session("email");
+			User loggedUser = User.find.where().eq("email", loggedEmail)
+					.findUnique();
+			
 
 			if (!emailMatcher.matches()) {
 				return "Invalid  email address";
 			}
 
 			// check if alias already registered
-			if (User.find.where().eq("alias", alias).findUnique() != null) {
+			if (!loggedUser.alias.equals(alias)
+					&& User.find.where().eq("alias", alias).findUnique() != null) {
 				return "Alias already registered";
 			}
 
@@ -184,11 +191,13 @@ public class Application extends Controller {
 			}
 
 			// check if phone number already exists
-			if (User.find.where().eq("phoneNumber", phoneNumber).findUnique() != null) {
+			if (!loggedUser.phoneNumber.equals(phoneNumber)
+					&& User.find.where().eq("phoneNumber", phoneNumber)
+							.findUnique() != null) {
 				return "Phone number already registered";
 			}
 
-			 return null;
+			return null;
 		}
 	}
 
