@@ -223,6 +223,29 @@ public class EditUserAccountTest extends BaseControllerTest {
 		assertNotNull(User.authenticate(originalEmail, newPassword));
 		assertNull(User.authenticate(originalEmail, originalPassword));
 	}
-	/* add test for all */
-	
+
+	@Test
+	public void editAllSuccess() {
+		String newPassword = "newPassword";
+		String newEmail = "newEmail@test.com";
+		String newAlias = "newAlias";
+		String newPhoneNumber = "999999999";
+		Result result = callAction(
+			    		controllers.routes.ref.UserAccountController.editAccountPOST(),
+			    		fakeRequest()
+							.withSession("email", originalEmail)
+							.withFormUrlEncodedBody(ImmutableMap.of(
+								"email", newEmail,
+								"alias", newAlias,
+								"phoneNumber", newPhoneNumber,
+								"password", newPassword))
+			    	);
+		assertEquals(303, status(result));
+		assertNull(User.authenticate(originalEmail, originalPassword));
+		
+		User user = User.authenticate(newEmail, newPassword);
+		assertNotNull(user);
+		assertEquals(newAlias, user.alias);
+		assertEquals(newPhoneNumber, user.phoneNumber);
+	}
 }
