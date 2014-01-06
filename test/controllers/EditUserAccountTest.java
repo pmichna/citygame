@@ -223,4 +223,6 @@ public class EditUserAccountTest extends BaseControllerTest {
 		assertNotNull(User.authenticate(originalEmail, newPassword));
 		assertNull(User.authenticate(originalEmail, originalPassword));
 	}
+	/* add test for all */
+	
 }
