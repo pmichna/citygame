@@ -1,0 +1,42 @@
+@(user: User)
+
+@main("My account", user) {
+<div class="container">
+	<div class="page-header">
+		<h1>My account</h1>
+		@if(flash.contains("success")) {
+    		<div class="alert alert-success">
+		        @flash.get("success")
+			</div>
+		}
+		<div class="row">
+			<div class="col-xs-6 col-md-4">
+				Email:
+			</div>
+			<div class="col-xs-12 col-md-8">
+				@user.email
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-6 col-md-4">
+				Alias:
+			</div>
+			<div class="col-xs-12 col-md-8">
+				@user.alias
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-6 col-md-4">
+				Phone number:
+			</div>
+			<div class="col-xs-12 col-md-8">
+				@user.phoneNumber
+			</div>
+		</div>
+	
+	<a href="@routes.UserAccountController.editAccountGET()" class="btn btn-primary btn-lg" role="button">Edit account</a>
+	<a href="@routes.UserAccountController.deleteAccountGET()" class="btn btn-warning btn-lg" role="button">Remove account</a>
+	</div>
+
+</div><!-- /.container -->
+}

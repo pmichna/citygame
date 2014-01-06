@@ -4,11 +4,19 @@
 
 # Home page
 GET     /                           controllers.Application.index()
-GET		/login						controllers.Application.login()
-POST	/login						controllers.Application.authenticate()
-GET		/logout						controllers.Application.logout()
-GET     /signup						controllers.Application.signup()
-POST	/signup						controllers.Application.createAccount()
+GET		/login						controllers.Application.loginGET()
+POST	/login						controllers.Application.loginPOST()
+GET		/logout						controllers.Application.logoutGET()
+GET     /createAccount				controllers.UserAccountController.createAccountGET()
+POST	/createAccount				controllers.UserAccountController.createAccountPOST()
+GET		/deleteAccount				controllers.UserAccountController.deleteAccountGET()
+GET		/editAccount				controllers.UserAccountController.editAccountGET()
+POST	/editAccount				controllers.UserAccountController.editAccountPOST()
+GET		/viewAccount				controllers.UserAccountController.viewAccountGET()
+GET		/createScenario				controllers.ScenarioController.createScenarioGET()
+POST	/createScenario				controllers.ScenarioController.createScenarioPOST()
+
+
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

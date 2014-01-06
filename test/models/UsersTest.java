@@ -54,4 +54,28 @@ public class UsersTest extends BaseModelTest {
 		assertNull(User.authenticate("bob@gmail.com", "badpassword"));
 		assertNull(User.authenticate("tom@gmail.com", "secret"));
 	}
+    
+    @Test
+    public void editUser() {
+		String originalEmail = "bob@gmail.com";
+		String newEmail = "bobNew@gmail.com";
+		String originalAlias = "Bob";
+		String newAlias = "BobNew";
+		String originalPass = "secret";
+		String newPass = "secretNew";
+		String originalPhone = "123456789";
+		String newPhone = "987654321";
+		
+    	new User(originalEmail, originalAlias, originalPass, originalPhone, USER_PRIVILEGE.regular).save();
+    	User.editUser(originalEmail, newEmail, newPass, newAlias, newPhone);
+    	User bobOld = User.find.where().eq("email", originalEmail).findUnique();
+    	assertNull(bobOld);
+    	User bobNew = User.find.where().eq("email", newEmail).findUnique();
+    	assertNotNull(bobNew);
+    	
+    	assertEquals(newAlias, bobNew.alias);
+    	assertEquals(newPhone, bobNew.phoneNumber);
+    	assertNull(User.authenticate(newEmail, originalPass));
+    	assertNotNull(User.authenticate(newEmail, newPass));    	
+    }
 }

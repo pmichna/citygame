@@ -10,7 +10,9 @@ import play.data.validation.Constraints.*;
 public class User extends Model {
 
     @Id
-    @Column(length=254)
+    public Long Id;
+    
+    @Column(length=254, unique=true, nullable=false)
     @Required
     public String email;
 
@@ -34,6 +36,7 @@ public class User extends Model {
 
     @OneToMany
     public List<Game> games = new ArrayList<Game>();
+    
     
     public User(String email, String alias, String password, String phoneNumber, USER_PRIVILEGE privilege) {
       this.email = email;
@@ -59,4 +62,28 @@ public class User extends Model {
     	}
     	return null;
     }
+    
+    public static User editUser(String oldEmail, String newEmail, String newPasswordNotHash, String newAlias, String newPhoneNumber) {
+    	User user = find.where().eq("email", oldEmail).findUnique();
+    	if(user == null) {
+    		return null;
+    	}
+    	if(newAlias != null && !newAlias.equals(user.alias)) {
+    		user.alias = newAlias;
+    	}
+    	if(newPasswordNotHash != null && !newPasswordNotHash.equals("")) {
+    		user.passwordHash = BCrypt.hashpw(newPasswordNotHash, BCrypt.gensalt());
+    	}
+    	if(newPhoneNumber != null && !newPhoneNumber.equals(user.phoneNumber)) {
+    		user.phoneNumber = newPhoneNumber;
+    	}
+    	if(newEmail != null && !newEmail.equals(user.email)) {
+    		user.email = newEmail;
+    	}
+    	user.save();
+    	
+    	return user;
+    }
+    
+    
 }

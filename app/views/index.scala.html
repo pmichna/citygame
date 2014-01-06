@@ -1,5 +1,12 @@
 @(user: User)
 
 @main("main page", user) {
-	main page
+	<div class="jumbotron">
+  <h1>Traverse the city!</h1>
+  <p>CityGame, it's amazing, play now with friends! Or without them! Friends are for some Pawels. Be cool, be like Karol</p>
+  @if(user == null) {
+	  <p><a class="btn btn-primary btn-lg" role="button" href="@routes.UserAccountController.createAccountGET()">Create account!</a></p>
+	}
+</div>
+
 }

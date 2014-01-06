@@ -5,17 +5,17 @@
 		<div class="page-header">
 			<h1>Sign in</h1>
 		</div>
-		@helper.form(routes.Application.authenticate) {
-			@if(form.hasGlobalErrors) {
-				<div class="alert alert-danger">
-					@form.globalError.message
-				</div>
-			}
-			@if(flash.contains("success")) {
-	    		<div class="alert alert-success">
-			        @flash.get("success")
-				</div>
-			}
+		@if(form.hasGlobalErrors) {
+			<div class="alert alert-danger">
+				@form.globalError.message
+			</div>
+		}
+		@if(flash.contains("success")) {
+    		<div class="alert alert-success">
+		        @flash.get("success")
+			</div>
+		}
+		@helper.form(routes.Application.loginPOST) {
 			<div class="form-group">
 				<input type="email" class="form-control" name="email" placeholder="Email" value="@form("email").value">
 			</div>
@@ -27,7 +27,7 @@
 			</div>
 			<p>or</p>
 			<div class="form-group">
-				<a href="@routes.Application.signup">Sign up</a>
+				<a href="@routes.UserAccountController.createAccountGET()">Sign up</a>
 			</div>
 		}	
 	</div>

@@ -17,7 +17,7 @@ public class SignUpTest extends BaseModelTest {
 	@Test
 	public void createAccountSuccess() {
 	    Result result = callAction(
-        	controllers.routes.ref.Application.createAccount(),
+        	controllers.routes.ref.UserAccountController.createAccountPOST(),
         	fakeRequest().withFormUrlEncodedBody(ImmutableMap.of(
 	            "email", "bob@example.com",
             	"password", "secret",
@@ -37,7 +37,7 @@ public class SignUpTest extends BaseModelTest {
 	@Test
 	public void createAccountFailureEmailRegex() {
 	    Result result = callAction(
-        	controllers.routes.ref.Application.createAccount(),
+        	controllers.routes.ref.UserAccountController.createAccountPOST(),
         	fakeRequest().withFormUrlEncodedBody(ImmutableMap.of(
 	            "email", "bobexample.com",
             	"password", "secret",
@@ -54,7 +54,7 @@ public class SignUpTest extends BaseModelTest {
 	@Test
 	public void createAccountFailurePhoneRegex() {
 	    Result result = callAction(
-        	controllers.routes.ref.Application.createAccount(),
+        	controllers.routes.ref.UserAccountController.createAccountPOST(),
         	fakeRequest().withFormUrlEncodedBody(ImmutableMap.of(
 	            "email", "bob@example.com",
             	"password", "secret",
@@ -72,7 +72,7 @@ public class SignUpTest extends BaseModelTest {
 	public void createAccountFailureEmailExists() {
         new User("bob@example.com", "Bob", "secret1", "111111111", USER_PRIVILEGE.regular).save();
 	    Result result = callAction(
-        	controllers.routes.ref.Application.createAccount(),
+        	controllers.routes.ref.UserAccountController.createAccountPOST(),
         	fakeRequest().withFormUrlEncodedBody(ImmutableMap.of(
 	            "email", "bob@example.com",
             	"password", "secret",
@@ -91,7 +91,7 @@ public class SignUpTest extends BaseModelTest {
 	public void createAccountFailurePhoneExists() {
         new User("bob@example.com", "Bob", "secret1", "111111111", USER_PRIVILEGE.regular).save();
 	    Result result = callAction(
-        	controllers.routes.ref.Application.createAccount(),
+        	controllers.routes.ref.UserAccountController.createAccountPOST(),
         	fakeRequest().withFormUrlEncodedBody(ImmutableMap.of(
 	            "email", "alice@example.com",
             	"password", "secret",
@@ -109,7 +109,7 @@ public class SignUpTest extends BaseModelTest {
 	public void createAccountFailureAliasExists() {
         new User("bob@example.com", "Bob", "secret1", "111111111", USER_PRIVILEGE.regular).save();
 	    Result result = callAction(
-        	controllers.routes.ref.Application.createAccount(),
+        	controllers.routes.ref.UserAccountController.createAccountPOST(),
         	fakeRequest().withFormUrlEncodedBody(ImmutableMap.of(
 	            "email", "bob2@example.com",
             	"password", "secret",

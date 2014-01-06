@@ -21,7 +21,7 @@ public class LoginTest extends BaseControllerTest {
     @Test
     public void authenticateSuccess() {
     	Result result = callAction(
-    		controllers.routes.ref.Application.authenticate(),
+    		controllers.routes.ref.Application.loginPOST(),
     		fakeRequest().withFormUrlEncodedBody(ImmutableMap.of(
     			"email", "test@test.pl",
     			"password", "password"))
@@ -33,7 +33,7 @@ public class LoginTest extends BaseControllerTest {
     @Test
 	public void authenticateFailure() {
 	    Result result = callAction(
-        	controllers.routes.ref.Application.authenticate(),
+        	controllers.routes.ref.Application.loginPOST(),
         	fakeRequest().withFormUrlEncodedBody(ImmutableMap.of(
 	            "email", "bob@example.com",
             	"password", "badpassword"))
