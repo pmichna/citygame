@@ -90,4 +90,33 @@ public class EditUserAccountTest extends BaseControllerTest {
 			    	);
     	assertEquals(400, status(result));
 	}
+	
+	@Test
+	public void editAliasSuccess() {
+		String newAlias = "newAlias";
+		Result result = callAction(
+			    		controllers.routes.ref.UserAccountController.editAccountPOST(),
+			    		fakeRequest()
+							.withSession("email", originalEmail)
+							.withFormUrlEncodedBody(ImmutableMap.of(
+								"email", originalEmail,
+								"alias", newAlias,
+								"phoneNumber", originalPhoneNumber))
+			    	);
+		assertEquals(303, status(result));
+		// check if session correct
+		assertEquals(originalEmail, session(result).get("email"));
+		User userModified = User.find.where()
+									.eq("email", originalEmail)
+									.findUnique();
+		assertNotNull(userModified);
+		assertEquals(newAlias, userModified.alias);
+		assertEquals(originalPhoneNumber, userModified.phoneNumber);
+		assertNotNull(User.authenticate(originalEmail, originalPassword));
+		
+		User userOld = User.find.where()
+								.eq("alias", originalAlias)
+								.findUnique();
+		assertNull(userOld);
+	}
 }

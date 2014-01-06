@@ -157,7 +157,8 @@ public class UserAccountController extends Controller {
 			}
 			
 			// check if email already registered
-			if (User.find.where().eq("email", email).findUnique() != null) {
+			if (!loggedUser.email.equals(email)
+				 	&& User.find.where().eq("email", email).findUnique() != null) {
 				return "Email already registered";
 			}
 
