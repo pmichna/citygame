@@ -15,7 +15,7 @@ POST	/editAccount				controllers.UserAccountController.editAccountPOST()
 GET		/viewAccount				controllers.UserAccountController.viewAccountGET()
 GET		/createScenario				controllers.ScenarioController.createScenarioGET()
 POST	/createScenario				controllers.ScenarioController.createScenarioPOST()
-
+GET		/myScenarios				controllers.ScenarioController.viewMyScenariosGET()
 
 
 # Map static resources from the /public folder to the /assets URL path
