@@ -7,6 +7,10 @@ import static play.data.Form.*;
 import views.html.*;
 import models.*;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,30 +26,53 @@ public class ScenarioController extends Controller{
 				.where().eq("email", session("email")).findUnique();
 		return ok(createScenario.render(Form.form(Creation.class),user));
 	}
-	
-	public static Result createScenarioPOST() {
-		/*
-		User user = User.find.where().eq("email", session("email"))
-				.findUnique();
-		Form<SaveChanges> editForm = Form.form(SaveChanges.class)
+	@Security.Authenticated(Secured.class)
+	public static Result createScenarioPOST() throws ParseException {
+		
+		User user=User.find
+				.where().eq("email", session("email")).findUnique();
+		
+		Form<Creation> createForm = Form.form(Creation.class)
 				.bindFromRequest();
-		if (editForm.hasErrors()) {
-			return badRequest(editAccount.render(editForm, user));
+		if (createForm.hasErrors()) {
+			return badRequest(createScenario.render(createForm, user));
 		} else {
-			String newEmail = editForm.get().email;
-			String newPasswordNotHash = editForm.get().password;
-			String newAlias = editForm.get().alias;
-			String newPhoneNumber = editForm.get().phoneNumber;
-			User.editUser(user.email, newEmail, newPasswordNotHash, newAlias,
-					newPhoneNumber);
+			String name = createForm.get().name;
+			String day = createForm.get().day;
+			String month = createForm.get().month;
+			String year = createForm.get().year;
+			boolean isPublic = createForm.get().isPublic;
+			DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+			Date date;
+			if(day.equals("dd") || month.equals("mm") || year.equals("yyyy")){
+				date=null;
+			}else{
+				date = formatter.parse(day+"/"+month+"/"+year);
+			}
+			Scenario.create(name, isPublic, date, user.email);
+			//later change to redirecting to "my scenarios"
 			return redirect(routes.Application.index());
 		}
-		*/
-		return redirect(routes.Application.index());
+		
+		//return redirect(routes.Application.index());
 	}
 	
 	public static class Creation {
+		public String name;
+		public boolean isPublic;
+		public String day;
+		public String month;
+		public String year;
+		
+		public String validate(){
+			return null;
+		}
+		
+		
+		
 		/*
+		 * 
+		 * 
 		public String email;
 		public String password;
 		public String alias;

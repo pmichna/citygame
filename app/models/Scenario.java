@@ -46,8 +46,11 @@ public class Scenario extends Model {
 	}
 	
 	public static Scenario create(String name, boolean isPublic, Date expirationDate,
-		String owner) {
-		Scenario scenario = new Scenario(name, isPublic, expirationDate, User.find.ref(owner));
+		String ownerEmail) {
+		Scenario scenario = new Scenario(name, isPublic, expirationDate, User.find
+																				.where()
+																				.eq("email", ownerEmail)
+																				.findUnique());
 		scenario.save();
 		scenario.saveManyToManyAssociations("members");
 		return scenario;
