@@ -155,6 +155,11 @@ public class UserAccountController extends Controller {
 			if (!emailMatcher.matches()) {
 				return "Invalid  email address";
 			}
+			
+			// check if email already registered
+			if (User.find.where().eq("email", email).findUnique() != null) {
+				return "Email already registered";
+			}
 
 			// check if alias already registered
 			if (!loggedUser.alias.equals(alias)

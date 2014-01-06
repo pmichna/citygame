@@ -21,9 +21,7 @@ public class BaseModelTest {
 	@BeforeClass
 	public static void startApp() throws IOException {
 		app = Helpers.fakeApplication();
-		Helpers.start(app);
-
-		
+		Helpers.start(app);		
 	}
 
  	@AfterClass

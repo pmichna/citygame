@@ -22,7 +22,6 @@ public class BaseControllerTest {
 	public static void startApp() throws IOException {
 		app = Helpers.fakeApplication();
 		Helpers.start(app);
-
 	}
 
  	@AfterClass
@@ -32,7 +31,6 @@ public class BaseControllerTest {
  
 	@Before
 	public void dropCreateDb() throws IOException {
-		
 		String serverName = "default";
  		EbeanServer server = Ebean.getServer(serverName);
  		ServerConfig config = new ServerConfig();

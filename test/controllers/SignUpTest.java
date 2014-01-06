@@ -12,7 +12,7 @@ import com.avaje.ebean.Ebean;
 import com.google.common.collect.ImmutableMap;
 import models.*;
 
-public class SignUpTest extends BaseModelTest {
+public class SignUpTest extends BaseControllerTest {
 	
 	@Test
 	public void createAccountSuccess() {
