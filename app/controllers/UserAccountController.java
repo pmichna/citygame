@@ -70,7 +70,10 @@ public class UserAccountController extends Controller {
 			String newPhoneNumber = editForm.get().phoneNumber;
 			User.editUser(user.email, newEmail, newPasswordNotHash, newAlias,
 					newPhoneNumber);
-			return redirect(routes.Application.index());
+			session().clear();
+			session("email", newEmail);
+			flash("success", "Your data has been modified");
+			return redirect(routes.UserAccountController.viewAccountGET());
 		}
 	}
 
