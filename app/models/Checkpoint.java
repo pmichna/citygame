@@ -35,17 +35,24 @@ public class Checkpoint extends Model {
         public Scenario scenario;
 
         public static Model.Finder<Long, Checkpoint> find =
-                new Finder<Long, Checkpoint>(Long.class, Checkpoint.class);
+            new Finder<Long, Checkpoint>(Long.class, Checkpoint.class);
 
-        public static Checkpoint create(Checkpoint checkpoint, Long scenario) {
-                checkpoint.scenario = Scenario.find.ref(scenario);
-                checkpoint.save();
-                return checkpoint;
+        public static Checkpoint create(String checkpointName, double longitude, double latitude, int points, String message, List<CheckpointAnswer> possibleAnswers, Long scenario) {
+			Checkpoint checkpoint = new Checkpoint();
+			checkpoint.name = checkpointName;
+			checkpoint.longitude = longitude;
+			checkpoint.latitude = latitude;
+			checkpoint.points = points;
+			checkpoint.message = message;
+			checkpoint.possibleAnswers = possibleAnswers;
+			checkpoint.scenario = Scenario.find.ref(scenarioId);
+            checkpoint.save();
+            return checkpoint;
         }
 
         public static List<Checkpoint> findAssignedTo(Long scenario) {
-                return find.where()
-                        .eq("scenario.id", scenario)
-                        .findList();
+            return find.where()
+                    .eq("scenario.id", scenario)
+                    .findList();
         }
 }
