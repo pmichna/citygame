@@ -56,6 +56,10 @@ public class Scenario extends Model {
 		return scenario;
 	}
 	
+	public static List<Scenario> findOwned(String userEmail){
+		return find.where().eq("owner.email",userEmail).findList();
+	}
+	
 	public static List<Scenario> findInvolving(String user) {
 		return find.where()
 		.eq("members.email", user)
