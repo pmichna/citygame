@@ -119,4 +119,90 @@ public class EditUserAccountTest extends BaseControllerTest {
 								.findUnique();
 		assertNull(userOld);
 	}
+	
+	@Test
+	public void editAliasFailureAlreadyRegistered() {
+		new User("newUser@gmail.com", "newUser", "password", "123456789", USER_PRIVILEGE.regular).save();
+		String newAlias = "newUser";
+		Result result = callAction(
+			    		controllers.routes.ref.UserAccountController.editAccountPOST(),
+			    		fakeRequest()
+							.withSession("email", originalEmail)
+							.withFormUrlEncodedBody(ImmutableMap.of(
+								"email", originalEmail,
+								"alias", newAlias,
+								"phoneNumber", originalPhoneNumber))
+			    	);
+    	assertEquals(400, status(result));
+		User user = User.find.where()
+								.eq("email", originalEmail)
+								.findUnique();
+		assertNotNull(user);
+		assertEquals(originalAlias, user.alias);
+	}
+	
+	@Test
+	public void editPhoneNumberSuccess() {
+		String newPhoneNumber = "111444777";
+		Result result = callAction(
+			    		controllers.routes.ref.UserAccountController.editAccountPOST(),
+			    		fakeRequest()
+							.withSession("email", originalEmail)
+							.withFormUrlEncodedBody(ImmutableMap.of(
+								"email", originalEmail,
+								"alias", originalAlias,
+								"phoneNumber", newPhoneNumber))
+			    	);
+		assertEquals(303, status(result));
+		// check if session correct
+		assertEquals(originalEmail, session(result).get("email"));
+		User userModified = User.find.where()
+									.eq("email", originalEmail)
+									.findUnique();
+		assertNotNull(userModified);
+		assertEquals(originalAlias, userModified.alias);
+		assertEquals(newPhoneNumber, userModified.phoneNumber);
+		assertNotNull(User.authenticate(originalEmail, originalPassword));
+	}
+	
+	@Test
+	public void editPhoneNumberFailureRegex() {
+		String newPhoneNumber = "123";
+		Result result = callAction(
+			    		controllers.routes.ref.UserAccountController.editAccountPOST(),
+			    		fakeRequest()
+							.withSession("email", originalEmail)
+							.withFormUrlEncodedBody(ImmutableMap.of(
+								"email", originalEmail,
+								"alias", originalAlias,
+								"phoneNumber", newPhoneNumber))
+			    	);
+    	assertEquals(400, status(result));
+		User user = User.find.where()
+									.eq("email", originalEmail)
+									.findUnique();
+		assertNotNull(user);		
+		assertEquals(originalPhoneNumber, user.phoneNumber);
+	}
+	
+	@Test
+	public void editPhoneNumberFailureAlreadyRegistered() {
+		String newPhoneNumber = "123456789";
+		new User("newUser@gmail.com", "newUser", "password", newPhoneNumber, USER_PRIVILEGE.regular).save();
+		Result result = callAction(
+			    		controllers.routes.ref.UserAccountController.editAccountPOST(),
+			    		fakeRequest()
+							.withSession("email", originalEmail)
+							.withFormUrlEncodedBody(ImmutableMap.of(
+								"email", originalEmail,
+								"alias", originalAlias,
+								"phoneNumber", newPhoneNumber))
+			    	);
+    	assertEquals(400, status(result));
+		User user = User.find.where()
+								.eq("email", originalEmail)
+								.findUnique();
+		assertNotNull(user);
+		assertEquals(originalPhoneNumber, user.phoneNumber);
+	}
 }
