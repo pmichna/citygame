@@ -21,4 +21,12 @@ public class CheckpointAnswer extends Model {
 	
 	public static Model.Finder<Long, CheckpointAnswer> find =
 			new Finder<Long, CheckpointAnswer>(Long.class, CheckpointAnswer.class);
+	
+	public CheckpointAnswer create(String text, Long checkpointId) {
+		CheckpointAnswer ca = new CheckpointAnswer();
+		ca.text = text;
+		ca.checkpoint = Checkpoint.find.ref(checkpointId);
+		ca.save();
+		return ca;
+	}
 }
