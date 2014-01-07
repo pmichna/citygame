@@ -1,0 +1,24 @@
+@(form: Form[CheckpointController.Creation], user: User, scenario: Scenario)
+
+@main("Create scenario", user) {
+<div class="container">
+	<div class="page-header">
+		<h1>Create checkpoint</h1>
+	</div>
+	@helper.form(routes.CheckpointController.createCheckpointPOST) {
+
+	<div class="form-group row">
+		<div class="col-sm-12">
+			<input id="name" type="text" class="form-control" name="name" placeholder="Scenario name" value="@form("name").value">
+		</div>
+	</div>
+	
+	<div class="col-sm-12 row">
+		<button type="submit" class="btn btn-default btn-lg">
+			Create
+		</button>
+	</div>
+
+	}
+</div><!-- /.container -->
+}
