@@ -17,13 +17,13 @@ import java.util.regex.Pattern;
 import controllers.UserAccountController.Registration;
 import controllers.UserAccountController.SaveChanges;
 
-public class CheckpointController extends Controller{
+public class CheckpointController extends Controller {
+	
 	@Security.Authenticated(Secured.class)
 	public static Result createCheckpointGET(Long scenarioId) {
-		User user=User.find
-				.where().eq("email", session("email")).findUnique();
-		Scenario scenario=Scenario.find.ref(scenarioId);
-		return ok(createCheckpoint.render(Form.form(Creation.class),user,scenario));
+		User user = User.find.where().eq("email", session("email")).findUnique();
+		Scenario scenario = Scenario.find.ref(scenarioId);
+		return ok(createCheckpoint.render(Form.form(Creation.class), user, scenario));
 	}
 	
 	@Security.Authenticated(Secured.class)
@@ -64,6 +64,7 @@ public class CheckpointController extends Controller{
 		return ok(myScenarios.render(user,Scenario.findOwned(user.email)));
 	}
 	*/
+		
 	public static class Creation {
 		public String name;
 		public boolean isPublic;
