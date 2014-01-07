@@ -67,13 +67,13 @@ public class CheckpointController extends Controller {
 
 	public static class Creation {
 		public String name;
-		double longitudeDegrees;
-		double longitudeMinutes;
-		double latitudeDegrees;
-		double latitudeMinutes;
-		String message;
-		int points;
-		long scenarioId;
+		public double longitudeDegrees;
+		public double longitudeMinutes;
+		public double latitudeDegrees;
+		public double latitudeMinutes;
+		public String message;
+		public int points;
+		public long scenarioId;
 
 		public String validate() {
 			return null;

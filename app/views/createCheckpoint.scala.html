@@ -7,7 +7,7 @@
 	</div>
 
 	@helper.form(routes.CheckpointController.createCheckpointPOST) {
-	<input type="hidden" name="scenarioId" value="@form("scenario.id")">
+	<input type="hidden" name="scenarioId" value="@scenario.id">
 	<div class="form-group ">
 		<input id="name" type="text" class="form-control" name="name" placeholder="Checkpoint name" value="@form("name").value">
 
