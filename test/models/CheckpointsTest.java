@@ -70,5 +70,4 @@ public class CheckpointsTest extends BaseModelTest {
 		assertTrue(results.contains(answer2));
 		assertTrue(results.contains(answer3));
 	}
-
 }
