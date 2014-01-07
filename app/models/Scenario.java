@@ -72,4 +72,12 @@ public class Scenario extends Model {
 			com.avaje.ebean.Expr.isNull("expirationDate")
 			).findList();
 	}
+	
+	public static boolean isMember(Long scenarioId, String userEmail){
+		 return find.where()
+			        .eq("members.email", userEmail)
+			        .eq("id", scenarioId)
+			        .findRowCount() > 0;
+	}
+	
 }

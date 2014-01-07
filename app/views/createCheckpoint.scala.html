@@ -1,23 +1,41 @@
 @(form: Form[CheckpointController.Creation], user: User, scenario: Scenario)
 
 @main("Create scenario", user) {
-	<div class="container">
-		<div class="page-header">
-			<h1>Create checkpoint</h1>
-		</div>
-	
-		@helper.form(routes.CheckpointController.createCheckpointPOST) {
-			<div class="form-group row">
-				<div class="col-sm-12">
-					<input id="name" type="text" class="form-control" name="name" placeholder="Checkpoint name" value="@form("name").value">
-				</div>
-			</div>
-	
-			<div class="col-sm-12 row">
-				<button type="submit" class="btn btn-default btn-lg">
-					Create
-				</button>
-			</div>
-		}
-	</div><!-- /.container -->
+<div class="container">
+	<div class="page-header">
+		<h1>Create checkpoint</h1>
+	</div>
+
+	@helper.form(routes.CheckpointController.createCheckpointPOST) {
+	<input type="hidden" name="scenarioId" value="@form("scenario.id")">
+	<div class="form-group ">
+		<input id="name" type="text" class="form-control" name="name" placeholder="Checkpoint name" value="@form("name").value">
+
+	</div>
+	<div class="form-group ">
+		<input id="longitudeDegrees" type="number" class="form-control" name="longitudeDegrees" placeholder="Longitude degrees" value="@form("longitudeDegrees").value">
+	</div>
+	<div class="form-group ">
+		<input id="longitudeMinutes" type="number" class="form-control" name="longitudeMinutes" placeholder="Longitude minutes" value="@form("longitudeMinutes").value">
+	</div>
+	<div class="form-group ">
+		<input id="latitudeDegrees" type="number" class="form-control" name="latitudeDegrees" placeholder="Latitude degrees" value="@form("latitudeDegrees").value">
+	</div>
+	<div class="form-group ">
+		<input id="latitudeMinutes" type="number" class="form-control" name="latitudeMinutes" placeholder="Latitude minutes" value="@form("latitudeMinutes").value">
+	</div>
+
+	<div class="form-group ">
+		<input id="message" type="text" name="message" class="form-control" placeholder="Message to send"  value="@form("message").value">
+	</div>
+	<div class="form-group ">
+		<input id="points" type="number" class="form-control" name="points" placeholder="Points" value="@form("points").value">
+	</div>
+
+	<button type="submit" class="btn btn-default btn-lg">
+		Create
+	</button>
+
+	}
+</div><!-- /.container -->
 }

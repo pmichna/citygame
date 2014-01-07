@@ -18,4 +18,12 @@ public class Secured extends Security.Authenticator {
 		ctx.flash().put("error", "Login to proceed");
         return redirect(routes.Application.loginGET());
     }
+    
+    public static boolean isMemberOf(Long scenario) {
+        return Scenario.isMember(
+            scenario,
+            Context.current().request().username()
+        );
+    }
+
 }
