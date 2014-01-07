@@ -16,8 +16,8 @@ create table checkpoint (
 
 create table checkpoint_answer (
   id                        bigint auto_increment not null,
+  checkpoint_id             bigint not null,
   text                      varchar(160) not null,
-  checkpoint_id             bigint,
   constraint pk_checkpoint_answer primary key (id))
 ;
 

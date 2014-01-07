@@ -12,6 +12,11 @@ public class CheckpointsTest extends BaseModelTest {
 	private String userPassword = "secret";
 	private String userPhoneNumber = "123456789";
 	private USER_PRIVILEGE privilege = USER_PRIVILEGE.regular;
+	String checkpointName = "checkpointTest";
+	double longitude = 55.55;
+	double latitude = 33.33;
+	int points = 5;
+	String message = "testMessage";
 	
 	private static final double DELTA = 1e-15;
 
@@ -22,12 +27,6 @@ public class CheckpointsTest extends BaseModelTest {
 	
 	@Test
 	public void createAndRetrieveCheckpoint() {
-		String checkpointName = "checkpointTest";
-		double longitude = 55.55;
-		double latitude = 33.33;
-		int points = 5;
-		String message = "testMessage";
-		
 		Scenario scenario = Scenario.create("Scenario 1", false, null, userEmail);
 		Checkpoint checkpoint = Checkpoint.create(checkpointName, longitude, latitude, points, message, scenario.id);
 		  	
@@ -38,4 +37,38 @@ public class CheckpointsTest extends BaseModelTest {
 		assertEquals(latitude, results.get(0).latitude, DELTA);
 		assertEquals(points, results.get(0).points);
 	}
+	
+	@Test
+	public void addAndRetrievePossibleAnswer() {
+		String answer1 = "answer1";
+		Scenario scenario = Scenario.create("Scenario 1", false, null, userEmail);
+		Checkpoint checkpoint = Checkpoint.create(checkpointName, longitude, latitude, points, message, scenario.id);
+		Checkpoint.addPossibleAnswer(answer1, checkpoint.id);
+		
+		List<String> answers = Checkpoint.getAnswers(checkpoint.id);
+		assertEquals(1, answers.size());		
+		assertEquals(answer1, answers.get(0));
+	}
+	
+	@Test
+	public void addAndRetrievePossibleAnswersList() {
+		String answer1 = "answer1";
+		String answer2 = "answer2";
+		String answer3 = "answer3";
+		List<String> answers = new ArrayList<String>(3);
+		answers.add(answer1);
+		answers.add(answer2);
+		answers.add(answer3);
+		
+		Scenario scenario = Scenario.create("Scenario 1", false, null, userEmail);
+		Checkpoint checkpoint = Checkpoint.create(checkpointName, longitude, latitude, points, message, scenario.id);
+		Checkpoint.addPossibleAnswers(answers, checkpoint.id);
+		
+		List<String> results = Checkpoint.getAnswers(checkpoint.id);
+		assertEquals(3, results.size());
+		assertTrue(results.contains(answer1));
+		assertTrue(results.contains(answer2));
+		assertTrue(results.contains(answer3));
+	}
+
 }
