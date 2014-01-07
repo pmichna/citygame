@@ -17,9 +17,7 @@ import play.test.WithApplication;
 import static play.test.Helpers.*;
 
 public class UsersTest extends BaseModelTest {
-	
-	private static final double DELTA = 1e-15;
-    
+	    
     @Test
     public void createAndRetrieveUser() {
         new User("bob@gmail.com", "Bob", "secret1", "111111111", USER_PRIVILEGE.regular).save();

@@ -15,6 +15,7 @@ public class Secured extends Security.Authenticator {
 
     @Override
     public Result onUnauthorized(Context ctx) {
+		ctx.flash().put("error", "Login to proceed");
         return redirect(routes.Application.loginGET());
     }
 }

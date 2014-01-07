@@ -15,6 +15,11 @@
 		        @flash.get("success")
 			</div>
 		}
+		@if(flash.contains("error")) {
+    		<div class="alert alert-warning">
+		        @flash.get("error")
+			</div>
+		}
 		@helper.form(routes.Application.loginPOST) {
 			<div class="form-group">
 				<input type="email" class="form-control" name="email" placeholder="Email" value="@form("email").value">

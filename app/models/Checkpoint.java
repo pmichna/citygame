@@ -28,7 +28,7 @@ public class Checkpoint extends Model {
         @Column(length=160,nullable=false)
         public String message;
 
-        @OneToMany
+        @OneToMany(cascade=CascadeType.ALL)
         public List<CheckpointAnswer> possibleAnswers = new ArrayList<CheckpointAnswer>();
 
         @ManyToOne
@@ -37,14 +37,14 @@ public class Checkpoint extends Model {
         public static Model.Finder<Long, Checkpoint> find =
             new Finder<Long, Checkpoint>(Long.class, Checkpoint.class);
 
-        public static Checkpoint create(String checkpointName, double longitude, double latitude, int points, String message, List<CheckpointAnswer> possibleAnswers, Long scenarioId) {
+
+        public static Checkpoint create(String checkpointName, double longitude, double latitude, int points, String message, Long scenarioId) {
 			Checkpoint checkpoint = new Checkpoint();
 			checkpoint.name = checkpointName;
 			checkpoint.longitude = longitude;
 			checkpoint.latitude = latitude;
 			checkpoint.points = points;
 			checkpoint.message = message;
-			checkpoint.possibleAnswers = possibleAnswers;
 			checkpoint.scenario = Scenario.find.ref(scenarioId);
             checkpoint.save();
             return checkpoint;
@@ -55,4 +55,32 @@ public class Checkpoint extends Model {
                     .eq("scenario.id", scenario)
                     .findList();
         }
+		
+		public static String addPossibleAnswer(String answer, Long checkpointId) {
+			Checkpoint checkpoint = find.ref(checkpointId);
+            CheckpointAnswer checkpointAnswer = new CheckpointAnswer(answer);
+            checkpoint.possibleAnswers.add(checkpointAnswer);
+            checkpoint.save();
+			return answer;
+		}
+		
+		public static List<String> addPossibleAnswers(List<String> answers, Long checkpointId) {
+			Checkpoint checkpoint = find.ref(checkpointId);
+			List<CheckpointAnswer> checkpointAnswers = new ArrayList<CheckpointAnswer>();
+			for(String a: answers) {
+				checkpointAnswers.add(new CheckpointAnswer(a));
+			}
+            checkpoint.possibleAnswers.addAll(checkpointAnswers);
+            checkpoint.save();
+			return answers;
+		}
+		
+		public static List<String> getAnswers(Long checkpointId) {
+			Checkpoint checkpoint = find.ref(checkpointId);
+			List<String> answers = new ArrayList<String>();
+			for(CheckpointAnswer ca: checkpoint.possibleAnswers) {
+				answers.add(ca.text);
+			}
+			return answers;
+		}
 }

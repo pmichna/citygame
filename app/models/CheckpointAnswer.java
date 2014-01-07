@@ -16,9 +16,10 @@ public class CheckpointAnswer extends Model {
 	@Column(length=160,nullable=false)
 	public String text;
 	
-	@ManyToOne
-	public Checkpoint checkpoint;
-	
 	public static Model.Finder<Long, CheckpointAnswer> find =
 			new Finder<Long, CheckpointAnswer>(Long.class, CheckpointAnswer.class);
+	
+	public CheckpointAnswer(String text) {
+		this.text = text;
+	}
 }
