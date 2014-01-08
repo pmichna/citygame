@@ -23,8 +23,10 @@ public class CheckpointController extends Controller {
 
 	@Security.Authenticated(Secured.class)
 	public static Result createCheckpointGET(Long scenarioId) {
-		User user = User.find.where().eq("email", session("email"))
-				.findUnique();
+		User user = User.find
+						.where()
+						.eq("email", session("email"))
+						.findUnique();
 		Scenario scenario = Scenario.find.ref(scenarioId);
 		if (!Secured.isMemberOf(scenarioId)) {
 			return redirect(routes.Application.index());
@@ -35,8 +37,10 @@ public class CheckpointController extends Controller {
 
 	@Security.Authenticated(Secured.class)
 	public static Result createCheckpointPOST() {
-		User user = User.find.where().eq("email", session("email"))
-				.findUnique();
+		User user = User.find
+						.where()
+						.eq("email", session("email"))
+							.findUnique();
 		Form<Creation> createForm = Form.form(Creation.class).bindFromRequest();
 		long scenarioId = createForm.get().scenarioId;
 		if (createForm.hasErrors()) {
@@ -58,24 +62,20 @@ public class CheckpointController extends Controller {
 			return redirect(routes.ScenarioController
 					.viewScenarioGET(scenarioId));
 		}
-
 	}
 	
 
 	@Security.Authenticated(Secured.class)
 	public static Result editCheckpointGET(Long checkpointId) {
-		User user = User.find.where().eq("email", session("email"))
-				.findUnique();
-		Checkpoint checkpoint = Checkpoint.find.byId(checkpointId);
-		if (checkpoint == null) {
+		User user = User.find
+						.where()
+						.eq("email", session("email"))
+						.findUnique();
+		Checkpoint checkpoint = Checkpoint.find.ref(checkpointId);
+		Scenario scenario = Scenario.findInvolvingCheckpoint(checkpointId);
+		if (checkpoint == null || !Secured.isMemberOf(scenario.id)) {
 			return redirect(routes.Application.index());
 		}
-		Scenario scenario = checkpoint.scenario;
-		/*
-		 * if (!Secured.isMemberOf(scenario.id)) { return
-		 * redirect(routes.Application.index()); }
-		 */
-
 		return ok(editCheckpoint.render(Form.form(Edition.class), user,
 				scenario, checkpoint));
 	}

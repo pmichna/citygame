@@ -49,7 +49,7 @@ public class ScenarioController extends Controller {
 			Date date;
 			if(day.equals("dd") || month.equals("mm") || year.equals("yyyy")){
 				date=null;
-			}else{
+			} else {
 				date = formatter.parse(day+"/"+month+"/"+year);
 			}
 			Scenario.create(name, isPublic, date, user.email);
@@ -69,7 +69,7 @@ public class ScenarioController extends Controller {
 		}
 		return ok(myScenarios.render(
 				user,
-				Scenario.findInvolving(user.email, scenariosPageSize, pageNum),
+				Scenario.findInvolvingUser(user.email, scenariosPageSize, pageNum),
 				pageNum,
 				totalPageCount,
 				scenariosPageSize,
@@ -89,7 +89,7 @@ public class ScenarioController extends Controller {
 		if(!Secured.isMemberOf(scenarioId)) {
 			return redirect(routes.ScenarioController.viewMyScenariosGET(0));
 		}
-		return ok(viewScenario.render(user,scenario));
+		return ok(viewScenario.render(user, scenario));
 	}
 	
 	@Security.Authenticated(Secured.class)
@@ -97,7 +97,6 @@ public class ScenarioController extends Controller {
 		User user=User.find
 				.where().eq("email", session("email")).findUnique();
 		Scenario scenario = Scenario.find.byId(scenarioId);
-		
 		return ok(addMember.render(Form.form(Member.class),user,scenario));
 	}
 	

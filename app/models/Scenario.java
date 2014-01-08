@@ -60,12 +60,18 @@ public class Scenario extends Model {
 		return find.where().eq("owner.email",userEmail).findList();
 	}
 	
-	public static List<Scenario> findInvolving(String user, int pageSize, int pageNum) {
+	public static List<Scenario> findInvolvingUser(String user, int pageSize, int pageNum) {
 		PagingList<Scenario> pagingList = find.where()
 												.eq("members.email", user)
 												.findPagingList(pageSize);
 		Page<Scenario> page = pagingList.getPage(pageNum);
 		return page.getList();
+	}
+	
+	public static Scenario findInvolvingCheckpoint(Long checkpointId) {
+		return find.where()
+					.eq("checkpoints.id", checkpointId)
+					.findUnique();
 	}
 	
 	public static List<Scenario> findNotExpired(Date date) {
