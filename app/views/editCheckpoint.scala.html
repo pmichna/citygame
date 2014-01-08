@@ -33,34 +33,7 @@
 		<input id="points" type="number" class="form-control" name="points" placeholder="Points" value="@checkpoint.points">
 	</div>
 	
-	<h4>Possible answer</h4>
-	<table class="table table-striped">
-		<thead>
-			<tr>
-				<th>#</th>
-				<th>text</th>
-				
-			</tr>
-		</thead>
-		<tbody>
-	@for(c <- checkpoint.possibleAnswers) {
-			<tr>
-				<td>@{checkpoint.possibleAnswers.indexOf(c)+1}</td>
-				<td>@c.text</td>
-				
-				<td>
-				<a class="btn btn-default btn-xs" href="#">
-					<span class="glyphicon glyphicon-pencil"></span> Edit
-				</a>
-				<a class="btn btn-default btn-xs" href="#">
-					<span class="glyphicon glyphicon-remove"></span> Remove
-				</a>
-				</td>
-				
-			</tr>
-			}
-		</tbody>
-	</table>
+	
 
 	<button type="submit" class="btn btn-default btn-lg">
 		Save

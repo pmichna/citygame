@@ -64,7 +64,7 @@ public class CheckpointController extends Controller {
 		User user = User.find.where().eq("email", session("email"))
 				.findUnique();
 		Checkpoint checkpoint = Checkpoint.find
-				.where().eq("id", checkpointId).findUnique();
+				.byId(checkpointId);
 		if(checkpoint == null){
 			return redirect(routes.Application.index());
 		}
@@ -75,6 +75,23 @@ public class CheckpointController extends Controller {
 		}*/
 		
 		return ok(editCheckpoint.render(Form.form(Edition.class), user,
+				scenario, checkpoint));
+	}
+	
+	public static Result viewCheckpointGET(Long checkpointId) {
+		User user = User.find.where().eq("email", session("email"))
+				.findUnique();
+		Checkpoint checkpoint = Checkpoint.find.byId(checkpointId);
+		if(checkpoint == null){
+			return redirect(routes.Application.index());
+		}
+		Scenario scenario = checkpoint.scenario;
+		/*
+		if (!Secured.isMemberOf(scenario.id)) {
+			return redirect(routes.Application.index());
+		}*/
+		
+		return ok(viewCheckpoint.render(user,
 				scenario, checkpoint));
 	}
 
