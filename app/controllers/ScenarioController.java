@@ -67,6 +67,35 @@ public class ScenarioController extends Controller{
 		return ok(viewScenario.render(user,scenario));
 	}
 	
+	@Security.Authenticated(Secured.class)
+	public static Result addMemberGET(Long scenarioId) {
+		User user=User.find
+				.where().eq("email", session("email")).findUnique();
+		Scenario scenario = Scenario.find.byId(scenarioId);
+		
+		return ok(addMember.render(Form.form(Member.class),user,scenario));
+	}
+	
+	@Security.Authenticated(Secured.class)
+	public static Result addMemberPOST(Long scenarioId) {
+		User user = User.find.where().eq("email", session("email"))
+				.findUnique();
+		Form<Member> addForm = Form.form(Member.class).bindFromRequest();
+		Scenario scenario = Scenario.find.byId(scenarioId);
+		if (addForm.hasErrors()) {
+			return badRequest(addMember.render(addForm, user,
+					scenario));
+		} else {
+			User member = User.find.where().eq("alias", addForm.get().alias).findUnique();
+			if(!scenario.members.contains(member)){
+				scenario.members.add(member);
+			}
+			return redirect(routes.ScenarioController
+					.viewScenarioGET(scenarioId));
+		}
+
+	}
+	
 	
 	public static class Creation {
 		public String name;
@@ -79,5 +108,14 @@ public class ScenarioController extends Controller{
 			return null;
 		}
 		
+	}
+	
+	public static class Member {
+		public String alias;
+
+		public String validate() {
+			return null;
+		}
+
 	}
 }

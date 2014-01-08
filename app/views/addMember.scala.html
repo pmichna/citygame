@@ -1,0 +1,28 @@
+@(form: Form[ScenarioController.Member], user: User, scenario: Scenario)
+
+@main("Add member", user) {
+	<div class="container">
+		<div class="page-header">
+			<h1>Add member</h1>
+		</div>
+		@if(form.hasGlobalErrors) {
+			<div class="alert alert-danger">
+				@form.globalError.message
+			</div>
+		}
+		@if(flash.contains("error")) {
+    		<div class="alert alert-warning">
+		        @flash.get("error")
+			</div>
+		}
+		@helper.form(routes.ScenarioController.addMemberPOST(scenario.id)) {
+			<div class="form-group">
+				<input type="email" class="form-control" name="email" placeholder="Users email" value="@form("email").value">
+			</div>
+			<div class="form-group">
+				<button type="submit" class="btn btn-default">Add member</button>
+			</div>
+			
+		}	
+	</div>
+}

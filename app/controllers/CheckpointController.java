@@ -60,6 +60,7 @@ public class CheckpointController extends Controller {
 		}
 
 	}
+	
 
 	@Security.Authenticated(Secured.class)
 	public static Result editCheckpointGET(Long checkpointId) {
@@ -108,6 +109,7 @@ public class CheckpointController extends Controller {
 		}
 
 	}
+	
 
 	public static Result viewCheckpointGET(Long checkpointId) {
 		User user = User.find.where().eq("email", session("email"))
@@ -174,4 +176,5 @@ public class CheckpointController extends Controller {
 		}
 
 	}
+	
 }

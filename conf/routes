@@ -28,5 +28,11 @@ POST	/editCheckpoint/				controllers.CheckpointController.editCheckpointPOST()
 GET  	/viewCheckpoint/:checkpoint		controllers.CheckpointController.viewCheckpointGET(checkpoint: Long)
 GET  	/deleteCheckpoint/:checkpoint	controllers.CheckpointController.removeCheckpointGET(checkpoint: Long)
 
+GET		/addAnswer/:checkpoint			controllers.CheckpointAnswerController.createCheckpointAnswerGET(checkpoint: Long)
+POST	/addAnswer/:checkpoint			controllers.CheckpointAnswerController.createCheckpointAnswerPOST(checkpoint: Long)
+
+GET		/addMember/:scenario			controllers.ScenarioController.addMemberGET(scenario: Long)
+POST	/addMember/:scenario			controllers.ScenarioController.addMemberPOST(scenario: Long)
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
