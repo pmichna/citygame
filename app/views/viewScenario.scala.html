@@ -20,7 +20,7 @@
 		<div class="col-xs-12 col-md-8">
 			@if(scenario.isAccepted){
 				yes
-			}else{
+			} else {
 				no
 			}
 		</div>
@@ -30,14 +30,14 @@
 			Is public:
 		</div>
 		<div class="col-xs-12 col-md-8">
-			@if(scenario.isPublic){
+			@if(scenario.isPublic) {
 				yes
-			}else{
+			} else {
 				no
 			}
 		</div>
 	</div>
-	@if(scenario.expirationDate!=null){
+	@if(scenario.expirationDate!=null) {
 	<div class="row">
 		<div class="col-xs-6 col-md-4">
 			Expiration date:
@@ -69,14 +69,13 @@
 			<tr>
 				<td>@{scenario.members.indexOf(m)+1}</td>
 				<td>@m.alias</td>
-				@if(m.Id!=scenario.owner.Id){
+				@if(m.Id != scenario.owner.Id){
 				<td>
-					<a class="btn btn-default btn-xs" href="#"> <span class="glyphicon glyphicon-remove"></span> Remove </a>
+					<a class="btn btn-default btn-xs" href="#"><span class="glyphicon glyphicon-remove"></span> Remove</a>
 				</td>
-				}else{
+				} else {
 					<td></td>
 				}
-
 			</tr>
 			}
 
