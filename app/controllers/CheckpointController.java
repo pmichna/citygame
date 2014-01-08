@@ -15,6 +15,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.avaje.ebean.Ebean;
+import play.data.validation.Constraints.*;
 
 import controllers.UserAccountController.Registration;
 import controllers.UserAccountController.SaveChanges;
@@ -31,31 +32,30 @@ public class CheckpointController extends Controller {
 		if (!Secured.isMemberOf(scenarioId)) {
 			return redirect(routes.Application.index());
 		}
-		return ok(createCheckpoint.render(Form.form(Creation.class), user,
+		return ok(createCheckpoint.render(Form.form(CheckpointForm.class), user,
 				scenario));
 	}
 
 	@Security.Authenticated(Secured.class)
-	public static Result createCheckpointPOST() {
+	public static Result createCheckpointPOST(Long scenarioId) {
 		User user = User.find
 						.where()
 						.eq("email", session("email"))
-							.findUnique();
-		Form<Creation> createForm = Form.form(Creation.class).bindFromRequest();
-		long scenarioId = createForm.get().scenarioId;
+						.findUnique();
+		Form<CheckpointForm> createForm = Form.form(CheckpointForm.class).bindFromRequest();
 		if (createForm.hasErrors()) {
 			return badRequest(createCheckpoint.render(createForm, user,
 					Scenario.find.ref(scenarioId)));
 		} else {
 			String name = createForm.get().name;
-			double longitudeDegrees = createForm.get().longitudeDegrees;
+			int longitudeDegrees = createForm.get().longitudeDegrees;
 			double longitudeMinutes = createForm.get().longitudeMinutes;
-			double latitudeDegrees = createForm.get().latitudeDegrees;
+			int latitudeDegrees = createForm.get().latitudeDegrees;
 			double latitudeMinutes = createForm.get().latitudeMinutes;
 			String message = createForm.get().message;
 			int points = createForm.get().points;
-			double longitude = longitudeDegrees + longitudeMinutes / 4;
-			double latitude = latitudeDegrees + latitudeMinutes / 60;
+			double longitude = longitudeDegrees + longitudeMinutes / 4L;
+			double latitude = latitudeDegrees + latitudeMinutes / 60L;
 
 			Checkpoint.create(name, longitude, latitude, points, message,
 					scenarioId);
@@ -76,26 +76,29 @@ public class CheckpointController extends Controller {
 		if (checkpoint == null || !Secured.isMemberOf(scenario.id)) {
 			return redirect(routes.Application.index());
 		}
-		return ok(editCheckpoint.render(Form.form(Edition.class), user,
+		return ok(editCheckpoint.render(Form.form(CheckpointForm.class), user,
 				scenario, checkpoint));
 	}
 
 	@Security.Authenticated(Secured.class)
-	public static Result editCheckpointPOST() {
-		User user = User.find.where().eq("email", session("email"))
-				.findUnique();
-		Form<Edition> editionForm = Form.form(Edition.class).bindFromRequest();
-		long scenarioId = editionForm.get().scenarioId;
-		long checkpointId = editionForm.get().checkpointId;
+	public static Result editCheckpointPOST(Long checkpointId, Long scenarioId) {
+		User user = User.find
+						.where()
+						.eq("email", session("email"))
+						.findUnique();
+		if(!Secured.isMemberOf(scenarioId)) {
+			return redirect(routes.Application.index());
+		}
+		Form<CheckpointForm> editionForm = Form.form(CheckpointForm.class).bindFromRequest();
 		if (editionForm.hasErrors()) {
 			return badRequest(editCheckpoint.render(editionForm, user,
 					Scenario.find.ref(scenarioId),
 					Checkpoint.find.ref(checkpointId)));
 		} else {
 			String name = editionForm.get().name;
-			double longitudeDegrees = editionForm.get().longitudeDegrees;
+			int longitudeDegrees = editionForm.get().longitudeDegrees;
 			double longitudeMinutes = editionForm.get().longitudeMinutes;
-			double latitudeDegrees = editionForm.get().latitudeDegrees;
+			int latitudeDegrees = editionForm.get().latitudeDegrees;
 			double latitudeMinutes = editionForm.get().latitudeMinutes;
 			String message = editionForm.get().message;
 			int points = editionForm.get().points;
@@ -110,23 +113,21 @@ public class CheckpointController extends Controller {
 
 	}
 	
-
+	@Security.Authenticated(Secured.class)
 	public static Result viewCheckpointGET(Long checkpointId) {
-		User user = User.find.where().eq("email", session("email"))
-				.findUnique();
-		Checkpoint checkpoint = Checkpoint.find.byId(checkpointId);
-		if (checkpoint == null) {
+		User user = User.find
+						.where()
+						.eq("email", session("email"))
+						.findUnique();
+		Checkpoint checkpoint = Checkpoint.find.ref(checkpointId);
+		Scenario scenario = Scenario.findInvolvingCheckpoint(checkpointId);
+		if (!Secured.isMemberOf(scenario.id)) {
 			return redirect(routes.Application.index());
 		}
-		Scenario scenario = checkpoint.scenario;
-		/*
-		 * if (!Secured.isMemberOf(scenario.id)) { return
-		 * redirect(routes.Application.index()); }
-		 */
-
 		return ok(viewCheckpoint.render(user, scenario, checkpoint));
 	}
 
+	@Security.Authenticated(Secured.class)
 	public static Result removeCheckpointGET(Long checkpointId) {
 		User user = User.find.where().eq("email", session("email"))
 				.findUnique();
@@ -144,37 +145,31 @@ public class CheckpointController extends Controller {
 
 	}
 
-	public static class Creation {
+	public static class CheckpointForm {
+		@Required(message = "Checkpoint name is required")
 		public String name;
-		public double longitudeDegrees;
+		
+		@Min(value = 0, message = "Longitude degress can't be lower than 0")
+		@Max(value = 180, message = "Longitude degress can't be greate than 180")
+		public int longitudeDegrees;
+		
+		@Min(value = 0, message = "Longitude minutes can't be lower than 0")
+		@Max(value = 4, message = "Longitude minutes can't be greater than 4")
 		public double longitudeMinutes;
-		public double latitudeDegrees;
+		
+		@Min(value = 0, message = "Latitude degress can't be lower than 0")
+		@Max(value = 90, message = "Latitude degress can't be greater than 90")
+		public int latitudeDegrees;
+		
+		@Min(value = 0, message = "Latitude minutes can't be lower than 0")
+		@Max(value = 60, message = "Latitude minutes can't be greater than 60")
 		public double latitudeMinutes;
+		
+		@Required(message = "Message is required")
 		public String message;
+
+		@Min(value= 1, message = "Points min. = 0")
 		public int points;
-		public long scenarioId;
-
-		public String validate() {
-			return null;
-		}
-
-	}
-
-	public static class Edition {
-		public String name;
-		public double longitudeDegrees;
-		public double longitudeMinutes;
-		public double latitudeDegrees;
-		public double latitudeMinutes;
-		public String message;
-		public int points;
-		public long scenarioId;
-		public long checkpointId;
-
-		public String validate() {
-			return null;
-		}
-
 	}
 	
 }
