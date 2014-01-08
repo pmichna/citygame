@@ -42,6 +42,7 @@ public class CheckpointController extends Controller {
 						.where()
 						.eq("email", session("email"))
 						.findUnique();
+		
 		Form<CheckpointForm> createForm = Form.form(CheckpointForm.class).bindFromRequest();
 		if (createForm.hasErrors()) {
 			return badRequest(createCheckpoint.render(createForm, user,
@@ -148,28 +149,33 @@ public class CheckpointController extends Controller {
 	public static class CheckpointForm {
 		@Required(message = "Checkpoint name is required")
 		public String name;
-		
+
+		@Required(message = "Longitude degrees required")
 		@Min(value = 0, message = "Longitude degress can't be lower than 0")
 		@Max(value = 180, message = "Longitude degress can't be greate than 180")
-		public int longitudeDegrees;
-		
+		public Integer longitudeDegrees;
+	
+		@Required(message = "Longitude minutes required")
 		@Min(value = 0, message = "Longitude minutes can't be lower than 0")
 		@Max(value = 4, message = "Longitude minutes can't be greater than 4")
-		public double longitudeMinutes;
+		public Double longitudeMinutes;
 		
+		@Required(message = "Latitude degrees required")
 		@Min(value = 0, message = "Latitude degress can't be lower than 0")
 		@Max(value = 90, message = "Latitude degress can't be greater than 90")
-		public int latitudeDegrees;
+		public Integer latitudeDegrees;
 		
+		@Required(message = "Latitude minutes required")
 		@Min(value = 0, message = "Latitude minutes can't be lower than 0")
 		@Max(value = 60, message = "Latitude minutes can't be greater than 60")
-		public double latitudeMinutes;
+		public Double latitudeMinutes;
 		
 		@Required(message = "Message is required")
 		public String message;
 
-		@Min(value= 1, message = "Points min. = 0")
-		public int points;
+		@Required(message = "Points are required")
+		@Min(value = 1, message = "Points min. = 1")
+		public Integer points;		
 	}
 	
 }

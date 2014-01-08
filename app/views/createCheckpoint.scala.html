@@ -10,7 +10,7 @@
 		<div class="alert alert-danger">
 	        @for(errorList <- form.errors().values) {
 				@for(e <- errorList) {
-					@e.message()<br/>
+					@e.message()
 				}
 				<br/>
 			}

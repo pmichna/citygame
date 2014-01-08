@@ -25,9 +25,9 @@ public class CheckpointTest extends BaseControllerTest {
 	private int longitudeDegrees = 2;
 	private double longitudeMinutes = 3;
 	private int latitudeDegrees = 2;
-	private double latitudeMinutes = 4;
+	private double latitudeMinutes = 3;
 	String message = "checkpoint message";
-	int points = 10;
+	int points = 1;
 	private static final double DELTA = 0.07;
 	
 	@Before
@@ -42,12 +42,13 @@ public class CheckpointTest extends BaseControllerTest {
 									.where()
 									.eq("name", scenarioName)
 									.findUnique();
+		
 		ImmutableMap.Builder<String, String> mapBuilder = ImmutableMap.builder();
 		mapBuilder.put("name", checkpointName);
 		mapBuilder.put("longitudeDegrees", Integer.toString(longitudeDegrees));
 		mapBuilder.put("longitudeMinutes", Double.toString(longitudeMinutes));
 		mapBuilder.put("latitudeDegrees", Integer.toString(latitudeDegrees));
-		mapBuilder.put("latitudeMinute", Double.toString(latitudeMinutes));
+		mapBuilder.put("latitudeMinutes", Double.toString(latitudeMinutes));
 		mapBuilder.put("message", message);
 		mapBuilder.put("points", Integer.toString(points));
 		
@@ -81,6 +82,37 @@ public class CheckpointTest extends BaseControllerTest {
 									.findUnique();
 		ImmutableMap.Builder<String, String> mapBuilder = ImmutableMap.builder();
 		mapBuilder.put("longitudeDegrees", Integer.toString(longitudeDegrees));
+		mapBuilder.put("longitudeMinutes", Double.toString(longitudeMinutes));
+		mapBuilder.put("latitudeDegrees", Integer.toString(latitudeDegrees));
+		mapBuilder.put("latitudeMinute", Double.toString(latitudeMinutes));
+		mapBuilder.put("message", message);
+		mapBuilder.put("points", Integer.toString(points));
+		
+		ImmutableMap<String, String> map = mapBuilder.build();
+		
+	    Result result = callAction(
+        	controllers.routes.ref.CheckpointController.createCheckpointPOST(scenario.id),
+        	fakeRequest()
+				.withSession("email", userEmail)
+				.withFormUrlEncodedBody(map)
+    	);
+		assertEquals(400, status(result));
+		
+		Checkpoint checkpoint = Checkpoint.find
+											.where()
+											.eq("name", checkpointName)
+											.findUnique();
+		assertNull(checkpoint);
+	}
+	
+	@Test
+	public void createCheckpointFailureNoLongitudeDeg() {
+		Scenario scenario = Scenario.find
+									.where()
+									.eq("name", scenarioName)
+									.findUnique();
+		ImmutableMap.Builder<String, String> mapBuilder = ImmutableMap.builder();
+		mapBuilder.put("name", checkpointName);
 		mapBuilder.put("longitudeMinutes", Double.toString(longitudeMinutes));
 		mapBuilder.put("latitudeDegrees", Integer.toString(latitudeDegrees));
 		mapBuilder.put("latitudeMinute", Double.toString(latitudeMinutes));
