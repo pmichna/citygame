@@ -17,18 +17,22 @@ import java.util.regex.Pattern;
 import controllers.UserAccountController.Registration;
 import controllers.UserAccountController.SaveChanges;
 
-public class ScenarioController extends Controller{
+public class ScenarioController extends Controller {
+	
 	@Security.Authenticated(Secured.class)
 	public static Result createScenarioGET() {
 		User user=User.find
 				.where().eq("email", session("email")).findUnique();
 		return ok(createScenario.render(Form.form(Creation.class),user));
 	}
+	 
 	@Security.Authenticated(Secured.class)
 	public static Result createScenarioPOST() throws ParseException {
 		
-		User user=User.find
-				.where().eq("email", session("email")).findUnique();
+		User user = User.find
+						.where()
+						.eq("email", session("email"))
+						.findUnique();
 		
 		Form<Creation> createForm = Form.form(Creation.class)
 				.bindFromRequest();
@@ -51,11 +55,17 @@ public class ScenarioController extends Controller{
 			return redirect(routes.ScenarioController.viewMyScenariosGET());
 		}
 	}
+	
 	@Security.Authenticated(Secured.class)
 	public static Result viewMyScenariosGET() {
-		User user=User.find
-				.where().eq("email", session("email")).findUnique();
-		return ok(myScenarios.render(user,Scenario.findOwned(user.email)));
+		User user = User.find
+						.where()
+						.eq("email", session("email"))
+						.findUnique();
+		return ok(myScenarios.render(
+				user, Scenario.findInvolving(user.email)
+			)
+		);
 	}
 	
 	@Security.Authenticated(Secured.class)
@@ -93,7 +103,6 @@ public class ScenarioController extends Controller{
 			return redirect(routes.ScenarioController
 					.viewScenarioGET(scenarioId));
 		}
-
 	}
 	
 	

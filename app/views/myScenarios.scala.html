@@ -1,42 +1,40 @@
 @(user: User, scenarios: List[Scenario])
 
 @main("My scenarios", user) {
-<div class="container">
-	<div class="page-header">
-		<h1>My scenarios</h1>
-	</div>
-	<table class="table table-striped">
-		<thead>
-			<tr>
-				<th>#</th>
-				<th>Scenario name</th>
-				<th>Is public</th>
-			</tr>
-		</thead>
-		<tbody>
-
-			@for(s <- scenarios) {
-			<tr>
-				<td>@{scenarios.indexOf(s)+1}</td>
-				<td>@s.name</td>
-				<td>@s.isPublic</td>
-				<td>
-				<a class="btn btn-default btn-xs" href="@routes.ScenarioController.viewScenarioGET(s.id)">
-					<span class="glyphicon glyphicon-search"></span> View
-				</a>
-				<a class="btn btn-default btn-xs" href="#">
-					<span class="glyphicon glyphicon-pencil"></span> Edit
-				</a>
-				<a class="btn btn-default btn-xs" href="#">
-					<span class="glyphicon glyphicon-remove"></span> Remove
-				</a>
-				</td>
-				
-			</tr>
-			}
-
-		</tbody>
-	</table>
-
-</div><!-- /.container -->
+	<div class="container">
+		<div class="page-header">
+			<h1>My scenarios</h1>
+		</div>
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>#</th>
+					<th>Scenario name</th>
+					<th>Is public</th>
+					<th>Created by me</th>
+				</tr>
+			</thead>
+			<tbody>
+				@for(s <- scenarios) {
+					<tr>
+						<td>@{scenarios.indexOf(s)+1}</td>
+						<td>@s.name</td>
+						<td>@s.isPublic</td>
+						<td>@{s.owner.email == user.email}</td>
+						<td>
+						<a class="btn btn-default btn-xs" href="@routes.ScenarioController.viewScenarioGET(s.id)">
+							<span class="glyphicon glyphicon-search"></span> View
+						</a>
+						<a class="btn btn-default btn-xs" href="#">
+							<span class="glyphicon glyphicon-pencil"></span> Edit
+						</a>
+						<a class="btn btn-default btn-xs" href="#">
+							<span class="glyphicon glyphicon-remove"></span> Remove
+						</a>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div><!-- /.container -->
 }

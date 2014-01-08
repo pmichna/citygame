@@ -42,8 +42,6 @@ public class Application extends Controller {
 		return redirect(routes.Application.loginGET());
 	}
 	
-	
-
 	public static class Login {
 		public String email;
 		public String password;
