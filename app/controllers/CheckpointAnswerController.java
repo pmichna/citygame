@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 import com.avaje.ebean.Ebean;
 
 import controllers.Application.Login;
+import controllers.CheckpointController.Creation;
 import controllers.UserAccountController.Registration;
 import controllers.UserAccountController.SaveChanges;
 
@@ -27,22 +28,28 @@ public class CheckpointAnswerController extends Controller {
 		User user = User.find.where().eq("email", session("email"))
 				.findUnique();
 		Checkpoint checkpoint = Checkpoint.find.ref(checkpointId);
+		
 		if (!Secured.isMemberOf(checkpoint.id)) {
-			return redirect(routes.CheckpointController.viewCheckpointGET(checkpointId));
+			//return redirect(routes.CheckpointController.viewCheckpointGET(checkpointId));
 		}
-		return redirect(routes.CheckpointController.viewCheckpointGET(checkpointId));
-		//return ok(addMember.render(Form.form(Creation.class), user,
-		//		checkpoint));
+		return ok(addAnswer.render(Form.form(Creation.class), user, checkpoint));
 	}
 	
 	public static Result createCheckpointAnswerPOST(Long checkpointId) {
 		Form<Creation> createForm = Form.form(Creation.class).bindFromRequest();
+		User user = User.find
+				.where()
+				.eq("email", session("email"))
+					.findUnique();
+		Checkpoint checkpoint = Checkpoint.findCheckpoint(checkpointId);
 		if (createForm.hasErrors()) {
-			
-			//return badRequest(login.render(createForm));
-			return redirect(routes.Application.index());
+			return badRequest(addAnswer.render(createForm,user,checkpoint));
 		} else {
-			return redirect(routes.Application.index());
+			String text = createForm.get().text;
+			CheckpointAnswer answer = new CheckpointAnswer(text);
+			checkpoint.possibleAnswers.add(answer);
+			checkpoint.save();
+			return redirect(routes.CheckpointController.viewCheckpointGET(checkpointId));
 		}
 	}
 	
