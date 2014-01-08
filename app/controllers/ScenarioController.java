@@ -18,7 +18,7 @@ import controllers.UserAccountController.Registration;
 import controllers.UserAccountController.SaveChanges;
 
 public class ScenarioController extends Controller {
-	private static int scenariosPageSize = 2;
+	private static int scenariosPageSize = 10;
 	
 	@Security.Authenticated(Secured.class)
 	public static Result createScenarioGET() {
@@ -64,6 +64,9 @@ public class ScenarioController extends Controller {
 						.eq("email", session("email"))
 						.findUnique();
 		int totalPageCount = Scenario.getTotalPageCount(user.email, scenariosPageSize);
+		if(pageNum > totalPageCount-1) {
+			pageNum = 0;
+		}
 		return ok(myScenarios.render(
 				user,
 				Scenario.findInvolving(user.email, scenariosPageSize, pageNum),
