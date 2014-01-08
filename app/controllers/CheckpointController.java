@@ -157,7 +157,7 @@ public class CheckpointController extends Controller {
 	
 		@Required(message = "Longitude minutes required")
 		@Min(value = 0, message = "Longitude minutes can't be lower than 0")
-		@Max(value = 4, message = "Longitude minutes can't be greater than 4")
+		@Max(value = (long) 3.9999, message = "Longitude minutes can't be greater than 4")
 		public Double longitudeMinutes;
 		
 		@Required(message = "Latitude degrees required")
@@ -167,7 +167,7 @@ public class CheckpointController extends Controller {
 		
 		@Required(message = "Latitude minutes required")
 		@Min(value = 0, message = "Latitude minutes can't be lower than 0")
-		@Max(value = 60, message = "Latitude minutes can't be greater than 60")
+		@Max(value = (long) 59.9999, message = "Latitude minutes can't be greater than 59.999")
 		public Double latitudeMinutes;
 		
 		@Required(message = "Message is required")
@@ -175,7 +175,15 @@ public class CheckpointController extends Controller {
 
 		@Required(message = "Points are required")
 		@Min(value = 1, message = "Points min. = 1")
-		public Integer points;		
+		public Integer points;	
+		
+		public String validate() {
+			if((longitudeDegrees == 180 && longitudeMinutes != 0) ||
+			(latitudeDegrees == 90 && latitudeMinutes != 0)) {
+				return "Enter correct coordinates";
+			}
+			return null;
+		}
 	}
 	
 }

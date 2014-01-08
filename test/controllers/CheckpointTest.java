@@ -84,7 +84,7 @@ public class CheckpointTest extends BaseControllerTest {
 		mapBuilder.put("longitudeDegrees", Integer.toString(longitudeDegrees));
 		mapBuilder.put("longitudeMinutes", Double.toString(longitudeMinutes));
 		mapBuilder.put("latitudeDegrees", Integer.toString(latitudeDegrees));
-		mapBuilder.put("latitudeMinute", Double.toString(latitudeMinutes));
+		mapBuilder.put("latitudeMinutes", Double.toString(latitudeMinutes));
 		mapBuilder.put("message", message);
 		mapBuilder.put("points", Integer.toString(points));
 		
@@ -115,7 +115,427 @@ public class CheckpointTest extends BaseControllerTest {
 		mapBuilder.put("name", checkpointName);
 		mapBuilder.put("longitudeMinutes", Double.toString(longitudeMinutes));
 		mapBuilder.put("latitudeDegrees", Integer.toString(latitudeDegrees));
-		mapBuilder.put("latitudeMinute", Double.toString(latitudeMinutes));
+		mapBuilder.put("latitudeMinutes", Double.toString(latitudeMinutes));
+		mapBuilder.put("message", message);
+		mapBuilder.put("points", Integer.toString(points));
+		
+		ImmutableMap<String, String> map = mapBuilder.build();
+		
+	    Result result = callAction(
+        	controllers.routes.ref.CheckpointController.createCheckpointPOST(scenario.id),
+        	fakeRequest()
+				.withSession("email", userEmail)
+				.withFormUrlEncodedBody(map)
+    	);
+		assertEquals(400, status(result));
+		
+		Checkpoint checkpoint = Checkpoint.find
+											.where()
+											.eq("name", checkpointName)
+											.findUnique();
+		assertNull(checkpoint);
+	}
+	
+	@Test
+	public void createCheckpointFailureNoLongitudeMinutes() {
+		Scenario scenario = Scenario.find
+									.where()
+									.eq("name", scenarioName)
+									.findUnique();
+		ImmutableMap.Builder<String, String> mapBuilder = ImmutableMap.builder();
+		mapBuilder.put("name", checkpointName);
+		mapBuilder.put("longitudeDegrees", Integer.toString(longitudeDegrees));
+		mapBuilder.put("latitudeDegrees", Integer.toString(latitudeDegrees));
+		mapBuilder.put("latitudeMinutes", Double.toString(latitudeMinutes));
+		mapBuilder.put("message", message);
+		mapBuilder.put("points", Integer.toString(points));
+		
+		ImmutableMap<String, String> map = mapBuilder.build();
+		
+	    Result result = callAction(
+        	controllers.routes.ref.CheckpointController.createCheckpointPOST(scenario.id),
+        	fakeRequest()
+				.withSession("email", userEmail)
+				.withFormUrlEncodedBody(map)
+    	);
+		assertEquals(400, status(result));
+		
+		Checkpoint checkpoint = Checkpoint.find
+											.where()
+											.eq("name", checkpointName)
+											.findUnique();
+		assertNull(checkpoint);
+	}
+	
+	@Test
+	public void createCheckpointFailureNoLatitudeDeg() {
+		Scenario scenario = Scenario.find
+									.where()
+									.eq("name", scenarioName)
+									.findUnique();
+		ImmutableMap.Builder<String, String> mapBuilder = ImmutableMap.builder();
+		mapBuilder.put("name", checkpointName);
+		mapBuilder.put("longitudeDegrees", Double.toString(longitudeDegrees));
+		mapBuilder.put("longitudeMinutes", Double.toString(longitudeMinutes));
+		mapBuilder.put("latitudeMinutes", Double.toString(latitudeMinutes));
+		mapBuilder.put("message", message);
+		mapBuilder.put("points", Integer.toString(points));
+		
+		ImmutableMap<String, String> map = mapBuilder.build();
+		
+	    Result result = callAction(
+        	controllers.routes.ref.CheckpointController.createCheckpointPOST(scenario.id),
+        	fakeRequest()
+				.withSession("email", userEmail)
+				.withFormUrlEncodedBody(map)
+    	);
+		assertEquals(400, status(result));
+		
+		Checkpoint checkpoint = Checkpoint.find
+											.where()
+											.eq("name", checkpointName)
+											.findUnique();
+		assertNull(checkpoint);
+	}
+	
+	@Test
+	public void createCheckpointFailureNoLatitudeMinutes() {
+		Scenario scenario = Scenario.find
+									.where()
+									.eq("name", scenarioName)
+									.findUnique();
+		ImmutableMap.Builder<String, String> mapBuilder = ImmutableMap.builder();
+		mapBuilder.put("name", checkpointName);
+		mapBuilder.put("longitudeDegrees", Double.toString(longitudeDegrees));
+		mapBuilder.put("longitudeMinutes", Double.toString(longitudeMinutes));
+		mapBuilder.put("latitudeDegrees", Double.toString(latitudeDegrees));
+		mapBuilder.put("message", message);
+		mapBuilder.put("points", Integer.toString(points));
+		
+		ImmutableMap<String, String> map = mapBuilder.build();
+		
+	    Result result = callAction(
+        	controllers.routes.ref.CheckpointController.createCheckpointPOST(scenario.id),
+        	fakeRequest()
+				.withSession("email", userEmail)
+				.withFormUrlEncodedBody(map)
+    	);
+		assertEquals(400, status(result));
+		
+		Checkpoint checkpoint = Checkpoint.find
+											.where()
+											.eq("name", checkpointName)
+											.findUnique();
+		assertNull(checkpoint);
+	}
+	
+	@Test
+	public void createCheckpointFailureNoMessage() {
+		Scenario scenario = Scenario.find
+									.where()
+									.eq("name", scenarioName)
+									.findUnique();
+		ImmutableMap.Builder<String, String> mapBuilder = ImmutableMap.builder();
+		mapBuilder.put("name", checkpointName);
+		mapBuilder.put("longitudeDegrees", Double.toString(longitudeDegrees));
+		mapBuilder.put("longitudeMinutes", Double.toString(longitudeMinutes));
+		mapBuilder.put("latitudeDegrees", Double.toString(latitudeDegrees));
+		mapBuilder.put("latitudeMinutes", Double.toString(latitudeMinutes));
+		mapBuilder.put("points", Integer.toString(points));
+		
+		ImmutableMap<String, String> map = mapBuilder.build();
+		
+	    Result result = callAction(
+        	controllers.routes.ref.CheckpointController.createCheckpointPOST(scenario.id),
+        	fakeRequest()
+				.withSession("email", userEmail)
+				.withFormUrlEncodedBody(map)
+    	);
+		assertEquals(400, status(result));
+		
+		Checkpoint checkpoint = Checkpoint.find
+											.where()
+											.eq("name", checkpointName)
+											.findUnique();
+		assertNull(checkpoint);
+	}
+	
+	@Test
+	public void createCheckpointFailureNoPoints() {
+		Scenario scenario = Scenario.find
+									.where()
+									.eq("name", scenarioName)
+									.findUnique();
+		ImmutableMap.Builder<String, String> mapBuilder = ImmutableMap.builder();
+		mapBuilder.put("name", checkpointName);
+		mapBuilder.put("longitudeDegrees", Double.toString(longitudeDegrees));
+		mapBuilder.put("longitudeMinutes", Double.toString(longitudeMinutes));
+		mapBuilder.put("latitudeDegrees", Double.toString(latitudeDegrees));
+		mapBuilder.put("latitudeMinutes", Double.toString(latitudeMinutes));
+		mapBuilder.put("message", message);
+		
+		ImmutableMap<String, String> map = mapBuilder.build();
+	    Result result = callAction(
+        	controllers.routes.ref.CheckpointController.createCheckpointPOST(scenario.id),
+        	fakeRequest()
+				.withSession("email", userEmail)
+				.withFormUrlEncodedBody(map)
+    	);
+	    
+		assertEquals(400, status(result));
+		
+		Checkpoint checkpoint = Checkpoint.find
+											.where()
+											.eq("name", checkpointName)
+											.findUnique();
+		assertNull(checkpoint);
+	}
+	
+	@Test
+	public void createCheckpointFailureWrongLonDegMin() {
+		Scenario scenario = Scenario.find
+									.where()
+									.eq("name", scenarioName)
+									.findUnique();
+		
+		ImmutableMap.Builder<String, String> mapBuilder = ImmutableMap.builder();
+		mapBuilder.put("name", checkpointName);
+		mapBuilder.put("longitudeDegrees", "-1");
+		mapBuilder.put("longitudeMinutes", Double.toString(longitudeMinutes));
+		mapBuilder.put("latitudeDegrees", Integer.toString(latitudeDegrees));
+		mapBuilder.put("latitudeMinutes", Double.toString(latitudeMinutes));
+		mapBuilder.put("message", message);
+		mapBuilder.put("points", Integer.toString(points));
+		
+		ImmutableMap<String, String> map = mapBuilder.build();
+		
+	    Result result = callAction(
+        	controllers.routes.ref.CheckpointController.createCheckpointPOST(scenario.id),
+        	fakeRequest()
+				.withSession("email", userEmail)
+				.withFormUrlEncodedBody(map)
+    	);
+		assertEquals(400, status(result));
+		
+		Checkpoint checkpoint = Checkpoint.find
+											.where()
+											.eq("name", checkpointName)
+											.findUnique();
+		assertNull(checkpoint);
+	}
+	
+	@Test
+	public void createCheckpointFailureWrongLonDegMax() {
+		Scenario scenario = Scenario.find
+									.where()
+									.eq("name", scenarioName)
+									.findUnique();
+		
+		ImmutableMap.Builder<String, String> mapBuilder = ImmutableMap.builder();
+		mapBuilder.put("name", checkpointName);
+		mapBuilder.put("longitudeDegrees", "181");
+		mapBuilder.put("longitudeMinutes", Double.toString(longitudeMinutes));
+		mapBuilder.put("latitudeDegrees", Integer.toString(latitudeDegrees));
+		mapBuilder.put("latitudeMinutes", Double.toString(latitudeMinutes));
+		mapBuilder.put("message", message);
+		mapBuilder.put("points", Integer.toString(points));
+		
+		ImmutableMap<String, String> map = mapBuilder.build();
+		
+	    Result result = callAction(
+        	controllers.routes.ref.CheckpointController.createCheckpointPOST(scenario.id),
+        	fakeRequest()
+				.withSession("email", userEmail)
+				.withFormUrlEncodedBody(map)
+    	);
+		assertEquals(400, status(result));
+		
+		Checkpoint checkpoint = Checkpoint.find
+											.where()
+											.eq("name", checkpointName)
+											.findUnique();
+		assertNull(checkpoint);
+	}
+	
+	@Test
+	public void createCheckpointFailureWrongLonMinMin() {
+		Scenario scenario = Scenario.find
+									.where()
+									.eq("name", scenarioName)
+									.findUnique();
+		
+		ImmutableMap.Builder<String, String> mapBuilder = ImmutableMap.builder();
+		mapBuilder.put("name", checkpointName);
+		mapBuilder.put("longitudeDegrees", Integer.toString(longitudeDegrees));
+		mapBuilder.put("longitudeMinutes", "-1");
+		mapBuilder.put("latitudeDegrees", Integer.toString(latitudeDegrees));
+		mapBuilder.put("latitudeMinutes", Double.toString(latitudeMinutes));
+		mapBuilder.put("message", message);
+		mapBuilder.put("points", Integer.toString(points));
+		
+		ImmutableMap<String, String> map = mapBuilder.build();
+		
+	    Result result = callAction(
+        	controllers.routes.ref.CheckpointController.createCheckpointPOST(scenario.id),
+        	fakeRequest()
+				.withSession("email", userEmail)
+				.withFormUrlEncodedBody(map)
+    	);
+		assertEquals(400, status(result));
+		
+		Checkpoint checkpoint = Checkpoint.find
+											.where()
+											.eq("name", checkpointName)
+											.findUnique();
+		assertNull(checkpoint);
+	}
+	
+	@Test
+	public void createCheckpointFailureWrongLonMinMax() {
+		Scenario scenario = Scenario.find
+									.where()
+									.eq("name", scenarioName)
+									.findUnique();
+		
+		ImmutableMap.Builder<String, String> mapBuilder = ImmutableMap.builder();
+		mapBuilder.put("name", checkpointName);
+		mapBuilder.put("longitudeDegrees", Integer.toString(longitudeDegrees));
+		mapBuilder.put("longitudeMinutes", "4");
+		mapBuilder.put("latitudeDegrees", Integer.toString(latitudeDegrees));
+		mapBuilder.put("latitudeMinutes", Double.toString(latitudeMinutes));
+		mapBuilder.put("message", message);
+		mapBuilder.put("points", Integer.toString(points));
+		
+		ImmutableMap<String, String> map = mapBuilder.build();
+		
+	    Result result = callAction(
+        	controllers.routes.ref.CheckpointController.createCheckpointPOST(scenario.id),
+        	fakeRequest()
+				.withSession("email", userEmail)
+				.withFormUrlEncodedBody(map)
+    	);
+		assertEquals(400, status(result));
+		
+		Checkpoint checkpoint = Checkpoint.find
+											.where()
+											.eq("name", checkpointName)
+											.findUnique();
+		assertNull(checkpoint);
+	}
+	// //////////////////
+	
+	@Test
+	public void createCheckpointFailureWrongLatDegMin() {
+		Scenario scenario = Scenario.find
+									.where()
+									.eq("name", scenarioName)
+									.findUnique();
+		
+		ImmutableMap.Builder<String, String> mapBuilder = ImmutableMap.builder();
+		mapBuilder.put("name", checkpointName);
+		mapBuilder.put("longitudeDegrees", Integer.toString(longitudeDegrees));
+		mapBuilder.put("longitudeMinutes", Double.toString(longitudeMinutes));
+		mapBuilder.put("latitudeDegrees", "-1");
+		mapBuilder.put("latitudeMinutes", Double.toString(latitudeMinutes));
+		mapBuilder.put("message", message);
+		mapBuilder.put("points", Integer.toString(points));
+		
+		ImmutableMap<String, String> map = mapBuilder.build();
+		
+	    Result result = callAction(
+        	controllers.routes.ref.CheckpointController.createCheckpointPOST(scenario.id),
+        	fakeRequest()
+				.withSession("email", userEmail)
+				.withFormUrlEncodedBody(map)
+    	);
+		assertEquals(400, status(result));
+		
+		Checkpoint checkpoint = Checkpoint.find
+											.where()
+											.eq("name", checkpointName)
+											.findUnique();
+		assertNull(checkpoint);
+	}
+	
+	@Test
+	public void createCheckpointFailureWrongLatDegMax() {
+		Scenario scenario = Scenario.find
+									.where()
+									.eq("name", scenarioName)
+									.findUnique();
+		
+		ImmutableMap.Builder<String, String> mapBuilder = ImmutableMap.builder();
+		mapBuilder.put("name", checkpointName);
+		mapBuilder.put("longitudeDegrees", Integer.toString(longitudeDegrees));
+		mapBuilder.put("longitudeMinutes", Double.toString(longitudeMinutes));
+		mapBuilder.put("latitudeDegrees", "91");
+		mapBuilder.put("latitudeMinutes", Double.toString(latitudeMinutes));
+		mapBuilder.put("message", message);
+		mapBuilder.put("points", Integer.toString(points));
+		
+		ImmutableMap<String, String> map = mapBuilder.build();
+		
+	    Result result = callAction(
+        	controllers.routes.ref.CheckpointController.createCheckpointPOST(scenario.id),
+        	fakeRequest()
+				.withSession("email", userEmail)
+				.withFormUrlEncodedBody(map)
+    	);
+		assertEquals(400, status(result));
+		
+		Checkpoint checkpoint = Checkpoint.find
+											.where()
+											.eq("name", checkpointName)
+											.findUnique();
+		assertNull(checkpoint);
+	}
+	
+	@Test
+	public void createCheckpointFailureWrongLatMinMin() {
+		Scenario scenario = Scenario.find
+									.where()
+									.eq("name", scenarioName)
+									.findUnique();
+		
+		ImmutableMap.Builder<String, String> mapBuilder = ImmutableMap.builder();
+		mapBuilder.put("name", checkpointName);
+		mapBuilder.put("longitudeDegrees", Integer.toString(longitudeDegrees));
+		mapBuilder.put("longitudeMinutes", Double.toString(longitudeMinutes));
+		mapBuilder.put("latitudeDegrees", Integer.toString(latitudeDegrees));
+		mapBuilder.put("latitudeMinutes", "-1");
+		mapBuilder.put("message", message);
+		mapBuilder.put("points", Integer.toString(points));
+		
+		ImmutableMap<String, String> map = mapBuilder.build();
+		
+	    Result result = callAction(
+        	controllers.routes.ref.CheckpointController.createCheckpointPOST(scenario.id),
+        	fakeRequest()
+				.withSession("email", userEmail)
+				.withFormUrlEncodedBody(map)
+    	);
+		assertEquals(400, status(result));
+		
+		Checkpoint checkpoint = Checkpoint.find
+											.where()
+											.eq("name", checkpointName)
+											.findUnique();
+		assertNull(checkpoint);
+	}
+	
+	@Test
+	public void createCheckpointFailureWrongLatMinMax() {
+		Scenario scenario = Scenario.find
+									.where()
+									.eq("name", scenarioName)
+									.findUnique();
+		
+		ImmutableMap.Builder<String, String> mapBuilder = ImmutableMap.builder();
+		mapBuilder.put("name", checkpointName);
+		mapBuilder.put("longitudeDegrees", Integer.toString(longitudeDegrees));
+		mapBuilder.put("longitudeMinutes", Double.toString(longitudeMinutes));
+		mapBuilder.put("latitudeDegrees", Integer.toString(latitudeDegrees));
+		mapBuilder.put("latitudeMinutes", "60");
 		mapBuilder.put("message", message);
 		mapBuilder.put("points", Integer.toString(points));
 		
