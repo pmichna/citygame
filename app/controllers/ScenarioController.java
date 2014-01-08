@@ -14,6 +14,8 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.avaje.ebean.Ebean;
+
 import controllers.UserAccountController.Registration;
 import controllers.UserAccountController.SaveChanges;
 
@@ -118,6 +120,23 @@ public class ScenarioController extends Controller {
 			return redirect(routes.ScenarioController
 					.viewScenarioGET(scenarioId));
 		}
+	}
+	@Security.Authenticated(Secured.class)
+	public static Result removeMemberGET(Long scenarioId, Long memberId) {
+		User user = User.find.where().eq("email", session("email"))
+				.findUnique();
+		User member = User.find.where().eq("id", memberId).findUnique();
+		Scenario scenario = Scenario.find.byId(scenarioId);
+		if (scenario == null) {
+			return redirect(routes.Application.index());
+		}
+		if(member.id == scenario.owner.id){
+			return redirect(routes.Application.index());
+		}
+		scenario.members.remove(member);
+		Ebean.save(scenario);
+		return redirect(routes.ScenarioController.viewScenarioGET(scenario.id));
+
 	}
 	
 	public static class Creation {

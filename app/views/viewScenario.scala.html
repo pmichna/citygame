@@ -69,9 +69,9 @@
 			<tr>
 				<td>@{scenario.members.indexOf(m)+1}</td>
 				<td>@m.alias</td>
-				@if(m.Id!=scenario.owner.Id){
+				@if(m.id!=scenario.owner.id){
 				<td>
-					<a class="btn btn-default btn-xs" href="#"> <span class="glyphicon glyphicon-remove"></span> Remove </a>
+					<a class="btn btn-default btn-xs" href="@routes.ScenarioController.removeMemberGET(scenario.id,m.id)"> <span class="glyphicon glyphicon-remove"></span> Remove </a>
 				</td>
 				}else{
 					<td></td>

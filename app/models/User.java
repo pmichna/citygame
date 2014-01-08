@@ -10,7 +10,7 @@ import play.data.validation.Constraints.*;
 public class User extends Model {
 
     @Id
-    public Long Id;
+    public Long id;
     
     @Column(length=254, unique=true, nullable=false)
     @Required
@@ -49,6 +49,7 @@ public class User extends Model {
     public static Finder<String,User> find = new Finder<String,User>(
         String.class, User.class
     );
+    
     
     public static User authenticate(String email, String passwordNotHash) {
     	User user = find.where().eq("email", email).findUnique();
