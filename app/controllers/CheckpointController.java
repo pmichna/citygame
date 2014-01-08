@@ -73,7 +73,7 @@ public class CheckpointController extends Controller {
 						.eq("email", session("email"))
 						.findUnique();
 		Checkpoint checkpoint = Checkpoint.find.ref(checkpointId);
-		Scenario scenario = Scenario.findInvolvingCheckpoint(checkpointId);
+		Scenario scenario = checkpoint.scenario;
 		if (checkpoint == null || !Secured.isMemberOf(scenario.id)) {
 			return redirect(routes.Application.index());
 		}
@@ -121,7 +121,7 @@ public class CheckpointController extends Controller {
 						.eq("email", session("email"))
 						.findUnique();
 		Checkpoint checkpoint = Checkpoint.find.ref(checkpointId);
-		Scenario scenario = Scenario.findInvolvingCheckpoint(checkpointId);
+		Scenario scenario = checkpoint.scenario;
 		if (!Secured.isMemberOf(scenario.id)) {
 			return redirect(routes.Application.index());
 		}
@@ -130,19 +130,19 @@ public class CheckpointController extends Controller {
 
 	@Security.Authenticated(Secured.class)
 	public static Result removeCheckpointGET(Long checkpointId) {
-		User user = User.find.where().eq("email", session("email"))
-				.findUnique();
-		Checkpoint checkpoint = Checkpoint.find.byId(checkpointId);
+		User user = User.find
+						.where()
+						.eq("email", session("email"))
+							.findUnique();
+		
+		Checkpoint checkpoint = Checkpoint.find.ref(checkpointId);
+		long scenarioId = checkpoint.scenario.id;
 		if (checkpoint == null) {
 			return redirect(routes.Application.index());
 		}
-		Scenario scenario = checkpoint.scenario;
 
-		for (CheckpointAnswer a : checkpoint.possibleAnswers) {
-			Ebean.delete(a);
-		}
-		Ebean.delete(checkpoint);
-		return redirect(routes.ScenarioController.viewScenarioGET(scenario.id));
+		checkpoint.delete();
+		return redirect(routes.ScenarioController.viewScenarioGET(scenarioId));
 
 	}
 
@@ -184,6 +184,5 @@ public class CheckpointController extends Controller {
 			}
 			return null;
 		}
-	}
-	
+	}	
 }

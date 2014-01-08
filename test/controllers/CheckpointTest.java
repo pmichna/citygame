@@ -555,4 +555,51 @@ public class CheckpointTest extends BaseControllerTest {
 											.findUnique();
 		assertNull(checkpoint);
 	}
+	
+	@Test
+	public void editCheckpointSuccess() {
+		String newName = "new name";
+		int newLongitudeDegrees = 1;
+		double newLongitudeMinutes = 2;
+		int newLatitudeDegrees = 5;
+		double newLatitudeMinutes = 20;
+		String newMessage = "some new message";
+		int newPoints = 20;
+		
+		Scenario scenario = Scenario.find
+									.where()
+									.eq("name", scenarioName)
+									.findUnique();
+		Checkpoint checkpoint = Checkpoint.create(checkpointName, 3, 3, points, message, scenario.id);
+		
+
+		
+		ImmutableMap.Builder<String, String> mapBuilder = ImmutableMap.builder();
+		mapBuilder.put("name", newName);
+		mapBuilder.put("longitudeDegrees", Integer.toString(newLongitudeDegrees));
+		mapBuilder.put("longitudeMinutes", Double.toString(newLongitudeMinutes));
+		mapBuilder.put("latitudeDegrees", Integer.toString(newLatitudeDegrees));
+		mapBuilder.put("latitudeMinutes", Double.toString(newLatitudeMinutes));
+		mapBuilder.put("message", newMessage);
+		mapBuilder.put("points", Integer.toString(newPoints));
+		ImmutableMap<String, String> map = mapBuilder.build();
+		
+	    Result result = callAction(
+        	controllers.routes.ref.CheckpointController.editCheckpointPOST(checkpoint.id, scenario.id),
+        	fakeRequest()
+				.withSession("email", userEmail)
+				.withFormUrlEncodedBody(map)
+    	);
+		assertEquals(303, status(result));
+		
+		Checkpoint modified = Checkpoint.find.ref(checkpoint.id);
+		assertNotNull(modified);
+		assertEquals(newName, modified.name);
+		double newLongitude = newLongitudeDegrees + newLongitudeMinutes/4;
+		assertEquals(newLongitude, modified.longitude, DELTA);
+		double newLatitude = newLatitudeDegrees + newLatitudeMinutes/60;
+		assertEquals(newLatitude, modified.latitude, DELTA);
+		assertEquals(newMessage, modified.message);
+		assertEquals(newPoints, modified.points);
+	}
 }
