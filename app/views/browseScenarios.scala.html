@@ -1,17 +1,15 @@
 @(user: User, scenarios: List[Scenario], currentPage: Integer, totalPageCount: Integer, pageSize: Integer, isFirstPage: Boolean, isListPage: Boolean)
 
-@main("My scenarios", user) {
+@main("Scenarios", user) {
 	<div class="container">
 		<div class="page-header">
-			<h1>My scenarios</h1>
+			<h1>Scenarios</h1>
 		</div>
 		<table class="table table-striped">
 			<thead>
 				<tr>
 					<th>#</th>
 					<th>Scenario name</th>
-					<th>Is public</th>
-					<th>Created by me</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -19,17 +17,9 @@
 					<tr>
 						<td>@{(scenarios.indexOf(s)+1)+pageSize*currentPage}</td>
 						<td>@s.name</td>
-						<td>@s.isPublic</td>
-						<td>@{s.owner.email == user.email}</td>
 						<td>
 						<a class="btn btn-info btn-xs" href="@routes.ScenarioController.viewScenarioGET(s.id)">
 							<span class="glyphicon glyphicon-search"></span> View
-						</a>
-						<a class="btn btn-warning btn-xs" href="#">
-							<span class="glyphicon glyphicon-pencil"></span> Edit
-						</a>
-						<a class="btn btn-danger btn-xs" href="#">
-							<span class="glyphicon glyphicon-remove"></span> Remove
 						</a>
 						</td>
 					</tr>

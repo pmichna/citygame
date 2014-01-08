@@ -74,7 +74,22 @@ public class Scenario extends Model {
 					.findUnique();
 	}
 	
-	public static List<Scenario> findNotExpired(Date date) {
+	public static List<Scenario> findAvailable(String userEmail, int pageSize, int pageNum){
+		Date date = new Date();
+		PagingList<Scenario> pagingList = find.where().or(
+				com.avaje.ebean.Expr.gt("expirationDate",date),
+				com.avaje.ebean.Expr.isNull("expirationDate"))
+				.or(
+				com.avaje.ebean.Expr.contains("members.email", userEmail),
+				com.avaje.ebean.Expr.eq("isPublic", true)
+				).findPagingList(pageSize);
+		
+		Page<Scenario> page = pagingList.getPage(pageNum);
+		return page.getList();
+	}
+	
+	public static List<Scenario> findNotExpired() {
+		Date date = new Date();
 		return find.where().or(
 			com.avaje.ebean.Expr.lt("expirationDate", date),
 			com.avaje.ebean.Expr.isNull("expirationDate")
