@@ -41,8 +41,8 @@ public class Game extends Model{
 	        Long.class, Game.class
 	    );
 	
-	public static Game create(String user, Long scenarioId) {
-		Game game = new Game(User.find.ref(user), Scenario.find.ref(scenarioId));
+	public static Game create(Long userId, Long scenarioId) {
+		Game game = new Game(User.find.ref(userId), Scenario.find.ref(scenarioId));
 		game.save();
 		return game;
 	}

@@ -106,7 +106,7 @@ public class Checkpoint extends Model {
 		return answers;
 	}
 	
-	 public static Checkpoint editCheckpoint(Long checkpointId,String checkpointName, double longitude,
+	 public static Checkpoint editCheckpoint(Long checkpointId, String checkpointName, double longitude,
 				double latitude, int points, String message) {
     	Checkpoint checkpoint = find.ref(checkpointId);
     	if(checkpoint == null) {
@@ -124,6 +124,9 @@ public class Checkpoint extends Model {
     	if(checkpoint.latitude != latitude) {
     		checkpoint.latitude = latitude;
     	}
+		if(checkpoint.points != points) {
+			checkpoint.points = points;
+		}
     	checkpoint.save();
     	
     	return checkpoint;
