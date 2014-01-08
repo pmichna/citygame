@@ -81,10 +81,14 @@ public class ScenarioController extends Controller {
 	
 	@Security.Authenticated(Secured.class)
 	public static Result viewScenarioGET(Long scenarioId) {
-		User user=User.find
-				.where().eq("email", session("email")).findUnique();
+		User user = User.find
+						.where()
+						.eq("email", session("email"))
+						.findUnique();
 		Scenario scenario = Scenario.find.byId(scenarioId);
-		
+		if(!Secured.isMemberOf(scenarioId)) {
+			return redirect(routes.ScenarioController.viewMyScenariosGET(0));
+		}
 		return ok(viewScenario.render(user,scenario));
 	}
 	
@@ -116,7 +120,6 @@ public class ScenarioController extends Controller {
 		}
 	}
 	
-	
 	public static class Creation {
 		public String name;
 		public boolean isPublic;
@@ -127,7 +130,6 @@ public class ScenarioController extends Controller {
 		public String validate(){
 			return null;
 		}
-		
 	}
 	
 	public static class Member {
@@ -136,6 +138,5 @@ public class ScenarioController extends Controller {
 		public String validate() {
 			return null;
 		}
-
 	}
 }
