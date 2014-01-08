@@ -110,9 +110,10 @@ public class ScenarioController extends Controller {
 			return badRequest(addMember.render(addForm, user,
 					scenario));
 		} else {
-			User member = User.find.where().eq("alias", addForm.get().alias).findUnique();
+			User member = User.find.where().eq("email", addForm.get().email).findUnique();
 			if(!scenario.members.contains(member)){
 				scenario.members.add(member);
+				scenario.save();
 			}
 			return redirect(routes.ScenarioController
 					.viewScenarioGET(scenarioId));
@@ -132,7 +133,7 @@ public class ScenarioController extends Controller {
 	}
 	
 	public static class Member {
-		public String alias;
+		public String email;
 
 		public String validate() {
 			return null;
