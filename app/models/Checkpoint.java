@@ -49,9 +49,29 @@ public class Checkpoint extends Model {
 		checkpoint.save();
 		return checkpoint;
 	}
+	
+	public int longitudeDegrees(Checkpoint checkpoint){
+		return (int) checkpoint.longitude;
+	}
+	
+	public double longitudeMinutes(Checkpoint checkpoint){
+		return (checkpoint.longitude-checkpoint.longitudeDegrees(checkpoint))*4;
+	}
+	
+	public int latitudeDegrees(Checkpoint checkpoint){
+		return (int) checkpoint.longitude;
+	}
+	
+	public double latitudeMinutes(Checkpoint checkpoint){
+		return (checkpoint.longitude-checkpoint.longitudeDegrees(checkpoint))*60;
+	}
 
 	public static List<Checkpoint> findAssignedTo(Long scenario) {
 		return find.where().eq("scenario.id", scenario).findList();
+	}
+	
+	public static Checkpoint findCheckpoint(Long checkpoint) {
+		return find.where().eq("id", checkpoint).findUnique();
 	}
 
 	public static String addPossibleAnswer(String answer, Long checkpointId) {
@@ -82,6 +102,31 @@ public class Checkpoint extends Model {
 		}
 		return answers;
 	}
+	
+	 public static Checkpoint editCheckpoint(Long checkpointId,String checkpointName, double longitude,
+				double latitude, int points, String message) {
+	    	Checkpoint checkpoint = find.where().eq("id", checkpointId).findUnique();
+	    	if(checkpoint == null) {
+	    		return null;
+	    	}
+	    	if(checkpointName != null && !checkpointName.equals("") && !checkpointName.equals(checkpoint.name)) {
+	    		checkpoint.name = checkpointName;
+	    	}
+	    	if(message != null && !message.equals("") && !message.equals(checkpoint.message)) {
+	    		checkpoint.message = message;
+	    	}
+	    	if(checkpoint.longitude!=longitude){
+	    		checkpoint.longitude=longitude;
+	    	}
+	    	if(checkpoint.latitude!=latitude){
+	    		checkpoint.latitude=latitude;
+	    	}
+	    	
+	    	checkpoint.save();
+	    	
+	    	return checkpoint;
+	    }
+	
 
 	public static class Creation {
 		public String name;

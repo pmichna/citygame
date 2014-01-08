@@ -58,6 +58,16 @@ public class ScenarioController extends Controller{
 		return ok(myScenarios.render(user,Scenario.findOwned(user.email)));
 	}
 	
+	@Security.Authenticated(Secured.class)
+	public static Result viewScenarioGET(Long scenarioId) {
+		User user=User.find
+				.where().eq("email", session("email")).findUnique();
+		Scenario scenario = Scenario.find.byId(scenarioId);
+		
+		return ok(viewScenario.render(user,scenario));
+	}
+	
+	
 	public static class Creation {
 		public String name;
 		public boolean isPublic;

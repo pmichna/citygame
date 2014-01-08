@@ -1,0 +1,112 @@
+@(user: User, scenario: Scenario)
+
+@main("View scenarios", user) {
+<div class="container">
+	<div class="page-header">
+		<h1>Scenario details</h1>
+	</div>
+	<div class="row">
+		<div class="col-xs-6 col-md-4">
+			Name:
+		</div>
+		<div class="col-xs-12 col-md-8">
+			@scenario.name
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-6 col-md-4">
+			Is accepted:
+		</div>
+		<div class="col-xs-12 col-md-8">
+			@if(scenario.isAccepted){
+				yes
+			}else{
+				no
+			}
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-6 col-md-4">
+			Is public:
+		</div>
+		<div class="col-xs-12 col-md-8">
+			@if(scenario.isPublic){
+				yes
+			}else{
+				no
+			}
+		</div>
+	</div>
+	@if(scenario.expirationDate!=null){
+	<div class="row">
+		<div class="col-xs-6 col-md-4">
+			Expiration date:
+		</div>
+		<div class="col-xs-12 col-md-8">
+			@scenario.expirationDate
+		</div>
+	</div>
+	}
+	<div class="row">
+		<div class="col-xs-6 col-md-4">
+			Owner:
+		</div>
+		<div class="col-xs-12 col-md-8">
+			@scenario.owner.alias
+		</div>
+	</div>
+	<h4>Members</h4>
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>#</th>
+				<th>Member alias</th>
+			</tr>
+		</thead>
+		<tbody>
+
+			@for(c <- scenario.members) {
+			<tr>
+				<td>@{scenario.members.indexOf(c)+1}</td>
+				<td>@c.alias</td>
+				@if(c.Id!=scenario.owner.Id){
+				<td>
+					<a class="btn btn-default btn-xs" href="#"> <span class="glyphicon glyphicon-remove"></span> Remove </a>
+				</td>
+				}else{
+					<td></td>
+				}
+
+			</tr>
+			}
+
+		</tbody>
+	</table>
+	<h4>Checkpoints</h4>
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>#</th>
+				<th>Checkpoint name</th>
+			</tr>
+		</thead>
+		<tbody>
+
+			@for(c <- scenario.checkpoints) {
+			<tr>
+				<td>@{scenario.checkpoints.indexOf(c)+1}</td>
+				<td>@c.name</td>
+				<td>
+					<a class="btn btn-default btn-xs" href="#"> <span class="glyphicon glyphicon-search"></span> View </a>
+					<a class="btn btn-default btn-xs" href="@routes.CheckpointController.editCheckpointGET(c.id)"> <span class="glyphicon glyphicon-pencil"></span> Edit </a>
+					<a class="btn btn-default btn-xs" href="#"> <span class="glyphicon glyphicon-remove"></span> Remove </a>
+				</td>
+
+			</tr>
+			}
+
+		</tbody>
+	</table>
+
+</div><!-- /.container -->
+}
