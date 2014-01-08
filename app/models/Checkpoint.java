@@ -53,20 +53,20 @@ public class Checkpoint extends Model {
 	}
 	
 	
-	public int longitudeDegrees(Checkpoint checkpoint){
-		return (int) checkpoint.longitude;
+	public int getLongitudeDegrees() {
+		return (int) this.longitude;
 	}
 	
-	public double longitudeMinutes(Checkpoint checkpoint){
-		return (checkpoint.longitude-checkpoint.longitudeDegrees(checkpoint))*4;
+	public double getLongitudeMinutes() {
+		return (longitude - getLongitudeDegrees())*4;
 	}
 	
-	public int latitudeDegrees(Checkpoint checkpoint){
-		return (int) checkpoint.longitude;
+	public int getLatitudeDegrees() {
+		return (int) this.longitude;
 	}
 	
-	public double latitudeMinutes(Checkpoint checkpoint){
-		return (checkpoint.longitude-checkpoint.longitudeDegrees(checkpoint))*60;
+	public double getLatitudeMinutes() {
+		return (longitude - getLongitudeDegrees())*60;
 	}
 
 	public static List<Checkpoint> findAssignedTo(Long scenario) {
@@ -106,41 +106,29 @@ public class Checkpoint extends Model {
 		return answers;
 	}
 	
-	 public static Checkpoint editCheckpoint(Long checkpointId,String checkpointName, double longitude,
+	 public static Checkpoint editCheckpoint(Long checkpointId, String checkpointName, double longitude,
 				double latitude, int points, String message) {
-	    	Checkpoint checkpoint = find.where().eq("id", checkpointId).findUnique();
-	    	if(checkpoint == null) {
-	    		return null;
-	    	}
-	    	if(checkpointName != null && !checkpointName.equals("") && !checkpointName.equals(checkpoint.name)) {
-	    		checkpoint.name = checkpointName;
-	    	}
-	    	if(message != null && !message.equals("") && !message.equals(checkpoint.message)) {
-	    		checkpoint.message = message;
-	    	}
-	    	if(checkpoint.longitude!=longitude){
-	    		checkpoint.longitude=longitude;
-	    	}
-	    	if(checkpoint.latitude!=latitude){
-	    		checkpoint.latitude=latitude;
-	    	}
-	    	
-	    	checkpoint.save();
-	    	
-	    	return checkpoint;
-	    }
-	
-
-	public static class Creation {
-		public String name;
-		double longitude;
-		double latitude;
-		int points;
-		String message;
-
-		public String validate() {
-			return null;
+    	Checkpoint checkpoint = find.ref(checkpointId);
+    	if(checkpoint == null) {
+    		return null;
+    	}
+    	if(!checkpointName.equals("") && !checkpointName.equals(checkpoint.name)) {
+    		checkpoint.name = checkpointName;
+    	}
+    	if(message != null && !message.equals("") && !message.equals(checkpoint.message)) {
+    		checkpoint.message = message;
+    	}
+    	if(checkpoint.longitude != longitude) {
+    		checkpoint.longitude = longitude;
+    	}
+    	if(checkpoint.latitude != latitude) {
+    		checkpoint.latitude = latitude;
+    	}
+		if(checkpoint.points != points) {
+			checkpoint.points = points;
 		}
-
+    	checkpoint.save();
+    	
+    	return checkpoint;
 	}
 }

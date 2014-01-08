@@ -70,4 +70,24 @@ public class CheckpointsTest extends BaseModelTest {
 		assertTrue(results.contains(answer2));
 		assertTrue(results.contains(answer3));
 	}
+	
+	@Test
+	public void editCheckpoint() {
+		Scenario scenario = Scenario.create("Scenario 1", false, null, userEmail);
+		Checkpoint checkpoint = Checkpoint.create(checkpointName, longitude, latitude, points, message, scenario.id);
+		
+		String newName = "newName";
+		double newLongitude = 12.2;
+		double newLatitude = 12.2;
+		int newPoints = 12;
+		String newMessage = "newMessage";
+		
+		Checkpoint.editCheckpoint(checkpoint.id, newName, newLongitude, newLatitude, newPoints, newMessage);
+		checkpoint.refresh();
+		assertEquals(newName, checkpoint.name);
+		assertEquals(newLongitude, checkpoint.longitude, DELTA);
+		assertEquals(newLatitude, checkpoint.latitude, DELTA);
+		assertEquals(newPoints, checkpoint.points);
+		assertEquals(newMessage, checkpoint.message);
+	}
 }

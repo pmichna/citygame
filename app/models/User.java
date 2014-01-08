@@ -46,8 +46,8 @@ public class User extends Model {
       this.privilege = privilege;
     }
 
-    public static Finder<String,User> find = new Finder<String,User>(
-        String.class, User.class
+    public static Finder<Long, User> find = new Finder<Long,User>(
+        Long.class, User.class
     );
     
     
