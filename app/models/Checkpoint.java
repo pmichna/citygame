@@ -4,6 +4,8 @@ import java.util.*;
 
 import javax.persistence.*;
 
+import com.avaje.ebean.Ebean;
+
 import play.db.ebean.*;
 import play.db.ebean.Model.Finder;
 
@@ -50,6 +52,7 @@ public class Checkpoint extends Model {
 		return checkpoint;
 	}
 	
+	
 	public int longitudeDegrees(Checkpoint checkpoint){
 		return (int) checkpoint.longitude;
 	}
@@ -71,7 +74,7 @@ public class Checkpoint extends Model {
 	}
 	
 	public static Checkpoint findCheckpoint(Long checkpoint) {
-		return find.where().eq("id", checkpoint).findUnique();
+		return find.byId(checkpoint);
 	}
 
 	public static String addPossibleAnswer(String answer, Long checkpointId) {

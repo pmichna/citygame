@@ -14,6 +14,8 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.avaje.ebean.Ebean;
+
 import controllers.UserAccountController.Registration;
 import controllers.UserAccountController.SaveChanges;
 
@@ -30,8 +32,6 @@ public class CheckpointController extends Controller {
 		return ok(createCheckpoint.render(Form.form(Creation.class), user,
 				scenario));
 	}
-	
-	
 
 	@Security.Authenticated(Secured.class)
 	public static Result createCheckpointPOST() {
@@ -55,43 +55,27 @@ public class CheckpointController extends Controller {
 
 			Checkpoint.create(name, longitude, latitude, points, message,
 					scenarioId);
-			return redirect(routes.ScenarioController.viewMyScenariosGET());
+			return redirect(routes.ScenarioController
+					.viewScenarioGET(scenarioId));
 		}
 
 	}
+
 	@Security.Authenticated(Secured.class)
 	public static Result editCheckpointGET(Long checkpointId) {
 		User user = User.find.where().eq("email", session("email"))
 				.findUnique();
-		Checkpoint checkpoint = Checkpoint.find
-				.byId(checkpointId);
-		if(checkpoint == null){
-			return redirect(routes.Application.index());
-		}
-		Scenario scenario = checkpoint.scenario;
-		/*
-		if (!Secured.isMemberOf(scenario.id)) {
-			return redirect(routes.Application.index());
-		}*/
-		
-		return ok(editCheckpoint.render(Form.form(Edition.class), user,
-				scenario, checkpoint));
-	}
-	
-	public static Result viewCheckpointGET(Long checkpointId) {
-		User user = User.find.where().eq("email", session("email"))
-				.findUnique();
 		Checkpoint checkpoint = Checkpoint.find.byId(checkpointId);
-		if(checkpoint == null){
+		if (checkpoint == null) {
 			return redirect(routes.Application.index());
 		}
 		Scenario scenario = checkpoint.scenario;
 		/*
-		if (!Secured.isMemberOf(scenario.id)) {
-			return redirect(routes.Application.index());
-		}*/
-		
-		return ok(viewCheckpoint.render(user,
+		 * if (!Secured.isMemberOf(scenario.id)) { return
+		 * redirect(routes.Application.index()); }
+		 */
+
+		return ok(editCheckpoint.render(Form.form(Edition.class), user,
 				scenario, checkpoint));
 	}
 
@@ -104,7 +88,8 @@ public class CheckpointController extends Controller {
 		long checkpointId = editionForm.get().checkpointId;
 		if (editionForm.hasErrors()) {
 			return badRequest(editCheckpoint.render(editionForm, user,
-					Scenario.find.ref(scenarioId), Checkpoint.find.ref(checkpointId)));
+					Scenario.find.ref(scenarioId),
+					Checkpoint.find.ref(checkpointId)));
 		} else {
 			String name = editionForm.get().name;
 			double longitudeDegrees = editionForm.get().longitudeDegrees;
@@ -116,13 +101,46 @@ public class CheckpointController extends Controller {
 			double longitude = longitudeDegrees + longitudeMinutes / 4;
 			double latitude = latitudeDegrees + latitudeMinutes / 60;
 
-			Checkpoint.editCheckpoint(checkpointId, name, longitude, latitude, points, message);
-			return redirect(routes.ScenarioController.viewMyScenariosGET());
+			Checkpoint.editCheckpoint(checkpointId, name, longitude, latitude,
+					points, message);
+			return redirect(routes.CheckpointController
+					.viewCheckpointGET(checkpointId));
 		}
 
 	}
-	
-	
+
+	public static Result viewCheckpointGET(Long checkpointId) {
+		User user = User.find.where().eq("email", session("email"))
+				.findUnique();
+		Checkpoint checkpoint = Checkpoint.find.byId(checkpointId);
+		if (checkpoint == null) {
+			return redirect(routes.Application.index());
+		}
+		Scenario scenario = checkpoint.scenario;
+		/*
+		 * if (!Secured.isMemberOf(scenario.id)) { return
+		 * redirect(routes.Application.index()); }
+		 */
+
+		return ok(viewCheckpoint.render(user, scenario, checkpoint));
+	}
+
+	public static Result removeCheckpointGET(Long checkpointId) {
+		User user = User.find.where().eq("email", session("email"))
+				.findUnique();
+		Checkpoint checkpoint = Checkpoint.find.byId(checkpointId);
+		if (checkpoint == null) {
+			return redirect(routes.Application.index());
+		}
+		Scenario scenario = checkpoint.scenario;
+
+		for (CheckpointAnswer a : checkpoint.possibleAnswers) {
+			Ebean.delete(a);
+		}
+		Ebean.delete(checkpoint);
+		return redirect(routes.ScenarioController.viewScenarioGET(scenario.id));
+
+	}
 
 	public static class Creation {
 		public String name;
@@ -139,7 +157,7 @@ public class CheckpointController extends Controller {
 		}
 
 	}
-	
+
 	public static class Edition {
 		public String name;
 		public double longitudeDegrees;

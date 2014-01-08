@@ -65,11 +65,11 @@
 		</thead>
 		<tbody>
 
-			@for(c <- scenario.members) {
+			@for(m <- scenario.members) {
 			<tr>
-				<td>@{scenario.members.indexOf(c)+1}</td>
-				<td>@c.alias</td>
-				@if(c.Id!=scenario.owner.Id){
+				<td>@{scenario.members.indexOf(m)+1}</td>
+				<td>@m.alias</td>
+				@if(m.Id!=scenario.owner.Id){
 				<td>
 					<a class="btn btn-default btn-xs" href="#"> <span class="glyphicon glyphicon-remove"></span> Remove </a>
 				</td>
@@ -97,9 +97,11 @@
 				<td>@{scenario.checkpoints.indexOf(c)+1}</td>
 				<td>@c.name</td>
 				<td>
-					<a class="btn btn-default btn-xs" href="#"> <span class="glyphicon glyphicon-search"></span> View </a>
+					<a class="btn btn-default btn-xs" href="@routes.CheckpointController.viewCheckpointGET(c.id)"> <span class="glyphicon glyphicon-search"></span> View </a>
+					@if(Secured.isMemberOf(scenario.id)){
 					<a class="btn btn-default btn-xs" href="@routes.CheckpointController.editCheckpointGET(c.id)"> <span class="glyphicon glyphicon-pencil"></span> Edit </a>
-					<a class="btn btn-default btn-xs" href="#"> <span class="glyphicon glyphicon-remove"></span> Remove </a>
+					<a class="btn btn-default btn-xs" href="@routes.CheckpointController.removeCheckpointGET(c.id)"> <span class="glyphicon glyphicon-remove"></span> Remove </a>
+					}
 				</td>
 
 			</tr>
@@ -107,6 +109,7 @@
 
 		</tbody>
 	</table>
+	<a class="btn btn-default btn" href="@routes.CheckpointController.createCheckpointGET(scenario.id)"> <span class="glyphicon glyphicon-plus"></span> Add checkpoint</a>
 
 </div><!-- /.container -->
 }
