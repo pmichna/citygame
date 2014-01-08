@@ -18,6 +18,7 @@ import controllers.UserAccountController.Registration;
 import controllers.UserAccountController.SaveChanges;
 
 public class ScenarioController extends Controller {
+	private static int scenariosPageSize = 2;
 	
 	@Security.Authenticated(Secured.class)
 	public static Result createScenarioGET() {
@@ -52,18 +53,25 @@ public class ScenarioController extends Controller {
 				date = formatter.parse(day+"/"+month+"/"+year);
 			}
 			Scenario.create(name, isPublic, date, user.email);
-			return redirect(routes.ScenarioController.viewMyScenariosGET());
+			return redirect(routes.ScenarioController.viewMyScenariosGET(0));
 		}
 	}
 	
 	@Security.Authenticated(Secured.class)
-	public static Result viewMyScenariosGET() {
+	public static Result viewMyScenariosGET(int pageNum) {
 		User user = User.find
 						.where()
 						.eq("email", session("email"))
 						.findUnique();
+		int totalPageCount = Scenario.getTotalPageCount(user.email, scenariosPageSize);
 		return ok(myScenarios.render(
-				user, Scenario.findInvolving(user.email)
+				user,
+				Scenario.findInvolving(user.email, scenariosPageSize, pageNum),
+				pageNum,
+				totalPageCount,
+				scenariosPageSize,
+				pageNum == 0,
+				pageNum == totalPageCount - 1
 			)
 		);
 	}

@@ -1,10 +1,10 @@
 package models;
 
 import java.util.*;
-
 import javax.persistence.*;
-
 import play.db.ebean.*;
+import com.avaje.ebean.PagingList;
+import com.avaje.ebean.Page;
 
 @Entity
 public class Scenario extends Model {
@@ -60,10 +60,12 @@ public class Scenario extends Model {
 		return find.where().eq("owner.email",userEmail).findList();
 	}
 	
-	public static List<Scenario> findInvolving(String user) {
-		return find.where()
-		.eq("members.email", user)
-		.findList();
+	public static List<Scenario> findInvolving(String user, int pageSize, int pageNum) {
+		PagingList<Scenario> pagingList = find.where()
+												.eq("members.email", user)
+												.findPagingList(pageSize);
+		Page<Scenario> page = pagingList.getPage(pageNum);
+		return page.getList();
 	}
 	
 	public static List<Scenario> findNotExpired(Date date) {
@@ -78,6 +80,13 @@ public class Scenario extends Model {
 			        .eq("members.email", userEmail)
 			        .eq("id", scenarioId)
 			        .findRowCount() > 0;
+	}
+	
+	public static int getTotalPageCount(String user, int pageSize) {
+		PagingList<Scenario> pagingList = find.where()
+												.eq("members.email", user)
+												.findPagingList(pageSize);
+		return pagingList.getTotalPageCount();
 	}
 	
 }

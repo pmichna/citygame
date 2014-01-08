@@ -1,4 +1,4 @@
-@(user: User, scenarios: List[Scenario])
+@(user: User, scenarios: List[Scenario], currentPage: Integer, totalPageCount: Integer, pageSize: Integer, isFirstPage: Boolean, isListPage: Boolean)
 
 @main("My scenarios", user) {
 	<div class="container">
@@ -17,7 +17,7 @@
 			<tbody>
 				@for(s <- scenarios) {
 					<tr>
-						<td>@{scenarios.indexOf(s)+1}</td>
+						<td>@{(scenarios.indexOf(s)+1)+pageSize*currentPage}</td>
 						<td>@s.name</td>
 						<td>@s.isPublic</td>
 						<td>@{s.owner.email == user.email}</td>
@@ -36,5 +36,10 @@
 				}
 			</tbody>
 		</table>
+		<ul class="pagination">
+			@for(p <- 1 to totalPageCount) {
+				<li><a href="@routes.ScenarioController.viewMyScenariosGET(p-1)">@p</a></li>
+			}
+		</ul>
 	</div><!-- /.container -->
 }
