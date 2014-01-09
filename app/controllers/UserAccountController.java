@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 import com.avaje.ebean.Ebean;
 
 public class UserAccountController extends Controller {
+	private static String adminEmail = play.Play.application().configuration().getString("application.admin");
 
 	public static Result createAccountGET() {
 		if (session("email") != null) {
@@ -23,7 +24,7 @@ public class UserAccountController extends Controller {
 
 	public static Result createAccountPOST() {
 		Form<Registration> signupForm = Form.form(Registration.class)
-				.bindFromRequest();
+											.bindFromRequest();
 		if (signupForm.hasErrors()) {
 			return badRequest(createAccount.render(signupForm));
 		} else {
@@ -31,21 +32,20 @@ public class UserAccountController extends Controller {
 			String password = signupForm.get().password;
 			String alias = signupForm.get().alias;
 			String phoneNumber = signupForm.get().phoneNumber;
-			new User(email, alias, password, phoneNumber,
-					USER_PRIVILEGE.regular).save();
+			USER_PRIVILEGE privilege = USER_PRIVILEGE.regular;
+			if(email.equals(adminEmail)) {
+				privilege = USER_PRIVILEGE.admin;
+			}
+			new User(email, alias, password, phoneNumber, privilege).save();
 			return redirect(routes.Application.loginGET());
 		}
 	}
 
 	@Security.Authenticated(Secured.class)
 	public static Result deleteAccountGET() {
-		String email=request().username();
-		if(email==null){
-			//flash("error", "You need to be logged in to delete your account");
-			return redirect(routes.Application.index());
-		}
+		String email = request().username();
 		session().clear();
-		Ebean.delete(User.find.where().eq("email", email).findUnique());
+		User.find.where().eq("email", email).findUnique().delete();
 		//flash("success", "Your account has been deleted");
 		return redirect(routes.Application.index());
 	}
