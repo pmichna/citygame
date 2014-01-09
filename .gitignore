@@ -16,3 +16,4 @@ dist
 /.settings
 /.target
 /conf/application.conf
+/conf/generated.keystore
