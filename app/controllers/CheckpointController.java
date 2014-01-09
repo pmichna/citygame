@@ -50,7 +50,7 @@ public class CheckpointController extends Controller {
 			Checkpoint.create(name, longitude, latitude, points, message,
 					scenarioId);
 			return redirect(routes.ScenarioController
-					.viewScenarioGET(scenarioId));
+					.viewMyScenarioGET(scenarioId));
 		}
 	}
 	
@@ -131,7 +131,7 @@ public class CheckpointController extends Controller {
 		}
 
 		checkpoint.delete();
-		return redirect(routes.ScenarioController.viewScenarioGET(scenarioId));
+		return redirect(routes.ScenarioController.viewMyScenarioGET(scenarioId));
 
 	}
 

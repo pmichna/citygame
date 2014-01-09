@@ -80,7 +80,7 @@ public class ScenarioController extends Controller {
 	}
 	
 	@Security.Authenticated(Secured.class)
-	public static Result browseScenariosGET(int pageNum) {
+	public static Result viewPublicScenariosGET(int pageNum) {
 		User user = User.find
 						.where()
 						.eq("email", session("email"))
@@ -89,7 +89,7 @@ public class ScenarioController extends Controller {
 		if(pageNum > totalPageCount-1) {
 			pageNum = 0;
 		}
-		return ok(browseScenarios.render(
+		return ok(viewPublicScenarios.render(
 				user,
 				Scenario.findAvailable(user.email, scenariosPageSize, pageNum),
 				pageNum,
@@ -102,7 +102,7 @@ public class ScenarioController extends Controller {
 	}
 	
 	@Security.Authenticated(Secured.class)
-	public static Result viewScenarioGET(Long scenarioId) {
+	public static Result viewMyScenarioGET(Long scenarioId) {
 		User user = User.find
 						.where()
 						.eq("email", session("email"))
@@ -138,7 +138,7 @@ public class ScenarioController extends Controller {
 				scenario.save();
 			}
 			return redirect(routes.ScenarioController
-					.viewScenarioGET(scenarioId));
+					.viewMyScenarioGET(scenarioId));
 		}
 	}
 	@Security.Authenticated(Secured.class)
@@ -158,7 +158,7 @@ public class ScenarioController extends Controller {
 		}
 		scenario.members.remove(member);
 		scenario.save();
-		return redirect(routes.ScenarioController.viewScenarioGET(scenario.id));
+		return redirect(routes.ScenarioController.viewMyScenarioGET(scenario.id));
 	}
 	
 	@Security.Authenticated(Secured.class)
