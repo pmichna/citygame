@@ -49,11 +49,9 @@ public class CheckpointController extends Controller {
 
 			Checkpoint.create(name, longitude, latitude, points, message,
 					scenarioId);
-			return redirect(routes.ScenarioController
-					.viewMyScenarioGET(scenarioId));
+			return redirect(routes.ScenarioController.viewPrivateScenarioGET(scenarioId));
 		}
 	}
-	
 
 	@Security.Authenticated(Secured.class)
 	public static Result editCheckpointGET(Long checkpointId) {
@@ -97,10 +95,8 @@ public class CheckpointController extends Controller {
 
 			Checkpoint.editCheckpoint(checkpointId, name, longitude, latitude,
 					points, message);
-			return redirect(routes.CheckpointController
-					.viewCheckpointGET(checkpointId));
+			return redirect(routes.CheckpointController.viewCheckpointGET(checkpointId));
 		}
-
 	}
 	
 	@Security.Authenticated(Secured.class)
@@ -111,10 +107,10 @@ public class CheckpointController extends Controller {
 						.findUnique();
 		Checkpoint checkpoint = Checkpoint.find.ref(checkpointId);
 		Scenario scenario = checkpoint.scenario;
-		if (!Secured.isMemberOf(scenario.id)) {
+		if(!Secured.isMemberOf(scenario.id)) {
 			return redirect(routes.Application.index());
 		}
-		return ok(viewCheckpoint.render(user, scenario, checkpoint));
+		return ok(viewCheckpoint.render(user, scenario, checkpoint);
 	}
 
 	@Security.Authenticated(Secured.class)
@@ -122,7 +118,7 @@ public class CheckpointController extends Controller {
 		User user = User.find
 						.where()
 						.eq("email", session("email"))
-							.findUnique();
+						.findUnique();
 		
 		Checkpoint checkpoint = Checkpoint.find.ref(checkpointId);
 		long scenarioId = checkpoint.scenario.id;
@@ -131,8 +127,7 @@ public class CheckpointController extends Controller {
 		}
 
 		checkpoint.delete();
-		return redirect(routes.ScenarioController.viewMyScenarioGET(scenarioId));
-
+		return redirect(routes.ScenarioController.viewPrivateScenarioGET(scenarioId));
 	}
 
 	public static class CheckpointForm {

@@ -1,0 +1,36 @@
+@(user: User, scenario: Scenario)
+
+@main("View scenarios", user) {
+<div class="container">
+	<div class="page-header">
+		<h1>Scenario details</h1>
+	</div>
+	<div class="row">
+		<div class="col-xs-6 col-md-4">
+			Name:
+		</div>
+		<div class="col-xs-12 col-md-8">
+			@scenario.name
+		</div>
+	</div>
+
+	@if(scenario.expirationDate!=null) {
+	<div class="row">
+		<div class="col-xs-6 col-md-4">
+			Expiration date:
+		</div>
+		<div class="col-xs-12 col-md-8">
+			@scenario.expirationDate
+		</div>
+	</div>
+	}
+	<div class="row">
+		<div class="col-xs-6 col-md-4">
+			Owner:
+		</div>
+		<div class="col-xs-12 col-md-8">
+			@scenario.owner.alias
+		</div>
+	</div>
+</div><!-- /.container -->
+}

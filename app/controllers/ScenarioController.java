@@ -53,21 +53,21 @@ public class ScenarioController extends Controller {
 				date = new Date(formatter.parse(day + "/" + month + "/" + year).getTime());
 			}
 			Scenario.create(name, isPublic, date, user.email);
-			return redirect(routes.ScenarioController.viewMyScenariosGET(0));
+			return redirect(routes.ScenarioController.viewPrivateScenariosGET(0));
 		}
 	}
 	
 	@Security.Authenticated(Secured.class)
-	public static Result viewMyScenariosGET(int pageNum) {
+	public static Result viewPrivateScenariosGET(int pageNum) {
 		User user = User.find
 						.where()
 						.eq("email", session("email"))
 						.findUnique();
-		int totalPageCount = Scenario.getTotalPageCount(user.email, scenariosPageSize);
+		int totalPageCount = Scenario.getTotalPrivatePageCount(user.email, scenariosPageSize);
 		if(pageNum > totalPageCount-1) {
 			pageNum = 0;
 		}
-		return ok(myScenarios.render(
+		return ok(viewPrivateScenarios.render(
 				user,
 				Scenario.findInvolvingUser(user.email, scenariosPageSize, pageNum),
 				pageNum,
@@ -85,13 +85,13 @@ public class ScenarioController extends Controller {
 						.where()
 						.eq("email", session("email"))
 						.findUnique();
-		int totalPageCount = Scenario.getTotalPageCount(user.email, scenariosPageSize);
-		if(pageNum > totalPageCount-1) {
+		int totalPageCount = Scenario.getTotalPublicNotExpiredPageCount(scenariosPageSize, new Date(System.currentTimeMillis()));
+		if(pageNum > totalPageCount - 1) {
 			pageNum = 0;
 		}
 		return ok(viewPublicScenarios.render(
 				user,
-				Scenario.findAvailable(user.email, scenariosPageSize, pageNum),
+				Scenario.findPublicNotExpired(new Date(System.currentTimeMillis()), scenariosPageSize, pageNum),
 				pageNum,
 				totalPageCount,
 				scenariosPageSize,
@@ -102,16 +102,26 @@ public class ScenarioController extends Controller {
 	}
 	
 	@Security.Authenticated(Secured.class)
-	public static Result viewMyScenarioGET(Long scenarioId) {
+	public static Result viewPrivateScenarioGET(Long scenarioId) {
 		User user = User.find
 						.where()
 						.eq("email", session("email"))
 						.findUnique();
 		Scenario scenario = Scenario.find.byId(scenarioId);
 		if(!Secured.isMemberOf(scenarioId)) {
-			return redirect(routes.ScenarioController.viewMyScenariosGET(0));
+			return redirect(routes.ScenarioController.viewPrivateScenariosGET(0));
 		}
-		return ok(viewScenario.render(user, scenario));
+		return ok(viewPrivateScenario.render(user, scenario));
+	}
+	
+	@Security.Authenticated(Secured.class)
+	public static Result viewPublicScenarioGET(Long scenarioId) {
+		User user = User.find
+						.where()
+						.eq("email", session("email"))
+						.findUnique();
+		Scenario scenario = Scenario.find.byId(scenarioId);
+		return ok(viewPublicScenario.render(user, scenario));
 	}
 	
 	@Security.Authenticated(Secured.class)
@@ -137,8 +147,7 @@ public class ScenarioController extends Controller {
 				scenario.members.add(member);
 				scenario.save();
 			}
-			return redirect(routes.ScenarioController
-					.viewMyScenarioGET(scenarioId));
+			return redirect(routes.ScenarioController.viewPrivateScenarioGET(scenarioId));
 		}
 	}
 	@Security.Authenticated(Secured.class)
@@ -158,7 +167,7 @@ public class ScenarioController extends Controller {
 		}
 		scenario.members.remove(member);
 		scenario.save();
-		return redirect(routes.ScenarioController.viewMyScenarioGET(scenario.id));
+		return redirect(routes.ScenarioController.viewPrivateScenarioGET(scenario.id));
 	}
 	
 	@Security.Authenticated(Secured.class)
@@ -168,7 +177,7 @@ public class ScenarioController extends Controller {
 						.eq("email", session("email"))
 						.findUnique();
 		if(!Secured.isMemberOf(scenarioId)) {
-			return redirect(routes.ScenarioController.viewMyScenariosGET(0));
+			return redirect(routes.ScenarioController.viewPrivateScenariosGET(0));
 		}
 		Scenario scenario = Scenario.find.ref(scenarioId);
 		return ok(editScenario.render(Form.form(ScenarioForm.class), user, scenario));
@@ -200,7 +209,7 @@ public class ScenarioController extends Controller {
 				date = new Date(formatter.parse(day + "/" + month + "/" + year).getTime());
 			}
 			Scenario.edit(scenarioId, name, isPublic, date);
-			return redirect(routes.ScenarioController.viewMyScenarioGET(scenarioId));
+			return redirect(routes.ScenarioController.viewPrivateScenarioGET(scenarioId));
 		}
 	}
 	

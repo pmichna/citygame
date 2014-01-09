@@ -22,7 +22,7 @@
 						<td>@s.isPublic</td>
 						<td>@{s.owner.email == user.email}</td>
 						<td>
-						<a class="btn btn-info btn-xs" href="@routes.ScenarioController.viewMyScenarioGET(s.id)">
+						<a class="btn btn-info btn-xs" href="@routes.ScenarioController.viewPrivateScenarioGET(s.id)">
 							<span class="glyphicon glyphicon-search"></span> View
 						</a>
 						<a class="btn btn-warning btn-xs" href="@routes.ScenarioController.editScenarioGET(s.id)">
@@ -41,19 +41,19 @@
 				@if(currentPage == 0) {
 					<li class="disabled"><span>&laquo;</span></li>
 				} else {
-					<li><a href="@routes.ScenarioController.viewMyScenariosGET(currentPage-1)">&laquo;</a></li>
+					<li><a href="@routes.ScenarioController.viewPrivateScenariosGET(currentPage-1)">&laquo;</a></li>
 				}
 				@for(p <- 1 to totalPageCount) {
 					@if(p == currentPage+1) {
-						<li class="active"><a href="@routes.ScenarioController.viewMyScenariosGET(p-1)">@p</a></li>
+						<li class="active"><a href="@routes.ScenarioController.viewPrivateScenariosGET(p-1)">@p</a></li>
 					} else {
-						<li><a href="@routes.ScenarioController.viewMyScenariosGET(p-1)">@p</a></li>
+						<li><a href="@routes.ScenarioController.viewPrivateScenariosGET(p-1)">@p</a></li>
 					}
 				}
 				@if(currentPage == totalPageCount-1) {
 					<li class="disabled"><span>&raquo;</span></li>
 				} else {
-					<li><a href="@routes.ScenarioController.viewMyScenariosGET(currentPage+1)">&raquo;</a></li>
+					<li><a href="@routes.ScenarioController.viewPrivateScenariosGET(currentPage+1)">&raquo;</a></li>
 				}
 			</ul>
 		}
