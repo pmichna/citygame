@@ -33,7 +33,7 @@ public class UserAccountController extends Controller {
 			String phoneNumber = signupForm.get().phoneNumber;
 			new User(email, alias, password, phoneNumber,
 					USER_PRIVILEGE.regular).save();
-			return redirect(routes.Application.index());
+			return redirect(routes.Application.loginGET());
 		}
 	}
 
