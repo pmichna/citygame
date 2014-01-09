@@ -25,7 +25,7 @@
 						<a class="btn btn-info btn-xs" href="@routes.ScenarioController.viewMyScenarioGET(s.id)">
 							<span class="glyphicon glyphicon-search"></span> View
 						</a>
-						<a class="btn btn-warning btn-xs" href="#">
+						<a class="btn btn-warning btn-xs" href="@routes.ScenarioController.editScenarioGET(s.id)">
 							<span class="glyphicon glyphicon-pencil"></span> Edit
 						</a>
 						<a class="btn btn-danger btn-xs" href="#">
@@ -36,24 +36,26 @@
 				}
 			</tbody>
 		</table>
-		<ul class="pagination">
-			@if(currentPage == 0) {
-				<li class="disabled"><span>&laquo;</span></li>
-			} else {
-				<li><a href="@routes.ScenarioController.viewMyScenariosGET(currentPage-1)">&laquo;</a></li>
-			}
-			@for(p <- 1 to totalPageCount) {
-				@if(p == currentPage+1) {
-					<li class="active"><a href="@routes.ScenarioController.viewMyScenariosGET(p-1)">@p</a></li>
+		@if(totalPageCount != 1) {
+			<ul class="pagination">
+				@if(currentPage == 0) {
+					<li class="disabled"><span>&laquo;</span></li>
 				} else {
-					<li><a href="@routes.ScenarioController.viewMyScenariosGET(p-1)">@p</a></li>
+					<li><a href="@routes.ScenarioController.viewMyScenariosGET(currentPage-1)">&laquo;</a></li>
 				}
-			}
-			@if(currentPage == totalPageCount-1) {
-				<li class="disabled"><span>&raquo;</span></li>
-			} else {
-				<li><a href="@routes.ScenarioController.viewMyScenariosGET(currentPage+1)">&raquo;</a></li>
-			}
-		</ul>
+				@for(p <- 1 to totalPageCount) {
+					@if(p == currentPage+1) {
+						<li class="active"><a href="@routes.ScenarioController.viewMyScenariosGET(p-1)">@p</a></li>
+					} else {
+						<li><a href="@routes.ScenarioController.viewMyScenariosGET(p-1)">@p</a></li>
+					}
+				}
+				@if(currentPage == totalPageCount-1) {
+					<li class="disabled"><span>&raquo;</span></li>
+				} else {
+					<li><a href="@routes.ScenarioController.viewMyScenariosGET(currentPage+1)">&raquo;</a></li>
+				}
+			</ul>
+		}
 	</div><!-- /.container -->
 }

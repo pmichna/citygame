@@ -75,5 +75,27 @@ public class ScenarioTest extends BaseControllerTest {
 		assertEquals(newDate.toString(), modified.expirationDate.toString());
 		assertTrue(modified.isPublic);
 	}
+	
+	@Test
+	public void editScenarioFailureNoName() {
+		Date newDate = new Date(System.currentTimeMillis());
+		Boolean newIsPublic = true;
+		
+		Scenario scenario = Scenario.create(scenarioName, !newIsPublic, null, userEmail);
+		
+		Result result = callAction(
+				controllers.routes.ref.ScenarioController.editScenarioPOST(scenario.id),
+				fakeRequest().withSession("email", userEmail)
+						.withFormUrlEncodedBody(
+								ImmutableMap.of(
+										"isPublic", newIsPublic.toString(), 
+										"day", newDate.toString().substring(8, 10), 
+										"month", newDate.toString().substring(5, 7), 
+										"year", newDate.toString().substring(0, 4))));
+		assertEquals(400, status(result));
+		Scenario modified = Scenario.find.ref(scenario.id);
+		assertNotNull(modified);
+		assertEquals(scenarioName, modified.name);
+	}
 
 }

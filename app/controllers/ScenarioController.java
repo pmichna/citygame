@@ -170,7 +170,8 @@ public class ScenarioController extends Controller {
 		if(!Secured.isMemberOf(scenarioId)) {
 			return redirect(routes.ScenarioController.viewMyScenariosGET(0));
 		}
-		return ok(editScenario.render(Form.form(ScenarioForm.class), user));
+		Scenario scenario = Scenario.find.ref(scenarioId);
+		return ok(editScenario.render(Form.form(ScenarioForm.class), user, scenario));
 	}
 	
 	@Security.Authenticated(Secured.class)
@@ -184,7 +185,7 @@ public class ScenarioController extends Controller {
 		Form<ScenarioForm> editForm = Form.form(ScenarioForm.class)
 											.bindFromRequest();
 		if (editForm.hasErrors()) {
-			return badRequest(editScenario.render(editForm, user));
+			return badRequest(editScenario.render(editForm, user, Scenario.find.ref(scenarioId)));
 		} else {
 			String name = editForm.get().name;
 			String day = editForm.get().day;
