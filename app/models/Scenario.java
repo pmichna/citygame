@@ -88,8 +88,7 @@ public class Scenario extends Model {
 		return page.getList();
 	}
 	
-	public static List<Scenario> findNotExpired() {
-		Date date = new Date();
+	public static List<Scenario> findNotExpired(Date date) {
 		return find.where().or(
 			com.avaje.ebean.Expr.lt("expirationDate", date),
 			com.avaje.ebean.Expr.isNull("expirationDate")
