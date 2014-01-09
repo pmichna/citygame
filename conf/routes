@@ -20,6 +20,8 @@ POST	/scenarios/create									controllers.ScenarioController.createScenarioPOST
 GET		/scenarios/my										controllers.ScenarioController.viewMyScenariosGET(page: Integer ?= 0)
 GET		/scenarios/:scenario								controllers.ScenarioController.viewScenarioGET(scenario: Long)
 GET		/scenarios/all/										controllers.ScenarioController.browseScenariosGET(page: Integer ?= 0)
+GET		/scenarios/edit/:scenario							controllers.ScenarioController.editScenarioGET(scenario: Long)
+POST	/scenarios/edit/:scenario							controllers.ScenarioController.editScenarioPOST(scenario: Long)
 
 GET  	/scenarios/:scenario/checkpoints/add				controllers.CheckpointController.createCheckpointGET(scenario: Long)
 POST	/scenarios/:scenario/checkpoints/add				controllers.CheckpointController.createCheckpointPOST(scenario: Long)

@@ -11,6 +11,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.sql.Date;
+import play.data.constraints.*;
 
 import com.avaje.ebean.Ebean;
 
@@ -19,9 +20,11 @@ public class ScenarioController extends Controller {
 	
 	@Security.Authenticated(Secured.class)
 	public static Result createScenarioGET() {
-		User user=User.find
-				.where().eq("email", session("email")).findUnique();
-		return ok(createScenario.render(Form.form(Creation.class),user));
+		User user = User.find
+						.where()
+						.eq("email", session("email"))
+						.findUnique();
+		return ok(createScenario.render(Form.form(Creation.class), user));
 	}
 	 
 	@Security.Authenticated(Secured.class)
@@ -140,8 +143,11 @@ public class ScenarioController extends Controller {
 	}
 	@Security.Authenticated(Secured.class)
 	public static Result removeMemberGET(Long scenarioId, Long memberId) {
-		User user = User.find.where().eq("email", session("email"))
-				.findUnique();
+		User user = User.find
+						.where()
+						.eq("email", session("email"))
+						.findUnique();
+		
 		User member = User.find.where().eq("id", memberId).findUnique();
 		Scenario scenario = Scenario.find.byId(scenarioId);
 		if (scenario == null) {
@@ -151,28 +157,65 @@ public class ScenarioController extends Controller {
 			return redirect(routes.Application.index());
 		}
 		scenario.members.remove(member);
-		Ebean.save(scenario);
+		scenario.save();
 		return redirect(routes.ScenarioController.viewScenarioGET(scenario.id));
-
 	}
 	
-	public static class Creation {
+	@Security.Authenticated(Secured.class)
+	public static Result editScenarioGET(Long scenarioId) {
+		User user = User.find
+						.where()
+						.eq("email", session("email"))
+						.findUnique();
+		if(!Secured.isMemberOf(scenariodId)) {
+			return redirect(routes.ScenarioController.viewMyScenariosGET(0));
+		}
+		return ok(editScenario.render(Form.form(ScenarioForm.class), user));
+	}
+	
+	@Security.Authenticated(Secured.class)
+	public static Result editScenarioPOST(Long scenarioId) throws ParseException {
+		
+		User user = User.find
+						.where()
+						.eq("email", session("email"))
+						.findUnique();
+		
+		Form<ScenarioForm> editForm = Form.form(ScenarioForm.class)
+											.bindFromRequest();
+		if (createForm.hasErrors()) {
+			return badRequest(editScenario.render(editForm, user));
+		} else {
+			String name = createForm.get().name;
+			String day = createForm.get().day;
+			String month = createForm.get().month;
+			String year = createForm.get().year;
+			boolean isPublic = createForm.get().isPublic;
+			DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+			Date date;
+			if(day.equals("dd") || month.equals("mm") || year.equals("yyyy")){
+				date = null;
+			} else {
+				date = new Date(formatter.parse(day + "/" + month + "/" + year).getTime());
+			}
+			Scenario.edit(scenarioId, name, isPublic, date, user.email);
+			return redirect(routes.ScenarioController.viewMyScenarioGET(scenarioId));
+		}
+	}
+	
+	public static class ScenarioForm {
+		
+		@Required(message = "Name is required")
 		public String name;
-		public boolean isPublic;
+		public Boolean isPublic;
 		public String day;
 		public String month;
 		public String year;
-		
-		public String validate(){
-			return null;
-		}
 	}
 	
 	public static class Member {
+		
+		@Email
 		public String email;
-
-		public String validate() {
-			return null;
-		}
 	}
 }
