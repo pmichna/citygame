@@ -17,9 +17,9 @@ GET		/account											controllers.UserAccountController.viewAccountGET()
 
 GET		/scenarios/create									controllers.ScenarioController.createScenarioGET()
 POST	/scenarios/create									controllers.ScenarioController.createScenarioPOST()
-GET		/scenarios/my										controllers.ScenarioController.viewMyScenariosGET(page: Integer ?= 0)
-GET		/scenarios/:scenario								controllers.ScenarioController.viewScenarioGET(scenario: Long)
-GET		/scenarios/all/										controllers.ScenarioController.browseScenariosGET(page: Integer ?= 0)
+GET		/scenarios/private									controllers.ScenarioController.viewMyScenariosGET(page: Integer ?= 0)
+GET		/scenarios/private/:scenario						controllers.ScenarioController.viewMyScenarioGET(scenario: Long)
+GET		/scenarios/public/									controllers.ScenarioController.viewPublicScenariosGET(page: Integer ?= 0)
 
 GET  	/scenarios/:scenario/checkpoints/add				controllers.CheckpointController.createCheckpointGET(scenario: Long)
 POST	/scenarios/:scenario/checkpoints/add				controllers.CheckpointController.createCheckpointPOST(scenario: Long)
