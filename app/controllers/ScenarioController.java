@@ -11,7 +11,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.sql.Date;
-import play.data.constraints.*;
+import play.data.validation.Constraints.*;
 
 import com.avaje.ebean.Ebean;
 
@@ -24,7 +24,7 @@ public class ScenarioController extends Controller {
 						.where()
 						.eq("email", session("email"))
 						.findUnique();
-		return ok(createScenario.render(Form.form(Creation.class), user));
+		return ok(createScenario.render(Form.form(ScenarioForm.class), user));
 	}
 	 
 	@Security.Authenticated(Secured.class)
@@ -35,7 +35,7 @@ public class ScenarioController extends Controller {
 						.eq("email", session("email"))
 						.findUnique();
 		
-		Form<Creation> createForm = Form.form(Creation.class)
+		Form<ScenarioForm> createForm = Form.form(ScenarioForm.class)
 				.bindFromRequest();
 		if (createForm.hasErrors()) {
 			return badRequest(createScenario.render(createForm, user));
@@ -44,7 +44,7 @@ public class ScenarioController extends Controller {
 			String day = createForm.get().day;
 			String month = createForm.get().month;
 			String year = createForm.get().year;
-			boolean isPublic = createForm.get().isPublic;
+			Boolean isPublic = createForm.get().isPublic;
 			DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 			Date date;
 			if(day.equals("dd") || month.equals("mm") || year.equals("yyyy")){
@@ -167,7 +167,7 @@ public class ScenarioController extends Controller {
 						.where()
 						.eq("email", session("email"))
 						.findUnique();
-		if(!Secured.isMemberOf(scenariodId)) {
+		if(!Secured.isMemberOf(scenarioId)) {
 			return redirect(routes.ScenarioController.viewMyScenariosGET(0));
 		}
 		return ok(editScenario.render(Form.form(ScenarioForm.class), user));
@@ -183,14 +183,14 @@ public class ScenarioController extends Controller {
 		
 		Form<ScenarioForm> editForm = Form.form(ScenarioForm.class)
 											.bindFromRequest();
-		if (createForm.hasErrors()) {
+		if (editForm.hasErrors()) {
 			return badRequest(editScenario.render(editForm, user));
 		} else {
-			String name = createForm.get().name;
-			String day = createForm.get().day;
-			String month = createForm.get().month;
-			String year = createForm.get().year;
-			boolean isPublic = createForm.get().isPublic;
+			String name = editForm.get().name;
+			String day = editForm.get().day;
+			String month = editForm.get().month;
+			String year = editForm.get().year;
+			Boolean isPublic = editForm.get().isPublic;
 			DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 			Date date;
 			if(day.equals("dd") || month.equals("mm") || year.equals("yyyy")){
@@ -198,7 +198,7 @@ public class ScenarioController extends Controller {
 			} else {
 				date = new Date(formatter.parse(day + "/" + month + "/" + year).getTime());
 			}
-			Scenario.edit(scenarioId, name, isPublic, date, user.email);
+			Scenario.edit(scenarioId, name, isPublic, date);
 			return redirect(routes.ScenarioController.viewMyScenarioGET(scenarioId));
 		}
 	}
