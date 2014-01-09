@@ -12,11 +12,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.sql.Date;
 import play.data.validation.Constraints.*;
+import java.util.List;
 
 import com.avaje.ebean.Ebean;
 
 public class ScenarioController extends Controller {
-	private static int scenariosPageSize = 10;
+	private static int pageSize = 10;
 	
 	@Security.Authenticated(Secured.class)
 	public static Result createScenarioGET() {
@@ -63,16 +64,16 @@ public class ScenarioController extends Controller {
 						.where()
 						.eq("email", session("email"))
 						.findUnique();
-		int totalPageCount = Scenario.getTotalPrivatePageCount(user.email, scenariosPageSize);
+		int totalPageCount = Scenario.getTotalPrivatePageCount(user.email, pageSize);
 		if(pageNum > totalPageCount-1) {
 			pageNum = 0;
 		}
 		return ok(viewPrivateScenarios.render(
 				user,
-				Scenario.findInvolvingUser(user.email, scenariosPageSize, pageNum),
+				Scenario.findInvolvingUser(user.email, pageSize, pageNum),
 				pageNum,
 				totalPageCount,
-				scenariosPageSize,
+				pageSize,
 				pageNum == 0,
 				pageNum == totalPageCount - 1
 			)
@@ -85,16 +86,16 @@ public class ScenarioController extends Controller {
 						.where()
 						.eq("email", session("email"))
 						.findUnique();
-		int totalPageCount = Scenario.getTotalPublicNotExpiredPageCount(scenariosPageSize, new Date(System.currentTimeMillis()));
+		int totalPageCount = Scenario.getTotalPublicNotExpiredPageCount(pageSize, new Date(System.currentTimeMillis()));
 		if(pageNum > totalPageCount - 1) {
 			pageNum = 0;
 		}
 		return ok(viewPublicScenarios.render(
 				user,
-				Scenario.findPublicNotExpired(new Date(System.currentTimeMillis()), scenariosPageSize, pageNum),
+				Scenario.findPublicAcceptedNotExpired(new Date(System.currentTimeMillis()), pageSize, pageNum),
 				pageNum,
 				totalPageCount,
-				scenariosPageSize,
+				pageSize,
 				pageNum == 0,
 				pageNum == totalPageCount - 1
 			)
@@ -107,11 +108,12 @@ public class ScenarioController extends Controller {
 						.where()
 						.eq("email", session("email"))
 						.findUnique();
+		Boolean isAdminMode = (user.privilege == USER_PRIVILEGE.admin);
 		Scenario scenario = Scenario.find.byId(scenarioId);
-		if(!Secured.isMemberOf(scenarioId)) {
+		if(!Secured.isMemberOf(scenarioId) && !isAdminMode) {
 			return redirect(routes.ScenarioController.viewPrivateScenariosGET(0));
 		}
-		return ok(viewPrivateScenario.render(user, scenario));
+		return ok(viewPrivateScenario.render(user, scenario, isAdminMode));
 	}
 	
 	@Security.Authenticated(Secured.class)
@@ -211,6 +213,28 @@ public class ScenarioController extends Controller {
 			Scenario.edit(scenarioId, name, isPublic, date);
 			return redirect(routes.ScenarioController.viewPrivateScenarioGET(scenarioId));
 		}
+	}
+	
+	@Security.Authenticated(Secured.class)
+	public static Result viewScenariosToAcceptGET(int pageNum) {
+		User user = User.find
+						.where()
+						.eq("email", session("email"))
+						.findUnique();
+		if(user.privilege != USER_PRIVILEGE.admin) {
+			return badRequest(index.render(user));
+		}
+		List<Scenario> scenarios = Scenario.findToAccept(new Date(System.currentTimeMillis()), pageSize, pageNum);
+		int totalPageCount = Scenario.getTotalToAcceptPageCount(new Date(System.currentTimeMillis()), pageSize);
+		return ok(viewScenariosToAccept.render(
+			user,
+			scenarios,
+			pageNum,
+			totalPageCount,
+			pageSize,
+			pageNum == 0,
+			pageNum == totalPageCount - 1					
+		));
 	}
 	
 	public static class ScenarioForm {

@@ -1,17 +1,15 @@
 @(user: User, scenarios: List[Scenario], currentPage: Integer, totalPageCount: Integer, pageSize: Integer, isFirstPage: Boolean, isListPage: Boolean)
 
-@main("Private scenarios", user) {
+@main("Scenarios pending moderation", user) {
 	<div class="container">
 		<div class="page-header">
-			<h1>My scenarios</h1>
+			<h1>Scenarios pending moderation</h1>
 		</div>
 		<table class="table table-striped">
 			<thead>
 				<tr>
 					<th>#</th>
 					<th>Scenario name</th>
-					<th>Is public</th>
-					<th>Created by me</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -19,17 +17,15 @@
 					<tr>
 						<td>@{(scenarios.indexOf(s)+1)+pageSize*currentPage}</td>
 						<td>@s.name</td>
-						<td>@s.isPublic</td>
-						<td>@{s.owner.email == user.email}</td>
 						<td>
 						<a class="btn btn-info btn-xs" href="@routes.ScenarioController.viewPrivateScenarioGET(s.id)">
 							<span class="glyphicon glyphicon-search"></span> View
 						</a>
-						<a class="btn btn-warning btn-xs" href="@routes.ScenarioController.editScenarioGET(s.id)">
-							<span class="glyphicon glyphicon-pencil"></span> Edit
+						<a class="btn btn-success btn-xs" href="#">
+							<span class="glyphicon glyphicon-ok"></span> Accept
 						</a>
 						<a class="btn btn-danger btn-xs" href="#">
-							<span class="glyphicon glyphicon-remove"></span> Remove
+							<span class="glyphicon glyphicon-remove"></span> Reject
 						</a>
 						</td>
 					</tr>
@@ -41,19 +37,19 @@
 				@if(currentPage == 0) {
 					<li class="disabled"><span>&laquo;</span></li>
 				} else {
-					<li><a href="@routes.ScenarioController.viewPrivateScenariosGET(currentPage-1)">&laquo;</a></li>
+					<li><a href="@routes.ScenarioController.viewScenariosToAcceptGET(currentPage-1)">&laquo;</a></li>
 				}
 				@for(p <- 1 to totalPageCount) {
 					@if(p == currentPage+1) {
-						<li class="active"><a href="@routes.ScenarioController.viewPrivateScenariosGET(p-1)">@p</a></li>
+						<li class="active"><a href="@routes.ScenarioController.viewScenariosToAcceptGET(p-1)">@p</a></li>
 					} else {
-						<li><a href="@routes.ScenarioController.viewPrivateScenariosGET(p-1)">@p</a></li>
+						<li><a href="@routes.ScenarioController.viewScenariosToAcceptGET(p-1)">@p</a></li>
 					}
 				}
 				@if(currentPage == totalPageCount-1) {
 					<li class="disabled"><span>&raquo;</span></li>
 				} else {
-					<li><a href="@routes.ScenarioController.viewPrivateScenariosGET(currentPage+1)">&raquo;</a></li>
+					<li><a href="@routes.ScenarioController.viewScenariosToAcceptGET(currentPage+1)">&raquo;</a></li>
 				}
 			</ul>
 		}

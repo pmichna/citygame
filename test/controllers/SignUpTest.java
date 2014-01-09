@@ -35,6 +35,32 @@ public class SignUpTest extends BaseControllerTest {
 	}
 	
 	@Test
+	public void createAdmin() {
+		String adminEmail = play.Play.application().configuration().getString("application.admin");
+		String adminPass = "pass";
+		String adminAlias = "admin";
+		String adminPhoneNumber = "123123123";
+		
+	    Result result = callAction(
+        	controllers.routes.ref.UserAccountController.createAccountPOST(),
+        	fakeRequest().withFormUrlEncodedBody(ImmutableMap.of(
+	            "email", adminEmail,
+            	"password", adminPass,
+            	"alias", adminAlias,
+            	"phoneNumber", adminPhoneNumber))
+    	);
+    	assertEquals(303, status(result));
+    	User user = User.find.where()
+    					.eq("email", adminEmail)
+    					.findUnique();
+    	assertNotNull(user);
+    	assertEquals(adminEmail, user.email);
+    	assertEquals(adminAlias, user.alias);
+    	assertEquals(adminPhoneNumber, user.phoneNumber);
+		assertEquals(USER_PRIVILEGE.admin, user.privilege);
+	}
+	
+	@Test
 	public void createAccountFailureEmailRegex() {
 	    Result result = callAction(
         	controllers.routes.ref.UserAccountController.createAccountPOST(),

@@ -41,22 +41,47 @@ public class ScenariosTest extends BaseModelTest {
 	}
 
 	@Test
-	public void findScenariosNotExpired() {
+	public void findScenariosPublicAcceptedNotExpired() {
 
 		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
 		Scenario.create("Scenario 1", false, null, user1Email);
 		try {
-			Scenario.create("Scenario 2", false, new Date(dt.parse("2050-12-12").getTime()),
+			Scenario.create("Scenario 2", true, new Date(dt.parse("2050-12-12").getTime()),
 					user2Email);
-			Scenario.create("Scenario 3", false, new Date(dt.parse("2000-10-10").getTime()),
+			Scenario temp1 = Scenario.create("Scenario 3", true, new Date(dt.parse("2000-10-10").getTime()),
+					user2Email);
+			temp1.isAccepted = true;
+			temp1.save();
+			Scenario temp2 = Scenario.create("Scenario 4", true, new Date(dt.parse("2020-10-10").getTime()),
+					user2Email);
+			temp2.isAccepted = true;
+			temp2.save();
+		} catch (ParseException e) {
+			System.err.println("Problem with date parsing");
+			e.printStackTrace();
+		}
+
+		List<Scenario> results = Scenario.findPublicAcceptedNotExpired(new Date(System.currentTimeMillis()), 10, 0);
+		assertEquals(1, results.size());
+	}
+	
+	@Test
+	public void findScenariosToAccept() {
+
+		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
+		Scenario.create("Scenario 1", false, null, user1Email);
+		try {
+			Scenario.create("Scenario 2", true, new Date(dt.parse("2050-12-12").getTime()),
+					user2Email);
+			Scenario.create("Scenario 3", true, new Date(dt.parse("2000-10-10").getTime()),
 					user2Email);
 		} catch (ParseException e) {
 			System.err.println("Problem with date parsing");
 			e.printStackTrace();
 		}
 
-		List<Scenario> results = Scenario.findNotExpired(new Date(System.currentTimeMillis()));
-		assertEquals(2, results.size());
+		List<Scenario> results = Scenario.findToAccept(new Date(System.currentTimeMillis()), 10, 0);
+		assertEquals(1, results.size());
 	}
 	
 	@Test

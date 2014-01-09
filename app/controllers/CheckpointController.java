@@ -107,10 +107,11 @@ public class CheckpointController extends Controller {
 						.findUnique();
 		Checkpoint checkpoint = Checkpoint.find.ref(checkpointId);
 		Scenario scenario = checkpoint.scenario;
-		if(!Secured.isMemberOf(scenario.id)) {
+		Boolean isAdminMode = (user.privilege == USER_PRIVILEGE.admin);
+		if(!Secured.isMemberOf(scenario.id) && !isAdminMode) {
 			return redirect(routes.Application.index());
 		}
-		return ok(viewCheckpoint.render(user, scenario, checkpoint));
+		return ok(viewCheckpoint.render(user, scenario, checkpoint, isAdminMode));
 	}
 
 	@Security.Authenticated(Secured.class)

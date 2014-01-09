@@ -94,14 +94,14 @@ public class Scenario extends Model {
 					.findUnique();
 	}
 	
-	public static List<Scenario> findPublicNotExpired(Date currentDate, int pageSize, int pageNum) {
+	public static List<Scenario> findPublicAcceptedNotExpired(Date currentDate, int pageSize, int pageNum) {
 		PagingList<Scenario> pagingList =  find.where()
+												.eq("isPublic", true)
+												.eq("isAccepted", true)
 												.or(
 													com.avaje.ebean.Expr.gt("expirationDate", currentDate),
 													com.avaje.ebean.Expr.isNull("expirationDate")
 												)
-												.eq("isPublic", true)
-												.eq("isAccepted", true)
 												.findPagingList(pageSize);
 		Page<Scenario> page = pagingList.getPage(pageNum);
 		return page.getList();
@@ -132,4 +132,28 @@ public class Scenario extends Model {
 		return pagingList.getTotalPageCount();
 	}
 	
+	public static List<Scenario> findToAccept(Date currentDate, int pageSize, int pageNum) {
+		PagingList<Scenario> pagingList =  find.where()
+												.eq("isAccepted", false)
+												.eq("isPublic", true)
+												.or(
+													com.avaje.ebean.Expr.lt("expirationDate", currentDate),
+													com.avaje.ebean.Expr.isNull("expirationDate")
+												)
+												.findPagingList(pageSize);
+		Page<Scenario> page = pagingList.getPage(pageNum);
+		return page.getList();
+	}
+	
+	public static int getTotalToAcceptPageCount(Date currentDate, int pageSize) {
+		return find.where()
+					.eq("isAccepted", false)
+					.eq("isPublic", true)
+					.or(
+						com.avaje.ebean.Expr.lt("expirationDate", currentDate),
+						com.avaje.ebean.Expr.isNull("expirationDate")
+					)
+					.findPagingList(pageSize)
+					.getTotalPageCount();
+	}
 }

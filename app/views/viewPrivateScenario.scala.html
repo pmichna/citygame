@@ -1,4 +1,4 @@
-@(user: User, scenario: Scenario)
+@(user: User, scenario: Scenario, isAdminMode: Boolean)
 
 @main("View scenarios", user) {
 <div class="container">
@@ -69,7 +69,7 @@
 			<tr>
 				<td>@{scenario.members.indexOf(m)+1}</td>
 				<td>@m.alias</td>
-				@if(m.id!=scenario.owner.id){
+				@if(m.id != scenario.owner.id && !isAdminMode) {
 				<td>
 					<a class="btn btn-danger btn-xs" href="@routes.ScenarioController.removeMemberGET(scenario.id,m.id)"> <span class="glyphicon glyphicon-remove"></span> Remove </a>
 				</td>
@@ -81,7 +81,9 @@
 
 		</tbody>
 	</table>
-	<a class="btn btn-primary btn" href="@routes.ScenarioController.addMemberGET(scenario.id)"> <span class="glyphicon glyphicon-plus"></span> Add member</a>
+	@if(!isAdminMode) {
+		<a class="btn btn-primary btn" href="@routes.ScenarioController.addMemberGET(scenario.id)"> <span class="glyphicon glyphicon-plus"></span> Add member</a>
+}
 	<h4>Checkpoints</h4>
 	<table class="table table-striped">
 		<thead>
@@ -98,18 +100,19 @@
 				<td>@c.name</td>
 				<td>
 					<a class="btn btn-info btn-xs" href="@routes.CheckpointController.viewCheckpointGET(c.id)"> <span class="glyphicon glyphicon-search"></span> View </a>
-					@if(Secured.isMemberOf(scenario.id)){
+					@if(Secured.isMemberOf(scenario.id) && !isAdminMode) {
 					<a class="btn btn-warning btn-xs" href="@routes.CheckpointController.editCheckpointGET(c.id)"> <span class="glyphicon glyphicon-pencil"></span> Edit </a>
 					<a class="btn btn-danger btn-xs" href="@routes.CheckpointController.removeCheckpointGET(c.id)"> <span class="glyphicon glyphicon-remove"></span> Remove </a>
 					}
 				</td>
-
 			</tr>
 			}
 
 		</tbody>
 	</table>
-	<a class="btn btn-primary btn" href="@routes.CheckpointController.createCheckpointGET(scenario.id)"> <span class="glyphicon glyphicon-plus"></span> Add checkpoint</a>
+	@if(!isAdminMode) {
+		<a class="btn btn-primary btn" href="@routes.CheckpointController.createCheckpointGET(scenario.id)"> <span class="glyphicon	glyphicon-plus"></span> Add checkpoint</a>
+	}
 
 </div><!-- /.container -->
 }
