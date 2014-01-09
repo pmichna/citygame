@@ -110,7 +110,7 @@ public class CheckpointController extends Controller {
 		if(!Secured.isMemberOf(scenario.id)) {
 			return redirect(routes.Application.index());
 		}
-		return ok(viewCheckpoint.render(user, scenario, checkpoint);
+		return ok(viewCheckpoint.render(user, scenario, checkpoint));
 	}
 
 	@Security.Authenticated(Secured.class)
