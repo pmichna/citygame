@@ -29,6 +29,11 @@ GET  	/checkpoints/delete/:checkpoint						controllers.CheckpointController.remo
 		
 GET		/checkpoints/:checkpoint/answers/add				controllers.CheckpointAnswerController.createCheckpointAnswerGET(checkpoint: Long)
 POST	/checkpoints/:checkpoint/answers/add				controllers.CheckpointAnswerController.createCheckpointAnswerPOST(checkpoint: Long)
+GET		/scenarios/create							controllers.ScenarioController.createScenarioGET()
+POST	/scenarios/create							controllers.ScenarioController.createScenarioPOST()
+GET		/scenarios									controllers.ScenarioController.viewMyScenariosGET(page: Integer ?= 0)
+GET		/scenarios/:scenario						controllers.ScenarioController.viewScenarioGET(scenario: Long)
+GET		/scenarios/browse/							controllers.ScenarioController.browseScenariosGET(page: Integer ?= 0)
 
 GET		/scenarios/:scenario/members/add					controllers.ScenarioController.addMemberGET(scenario: Long)
 POST	/scenarios/:scenario/members/add					controllers.ScenarioController.addMemberPOST(scenario: Long)

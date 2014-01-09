@@ -82,6 +82,28 @@ public class ScenarioController extends Controller {
 	}
 	
 	@Security.Authenticated(Secured.class)
+	public static Result browseScenariosGET(int pageNum) {
+		User user = User.find
+						.where()
+						.eq("email", session("email"))
+						.findUnique();
+		int totalPageCount = Scenario.getTotalPageCount(user.email, scenariosPageSize);
+		if(pageNum > totalPageCount-1) {
+			pageNum = 0;
+		}
+		return ok(browseScenarios.render(
+				user,
+				Scenario.findAvailable(user.email, scenariosPageSize, pageNum),
+				pageNum,
+				totalPageCount,
+				scenariosPageSize,
+				pageNum == 0,
+				pageNum == totalPageCount - 1
+			)
+		);
+	}
+	
+	@Security.Authenticated(Secured.class)
 	public static Result viewScenarioGET(Long scenarioId) {
 		User user = User.find
 						.where()
