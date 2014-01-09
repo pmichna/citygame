@@ -10,14 +10,9 @@ import models.*;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.sql.Date;
 
 import com.avaje.ebean.Ebean;
-
-import controllers.UserAccountController.Registration;
-import controllers.UserAccountController.SaveChanges;
 
 public class ScenarioController extends Controller {
 	private static int scenariosPageSize = 10;
@@ -50,9 +45,9 @@ public class ScenarioController extends Controller {
 			DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 			Date date;
 			if(day.equals("dd") || month.equals("mm") || year.equals("yyyy")){
-				date=null;
+				date = null;
 			} else {
-				date = formatter.parse(day+"/"+month+"/"+year);
+				date = new Date(formatter.parse(day + "/" + month + "/" + year).getTime());
 			}
 			Scenario.create(name, isPublic, date, user.email);
 			return redirect(routes.ScenarioController.viewMyScenariosGET(0));

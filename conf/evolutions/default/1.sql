@@ -37,7 +37,7 @@ create table scenario (
   name                      varchar(80) not null,
   is_public                 tinyint(1) default 0 not null,
   is_accepted               tinyint(1) default 0 not null,
-  expiration_date           datetime,
+  expiration_date           date,
   owner_id                  bigint,
   constraint pk_scenario primary key (id))
 ;
