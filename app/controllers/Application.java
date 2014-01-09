@@ -12,10 +12,12 @@ import java.util.regex.Pattern;
 
 public class Application extends Controller {
 
-	@Security.Authenticated(Secured.class)
 	public static Result index() {
-		return ok(index.render(User.find.where()
-				.eq("email", request().username()).findUnique()));
+		User user = null;
+		if(session("email") != null) {
+			user = User.find.where().eq("email", session("email")).findUnique();
+		}
+		return ok(index.render(user));
 	}
 
 	public static Result loginGET() {

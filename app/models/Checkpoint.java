@@ -72,10 +72,6 @@ public class Checkpoint extends Model {
 	public static List<Checkpoint> findAssignedTo(Long scenario) {
 		return find.where().eq("scenario.id", scenario).findList();
 	}
-	
-	public static Checkpoint findCheckpoint(Long checkpoint) {
-		return find.byId(checkpoint);
-	}
 
 	public static String addPossibleAnswer(String answer, Long checkpointId) {
 		Checkpoint checkpoint = find.ref(checkpointId);

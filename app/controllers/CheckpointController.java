@@ -7,18 +7,7 @@ import static play.data.Form.*;
 import views.html.*;
 import models.*;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import com.avaje.ebean.Ebean;
 import play.data.validation.Constraints.*;
-
-import controllers.UserAccountController.Registration;
-import controllers.UserAccountController.SaveChanges;
 
 public class CheckpointController extends Controller {
 
