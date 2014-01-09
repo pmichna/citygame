@@ -1,6 +1,8 @@
 package models;
 
-import java.util.*;
+import java.sql.Date;
+import java.util.List;
+import java.util.ArrayList;
 import javax.persistence.*;
 import play.db.ebean.*;
 import com.avaje.ebean.PagingList;
@@ -56,6 +58,24 @@ public class Scenario extends Model {
 		return scenario;
 	}
 	
+	public static Scenario edit(Long scenarioId, String newName, Boolean newIsPublic, Date newExpirationDate) {
+		Scenario scenario = find.ref(scenarioId);
+		if(newName != null && !newName.equals(scenario.name)) {
+			scenario.name = newName;
+			scenario.isAccepted = false;
+		}
+		if(newIsPublic != null && newIsPublic != scenario.isPublic) {
+			scenario.isPublic = newIsPublic;
+			scenario.isAccepted = false;
+		}
+		if(newExpirationDate != null && !newExpirationDate.equals(scenario.expirationDate)) {
+			scenario.expirationDate = newExpirationDate;
+			scenario.isAccepted = false;
+		}
+		scenario.save();
+		return scenario;
+	}
+	
 	public static List<Scenario> findOwned(String userEmail){
 		return find.where().eq("owner.email",userEmail).findList();
 	}
@@ -75,9 +95,9 @@ public class Scenario extends Model {
 	}
 	
 	public static List<Scenario> findAvailable(String userEmail, int pageSize, int pageNum){
-		Date date = new Date();
+		Date date = new Date(System.currentTimeMillis());
 		PagingList<Scenario> pagingList = find.where().or(
-				com.avaje.ebean.Expr.gt("expirationDate",date),
+				com.avaje.ebean.Expr.gt("expirationDate", date),
 				com.avaje.ebean.Expr.isNull("expirationDate"))
 				.or(
 				com.avaje.ebean.Expr.contains("members.email", userEmail),
@@ -88,8 +108,7 @@ public class Scenario extends Model {
 		return page.getList();
 	}
 	
-	public static List<Scenario> findNotExpired() {
-		Date date = new Date();
+	public static List<Scenario> findNotExpired(Date date) {
 		return find.where().or(
 			com.avaje.ebean.Expr.lt("expirationDate", date),
 			com.avaje.ebean.Expr.isNull("expirationDate")

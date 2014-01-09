@@ -51,13 +51,13 @@ public class LoginTest extends BaseControllerTest {
 	    assertEquals(200, status(result));
 	}  
 	
-	@Test
-	public void notAuthenticated() {
-	    Result result = callAction(
-	        controllers.routes.ref.Application.index(),
-	        fakeRequest()
-	    );
-	    assertEquals(303, status(result));
-	    assertEquals("/login", header("Location", result));
-	}
+	// @Test
+	// public void notAuthenticated() {
+	//     Result result = callAction(
+	//         controllers.routes.ref.Application.index(),
+	//         fakeRequest()
+	//     );
+	//     assertEquals(303, status(result));
+	//     assertEquals("/login", header("Location", result));
+	// }
 }

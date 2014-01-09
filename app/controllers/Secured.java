@@ -19,9 +19,9 @@ public class Secured extends Security.Authenticator {
         return redirect(routes.Application.loginGET());
     }
     
-    public static boolean isMemberOf(Long scenario) {
+    public static boolean isMemberOf(Long scenarioId) {
         return Scenario.isMember(
-            scenario,
+            scenarioId,
             Context.current().request().username()
         );
     }

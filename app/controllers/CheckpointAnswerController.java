@@ -7,59 +7,45 @@ import static play.data.Form.*;
 import views.html.*;
 import models.*;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import com.avaje.ebean.Ebean;
-
-import controllers.Application.Login;
-import controllers.CheckpointController.Creation;
-import controllers.UserAccountController.Registration;
-import controllers.UserAccountController.SaveChanges;
+import play.data.validation.Constraints.*;
 
 public class CheckpointAnswerController extends Controller {
 
 	@Security.Authenticated(Secured.class)
 	public static Result createCheckpointAnswerGET(Long checkpointId) {
-		User user = User.find.where().eq("email", session("email"))
-				.findUnique();
+		User user = User.find
+						.where()
+						.eq("email", session("email"))
+						.findUnique();
+		
 		Checkpoint checkpoint = Checkpoint.find.ref(checkpointId);
 		
 		if (!Secured.isMemberOf(checkpoint.id)) {
-			//return redirect(routes.CheckpointController.viewCheckpointGET(checkpointId));
+			return redirect(routes.Application.index());
 		}
-		return ok(addAnswer.render(Form.form(Creation.class), user, checkpoint));
+		return ok(addAnswer.render(Form.form(AnswerForm.class), user, checkpoint));
 	}
 	
 	public static Result createCheckpointAnswerPOST(Long checkpointId) {
-		Form<Creation> createForm = Form.form(Creation.class).bindFromRequest();
+		Form<AnswerForm> createForm = Form.form(AnswerForm.class).bindFromRequest();
 		User user = User.find
-				.where()
-				.eq("email", session("email"))
-					.findUnique();
-		Checkpoint checkpoint = Checkpoint.findCheckpoint(checkpointId);
+						.where()
+						.eq("email", session("email"))
+						.findUnique();
+		
+		Checkpoint checkpoint = Checkpoint.find.ref(checkpointId);
 		if (createForm.hasErrors()) {
-			return badRequest(addAnswer.render(createForm,user,checkpoint));
+			return badRequest(addAnswer.render(createForm, user, checkpoint));
 		} else {
 			String text = createForm.get().text;
-			CheckpointAnswer answer = new CheckpointAnswer(text);
-			checkpoint.possibleAnswers.add(answer);
-			checkpoint.save();
+			Checkpoint.addPossibleAnswer("text", checkpointId);
 			return redirect(routes.CheckpointController.viewCheckpointGET(checkpointId));
 		}
 	}
 	
-	public static class Creation {
-		public String text;
+	public static class AnswerForm {
 		
-
-		public String validate() {
-			return null;
-		}
-
+		@Required(message = "Answer is required")
+		public String text;
 	}
 }

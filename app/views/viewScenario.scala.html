@@ -20,7 +20,7 @@
 		<div class="col-xs-12 col-md-8">
 			@if(scenario.isAccepted){
 				yes
-			}else{
+			} else {
 				no
 			}
 		</div>
@@ -30,14 +30,14 @@
 			Is public:
 		</div>
 		<div class="col-xs-12 col-md-8">
-			@if(scenario.isPublic){
+			@if(scenario.isPublic) {
 				yes
-			}else{
+			} else {
 				no
 			}
 		</div>
 	</div>
-	@if(scenario.expirationDate!=null){
+	@if(scenario.expirationDate!=null) {
 	<div class="row">
 		<div class="col-xs-6 col-md-4">
 			Expiration date:
@@ -73,10 +73,9 @@
 				<td>
 					<a class="btn btn-danger btn-xs" href="@routes.ScenarioController.removeMemberGET(scenario.id,m.id)"> <span class="glyphicon glyphicon-remove"></span> Remove </a>
 				</td>
-				}else{
+				} else {
 					<td></td>
 				}
-
 			</tr>
 			}
 
