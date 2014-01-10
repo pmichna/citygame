@@ -56,7 +56,7 @@ public class ScenarioTest extends BaseControllerTest {
 		Date newDate = new Date(System.currentTimeMillis());
 		Boolean newIsPublic = true;
 		
-		Scenario scenario = Scenario.create(scenarioName, !newIsPublic, null, userEmail);
+		Scenario scenario = Scenario.create(scenarioName, !newIsPublic, null, userEmail, false);
 		
 		Result result = callAction(
 				controllers.routes.ref.ScenarioController.editScenarioPOST(scenario.id),
@@ -82,7 +82,7 @@ public class ScenarioTest extends BaseControllerTest {
 		Date newDate = new Date(System.currentTimeMillis());
 		Boolean newIsPublic = true;
 		
-		Scenario scenario = Scenario.create(scenarioName, !newIsPublic, null, userEmail);
+		Scenario scenario = Scenario.create(scenarioName, !newIsPublic, null, userEmail, false);
 		
 		Result result = callAction(
 				controllers.routes.ref.ScenarioController.editScenarioPOST(scenario.id),
@@ -103,7 +103,7 @@ public class ScenarioTest extends BaseControllerTest {
 	public void acceptScenario() {
 		new User("admin@citygame.com", "admin", "userPassword", "111111222",
 				USER_PRIVILEGE.admin).save();
-		Scenario scenario = Scenario.create(scenarioName, true, null, userEmail);
+		Scenario scenario = Scenario.create(scenarioName, true, null, userEmail, false);
 		
 		Result result = callAction(
 				controllers.routes.ref.ScenarioController.acceptScenarioGET(scenario.id),

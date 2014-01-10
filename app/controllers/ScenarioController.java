@@ -53,7 +53,7 @@ public class ScenarioController extends Controller {
 			} else {
 				date = new Date(formatter.parse(day + "/" + month + "/" + year).getTime());
 			}
-			Scenario.create(name, isPublic, date, user.email);
+			Scenario.create(name, isPublic, date, user.email, user.privilege == USER_PRIVILEGE.admin);
 			return redirect(routes.ScenarioController.viewPrivateScenariosGET(0));
 		}
 	}
@@ -235,7 +235,7 @@ public class ScenarioController extends Controller {
 			} else {
 				date = new Date(formatter.parse(day + "/" + month + "/" + year).getTime());
 			}
-			Scenario.edit(scenarioId, name, isPublic, date);
+			Scenario.edit(scenarioId, name, isPublic, date, user.privilege == USER_PRIVILEGE.admin);
 			return redirect(routes.ScenarioController.viewPrivateScenarioGET(scenarioId));
 		}
 	}

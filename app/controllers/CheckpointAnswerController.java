@@ -20,7 +20,7 @@ public class CheckpointAnswerController extends Controller {
 		
 		Checkpoint checkpoint = Checkpoint.find.ref(checkpointId);
 		
-		if (!Secured.isMemberOf(checkpoint.id)) {
+		if (!Secured.isMemberOf(checkpoint.scenario.id)) {
 			return redirect(routes.Application.index());
 		}
 		return ok(addAnswer.render(Form.form(AnswerForm.class), user, checkpoint));
@@ -38,8 +38,8 @@ public class CheckpointAnswerController extends Controller {
 			return badRequest(addAnswer.render(createForm, user, checkpoint));
 		} else {
 			String text = createForm.get().text;
-			Checkpoint.addPossibleAnswer("text", checkpointId);
-			return redirect(routes.CheckpointController.viewCheckpointGET(checkpointId));
+			Checkpoint.addPossibleAnswer(text, checkpointId, user.privilege == USER_PRIVILEGE.admin);
+			return redirect(routes.CheckpointController.editCheckpointGET(checkpoint.id));
 		}
 	}
 	

@@ -33,7 +33,7 @@ public class CheckpointTest extends BaseControllerTest {
 	@Before
 	public void setUp() {
 		new User(userEmail, userAlias, userPass, userPhoneNumber, userPrivilege).save();
-		Scenario.create(scenarioName, isScenarioPublic, null, userEmail);
+		Scenario.create(scenarioName, isScenarioPublic, null, userEmail, false);
 	}
 	
 	@Test
@@ -570,7 +570,7 @@ public class CheckpointTest extends BaseControllerTest {
 									.where()
 									.eq("name", scenarioName)
 									.findUnique();
-		Checkpoint checkpoint = Checkpoint.create(checkpointName, 3, 3, points, message, scenario.id);
+		Checkpoint checkpoint = Checkpoint.create(checkpointName, 3, 3, points, message, scenario.id, false);
 		
 
 		
@@ -590,7 +590,7 @@ public class CheckpointTest extends BaseControllerTest {
 				.withSession("email", userEmail)
 				.withFormUrlEncodedBody(map)
     	);
-		assertEquals(303, status(result));
+		assertEquals(200, status(result));
 		
 		Checkpoint modified = Checkpoint.find.ref(checkpoint.id);
 		assertNotNull(modified);

@@ -48,7 +48,7 @@ public class CheckpointController extends Controller {
 			double latitude = latitudeDegrees + latitudeMinutes / 60L;
 
 			Checkpoint.create(name, longitude, latitude, points, message,
-					scenarioId);
+					scenarioId, user.privilege == USER_PRIVILEGE.admin);
 			return redirect(routes.ScenarioController.editScenarioGET(scenarioId));
 		}
 	}
@@ -94,12 +94,14 @@ public class CheckpointController extends Controller {
 			return redirect(routes.Application.index());
 		}
 		Form<CheckpointForm> editionForm = Form.form(CheckpointForm.class).bindFromRequest();
+		Scenario scenario = Scenario.find.ref(scenarioId);
+		Checkpoint checkpoint = Checkpoint.find.ref(checkpointId);
 		if (editionForm.hasErrors()) {
 			return badRequest(editCheckpoint.render(
 				editionForm,
 				user,
-				Scenario.find.ref(scenarioId),
-				Checkpoint.find.ref(checkpointId),
+				scenario,
+				checkpoint,
 				false)
 			);
 		} else {
@@ -114,8 +116,8 @@ public class CheckpointController extends Controller {
 			double latitude = latitudeDegrees + latitudeMinutes / 60;
 
 			Checkpoint.editCheckpoint(checkpointId, name, longitude, latitude,
-					points, message);
-			return redirect(routes.CheckpointController.viewCheckpointGET(checkpointId));
+					points, message, user.privilege == USER_PRIVILEGE.admin);
+			return ok(viewCheckpoint.render(user, scenario, checkpoint, true));
 		}
 	}
 	
@@ -130,7 +132,7 @@ public class CheckpointController extends Controller {
 		if(!Secured.isMemberOf(scenario.id)) {
 			return redirect(routes.Application.index());
 		}
-		return ok(viewCheckpoint.render(user, scenario, checkpoint));
+		return ok(viewCheckpoint.render(user, scenario, checkpoint, false));
 	}
 
 	@Security.Authenticated(Secured.class)
