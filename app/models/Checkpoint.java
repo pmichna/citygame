@@ -131,4 +131,11 @@ public class Checkpoint extends Model {
     	
     	return checkpoint;
 	}
+	
+	public static Boolean hasAnswer(Long checkpointId, String answer) {
+		return find.where()
+					.eq("id", checkpointId)
+					.eq("possibleAnswers.text", answer)
+					.findRowCount() > 0;
+	}
 }

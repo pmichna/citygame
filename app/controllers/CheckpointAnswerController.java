@@ -38,6 +38,10 @@ public class CheckpointAnswerController extends Controller {
 			return badRequest(addAnswer.render(createForm, user, checkpoint));
 		} else {
 			String text = createForm.get().text;
+			if(Checkpoint.hasAnswer(checkpoint.id, text)) {
+				createForm.reject("Answer already exists");
+				return badRequest(addAnswer.render(createForm, user, checkpoint));
+			}
 			Checkpoint.addPossibleAnswer(text, checkpointId, user.privilege == USER_PRIVILEGE.admin);
 			return redirect(routes.CheckpointController.editCheckpointGET(checkpoint.id));
 		}
