@@ -33,7 +33,7 @@ public class Checkpoint extends Model {
 	@OneToMany(cascade = CascadeType.ALL)
 	public List<CheckpointAnswer> possibleAnswers = new ArrayList<CheckpointAnswer>();
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.PERSIST)
 	public Scenario scenario;
 
 	public static Model.Finder<Long, Checkpoint> find = new Finder<Long, Checkpoint>(
@@ -48,6 +48,7 @@ public class Checkpoint extends Model {
 		checkpoint.points = points;
 		checkpoint.message = message;
 		checkpoint.scenario = Scenario.find.ref(scenarioId);
+		checkpoint.scenario.isAccepted = false;
 		checkpoint.save();
 		return checkpoint;
 	}
@@ -123,6 +124,7 @@ public class Checkpoint extends Model {
 		if(checkpoint.points != points) {
 			checkpoint.points = points;
 		}
+		checkpoint.scenario.isAccepted = false;
     	checkpoint.save();
     	
     	return checkpoint;
