@@ -128,9 +128,11 @@ public class ScenarioController extends Controller {
 	
 	@Security.Authenticated(Secured.class)
 	public static Result addMemberGET(Long scenarioId) {
-		User user=User.find
-				.where().eq("email", session("email")).findUnique();
-		Scenario scenario = Scenario.find.byId(scenarioId);
+		User user = User.find
+						.where()
+						.eq("email", session("email"))
+						.findUnique();
+		Scenario scenario = Scenario.find.ref(scenarioId);
 		return ok(addMember.render(Form.form(Member.class),user,scenario));
 	}
 	
@@ -164,10 +166,13 @@ public class ScenarioController extends Controller {
 		if (scenario == null) {
 			return redirect(routes.Application.index());
 		}
-		if(member.id == scenario.owner.id){
+		if(member.id == scenario.owner.id) {
 			return redirect(routes.Application.index());
 		}
 		scenario.members.remove(member);
+		if(scenario.editedBy != null && scenario.editedBy.id == member.id) {
+			scenario.editedBy = null;
+		}
 		scenario.save();
 		return redirect(routes.ScenarioController.viewPrivateScenarioGET(scenario.id));
 	}
@@ -182,7 +187,27 @@ public class ScenarioController extends Controller {
 			return redirect(routes.ScenarioController.viewPrivateScenariosGET(0));
 		}
 		Scenario scenario = Scenario.find.ref(scenarioId);
-		return ok(editScenario.render(Form.form(ScenarioForm.class), user, scenario));
+		if(scenario.editedBy != null && !scenario.editedBy.email.equals(user.email)) {
+			return ok(editScenario.render(Form.form(ScenarioForm.class), user, scenario, true));
+		}
+		scenario.editedBy = user;
+		scenario.save();
+		return ok(editScenario.render(Form.form(ScenarioForm.class), user, scenario, false));
+	}
+	
+	@Security.Authenticated(Secured.class)
+	public static Result cancelEditGET(Long scenarioId) {
+		User user = User.find
+						.where()
+						.eq("email", session("email"))
+						.findUnique();
+		Scenario scenario = Scenario.find.ref(scenarioId);
+		if(scenario == null || !scenario.editedBy.email.equals(user.email)) {
+			return redirect(routes.ScenarioController.viewPrivateScenariosGET(0));
+		}
+		scenario.editedBy = null;
+		scenario.save();
+		return redirect(routes.ScenarioController.viewPrivateScenariosGET(0));
 	}
 	
 	@Security.Authenticated(Secured.class)
@@ -196,7 +221,7 @@ public class ScenarioController extends Controller {
 		Form<ScenarioForm> editForm = Form.form(ScenarioForm.class)
 											.bindFromRequest();
 		if (editForm.hasErrors()) {
-			return badRequest(editScenario.render(editForm, user, Scenario.find.ref(scenarioId)));
+			return badRequest(editScenario.render(editForm, user, Scenario.find.ref(scenarioId), false));
 		} else {
 			String name = editForm.get().name;
 			String day = editForm.get().day;

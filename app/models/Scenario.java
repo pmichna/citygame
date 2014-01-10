@@ -33,6 +33,9 @@ public class Scenario extends Model {
 
 	@OneToMany
 	public List<Checkpoint> checkpoints = new ArrayList<Checkpoint>();
+	
+	@ManyToOne
+	public User editedBy;
 
 	public static Finder<Long,Scenario> find = new Finder(
 		Long.class, Scenario.class
@@ -45,6 +48,7 @@ public class Scenario extends Model {
 		this.owner = owner;
 		this.isAccepted = false;
 		this.members.add(owner);
+		this.editedBy = null;
 	}
 	
 	public static Scenario create(String name, boolean isPublic, Date expirationDate,
@@ -72,6 +76,7 @@ public class Scenario extends Model {
 			scenario.expirationDate = newExpirationDate;
 			scenario.isAccepted = false;
 		}
+		scenario.editedBy = null;
 		scenario.save();
 		return scenario;
 	}

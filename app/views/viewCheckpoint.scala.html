@@ -1,4 +1,4 @@
-@(user: User, scenario: Scenario, checkpoint: Checkpoint, isAdminMode: Boolean)
+@(user: User, scenario: Scenario, checkpoint: Checkpoint)
 
 @main("View checkpoint", user) {
 <div class="container">
@@ -59,19 +59,9 @@
 			<tr>
 				<td>@{checkpoint.possibleAnswers.indexOf(c)+1}</td>
 				<td>@c.text</td>
-
-				@if(!isAdminMode) {
-				<td>
-					<a class="btn btn-warning btn-xs" href="#"> <span class="glyphicon glyphicon-pencil"></span> Edit </a>
-					<a class="btn btn-danger btn-xs" href="#"> <span class="glyphicon glyphicon-remove"></span> Remove </a>
-				</td>
-				}
 			</tr>
 			}
 		</tbody>
 	</table>
-		@if(!isAdminMode) {
-			<a class="btn btn-primary btn" href="@routes.CheckpointAnswerController.createCheckpointAnswerGET(checkpoint.id)"> <span class="glyphicon glyphicon-plus"></span> Add possible answer</a>
-		}
 </div><!-- /.container -->
 }

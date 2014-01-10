@@ -49,7 +49,7 @@ public class CheckpointController extends Controller {
 
 			Checkpoint.create(name, longitude, latitude, points, message,
 					scenarioId);
-			return redirect(routes.ScenarioController.viewPrivateScenarioGET(scenarioId));
+			return redirect(routes.ScenarioController.editScenarioGET(scenarioId));
 		}
 	}
 
@@ -64,8 +64,24 @@ public class CheckpointController extends Controller {
 		if (checkpoint == null || !Secured.isMemberOf(scenario.id)) {
 			return redirect(routes.Application.index());
 		}
-		return ok(editCheckpoint.render(Form.form(CheckpointForm.class), user,
-				scenario, checkpoint));
+		if(scenario.editedBy != null && !scenario.editedBy.email.equals(user.email)) {
+			return ok(editCheckpoint.render(
+				Form.form(CheckpointForm.class),
+				user,
+				scenario,
+				checkpoint,
+				true)
+			);
+		}
+		scenario.editedBy = user;
+		scenario.save();
+		return ok(editCheckpoint.render(
+			Form.form(CheckpointForm.class),
+			user,
+			scenario,
+			checkpoint,
+			false)
+		);
 	}
 
 	@Security.Authenticated(Secured.class)
@@ -79,9 +95,13 @@ public class CheckpointController extends Controller {
 		}
 		Form<CheckpointForm> editionForm = Form.form(CheckpointForm.class).bindFromRequest();
 		if (editionForm.hasErrors()) {
-			return badRequest(editCheckpoint.render(editionForm, user,
-					Scenario.find.ref(scenarioId),
-					Checkpoint.find.ref(checkpointId)));
+			return badRequest(editCheckpoint.render(
+				editionForm,
+				user,
+				Scenario.find.ref(scenarioId),
+				Checkpoint.find.ref(checkpointId),
+				false)
+			);
 		} else {
 			String name = editionForm.get().name;
 			int longitudeDegrees = editionForm.get().longitudeDegrees;
@@ -107,11 +127,10 @@ public class CheckpointController extends Controller {
 						.findUnique();
 		Checkpoint checkpoint = Checkpoint.find.ref(checkpointId);
 		Scenario scenario = checkpoint.scenario;
-		Boolean isAdminMode = (user.privilege == USER_PRIVILEGE.admin);
-		if(!Secured.isMemberOf(scenario.id) && !isAdminMode) {
+		if(!Secured.isMemberOf(scenario.id)) {
 			return redirect(routes.Application.index());
 		}
-		return ok(viewCheckpoint.render(user, scenario, checkpoint, isAdminMode));
+		return ok(viewCheckpoint.render(user, scenario, checkpoint));
 	}
 
 	@Security.Authenticated(Secured.class)
@@ -122,6 +141,10 @@ public class CheckpointController extends Controller {
 						.findUnique();
 		
 		Checkpoint checkpoint = Checkpoint.find.ref(checkpointId);
+		if(checkpoint.scenario.editedBy != null && !checkpoint.scenario.editedBy.email.equals(user.email)) {
+			return redirect(routes.Application.index());
+		}
+		
 		long scenarioId = checkpoint.scenario.id;
 		if (checkpoint == null) {
 			return redirect(routes.Application.index());
