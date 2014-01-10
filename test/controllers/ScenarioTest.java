@@ -101,12 +101,13 @@ public class ScenarioTest extends BaseControllerTest {
 	
 	@Test
 	public void acceptScenario() {
-		String adminEmail = play.Play.application().configuration().getString("application.admin");
+		new User("admin@citygame.com", "admin", "userPassword", "111111222",
+				USER_PRIVILEGE.admin).save();
 		Scenario scenario = Scenario.create(scenarioName, true, null, userEmail);
 		
 		Result result = callAction(
 				controllers.routes.ref.ScenarioController.acceptScenarioGET(scenario.id),
-				fakeRequest().withSession("email", adminEmail)
+				fakeRequest().withSession("email", "admin@citygame.com")
 		);
 		assertEquals(303, status(result));
 		Scenario modified = Scenario.find.ref(scenario.id);
