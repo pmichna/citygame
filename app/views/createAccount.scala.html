@@ -1,13 +1,19 @@
-@(form: Form[UserAccountController.Registration])
+@(form: Form[UserAccountController.RegistrationForm])
 
 @main("User sign up", null) {
 	<div class="container">
 		<div class="page-header">	
 			<h1>Sign up</h1>
 		</div>
-			@if(form.hasGlobalErrors) {
+			<!-- error in the form -->
+			@if(form.hasErrors) {
 				<div class="alert alert-danger">
-			        @form.globalError.message
+			        @for(errorList <- form.errors().values) {
+						@for(e <- errorList) {
+							@e.message()
+						}
+						<br/>
+					}
 				</div>
 			}
 			@helper.form(routes.UserAccountController.createAccountPOST) {
@@ -19,14 +25,13 @@
 					<input type="password" class="form-control" name="password" placeholder="Password">
 				</div>
 				<div class="form-group">
-					<input type="text" name="alias" class="form-control" placeholder="Alias">
+					<input type="text" name="alias" class="form-control" placeholder="Alias" value="@form("alias").value">
 				</div>
 				<div class="form-group">
-					<input type="text" class="form-control" name="phoneNumber" placeholder="Phone number">
+					<input type="text" class="form-control" name="phoneNumber" placeholder="Phone number, e.g.: 123456789" value="@form("phoneNumber").value">
 				</div>
 				
 				<button type="submit" class="btn btn-default">Sign up</button>
-					
 			}			
 	</div><!-- /.container -->
 }
