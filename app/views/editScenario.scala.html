@@ -81,6 +81,7 @@
 					</select>
 				</div>
 			</div>
+			@if(user.id == scenario.owner.id) {
 			<h4>Members</h4>
 			<table class="table table-striped">
 				<thead>
@@ -105,10 +106,10 @@
 					}
 				</tbody>
 			</table>
-			
 			<div class="form-group">
 				<a class="btn btn-primary" href="@routes.ScenarioController.addMemberGET(scenario.id)"> <span class="glyphicon glyphicon-plus"></span> Add member</a>
 			</div>
+			}
 			
 			<h4>Checkpoints</h4>
 			<table class="table table-striped">
