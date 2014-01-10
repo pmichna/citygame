@@ -125,9 +125,10 @@ public class Scenario extends Model {
 		return pagingList.getTotalPageCount();
 	}
 	
-	public static int getTotalPublicNotExpiredPageCount(int pageSize, Date currentDate) {
+	public static int getTotalPublicAcceptedNotExpiredPageCount(int pageSize, Date currentDate) {
 		PagingList<Scenario> pagingList = find.where()
 												.eq("isPublic", true)
+												.eq("isAccepted", true)
 												.or(
 													com.avaje.ebean.Expr.lt("expirationDate", currentDate),
 													com.avaje.ebean.Expr.isNull("expirationDate")

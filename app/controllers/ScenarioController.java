@@ -86,7 +86,7 @@ public class ScenarioController extends Controller {
 						.where()
 						.eq("email", session("email"))
 						.findUnique();
-		int totalPageCount = Scenario.getTotalPublicNotExpiredPageCount(pageSize, new Date(System.currentTimeMillis()));
+		int totalPageCount = Scenario.getTotalPublicAcceptedNotExpiredPageCount(pageSize, new Date(System.currentTimeMillis()));
 		if(pageNum > totalPageCount - 1) {
 			pageNum = 0;
 		}
