@@ -24,6 +24,7 @@ GET		/scenarios/private/:scenario						controllers.ScenarioController.viewPrivat
 GET		/scenarios/public/									controllers.ScenarioController.viewPublicScenariosGET(page: Integer ?= 0)
 GET		/scenarios/public/:scenario							controllers.ScenarioController.viewPublicScenarioGET(scenario: Long)
 GET		/scenarios/accept									controllers.ScenarioController.viewScenariosToAcceptGET(page: Integer ?= 0)
+GET		/scenarios/:scenario/accept							controllers.ScenarioController.acceptScenarioGET(scenario: Long)
 
 GET  	/scenarios/:scenario/checkpoints/add				controllers.CheckpointController.createCheckpointGET(scenario: Long)
 POST	/scenarios/:scenario/checkpoints/add				controllers.CheckpointController.createCheckpointPOST(scenario: Long)

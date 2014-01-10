@@ -74,6 +74,7 @@ public class ScenarioTest extends BaseControllerTest {
 		assertEquals(newName, modified.name);
 		assertEquals(newDate.toString(), modified.expirationDate.toString());
 		assertTrue(modified.isPublic);
+		assertFalse(modified.isAccepted);
 	}
 	
 	@Test
@@ -96,6 +97,21 @@ public class ScenarioTest extends BaseControllerTest {
 		Scenario modified = Scenario.find.ref(scenario.id);
 		assertNotNull(modified);
 		assertEquals(scenarioName, modified.name);
+	}
+	
+	@Test
+	public void acceptScenario() {
+		String adminEmail = play.Play.application().configuration().getString("application.admin");
+		Scenario scenario = Scenario.create(scenarioName, true, null, userEmail);
+		
+		Result result = callAction(
+				controllers.routes.ref.ScenarioController.acceptScenarioGET(scenario.id),
+				fakeRequest().withSession("email", adminEmail)
+		);
+		assertEquals(303, status(result));
+		Scenario modified = Scenario.find.ref(scenario.id);
+		assertNotNull(modified);
+		assertTrue(modified.isAccepted);
 	}
 
 }

@@ -237,6 +237,23 @@ public class ScenarioController extends Controller {
 		));
 	}
 	
+	@Security.Authenticated(Secured.class)
+	public static Result acceptScenarioGET(Long scenarioId) {
+		User user = User.find
+						.where()
+						.eq("email", session("email"))
+						.findUnique();
+		if(user.privilege != USER_PRIVILEGE.admin) {
+			return badRequest(index.render(user));
+		}
+		Scenario scenario = Scenario.find.ref(scenarioId);
+		if(scenario != null) {
+			scenario.isAccepted = true;
+			scenario.save();
+		}
+		return redirect(routes.ScenarioController.viewScenariosToAcceptGET(0));
+	}
+	
 	public static class ScenarioForm {
 		
 		@Required(message = "Name is required")
