@@ -1,8 +1,5 @@
 package models;
 
-public enum GAME_STATUS
-{
-	paused,
-	playing,
-	stopped
+public enum GAME_STATUS {
+	playing,stopped,paused
 }

@@ -16,6 +16,8 @@ public class Application extends Controller {
 		User user = null;
 		if(session("email") != null) {
 			user = User.find.where().eq("email", session("email")).findUnique();
+			if(user==null)
+				session().clear();
 		}
 		return ok(index.render(user));
 	}

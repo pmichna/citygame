@@ -26,10 +26,17 @@ create table game (
   user_id                   bigint,
   scenario_id               bigint,
   status                    varchar(7) not null,
-  start_date                datetime,
+  start_date                date,
   points_collected          integer,
-  constraint ck_game_status check (status in ('paused','playing','stopped')),
+  constraint ck_game_status check (status in ('playing','stopped','paused')),
   constraint pk_game primary key (id))
+;
+
+create table game_event (
+  id                        bigint auto_increment not null,
+  user_phone_number         varchar(9) not null,
+  message                   varchar(255),
+  constraint pk_game_event primary key (id))
 ;
 
 create table scenario (
@@ -100,6 +107,8 @@ drop table checkpoint_answer;
 drop table game;
 
 drop table game_checkpoint;
+
+drop table game_event;
 
 drop table scenario;
 
