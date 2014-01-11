@@ -20,7 +20,7 @@ public class CheckpointAnswerController extends Controller {
 		
 		Checkpoint checkpoint = Checkpoint.find.ref(checkpointId);
 		
-		if (!Secured.isMemberOf(checkpoint.scenario.id)) {
+		if (!Secured.isMemberOf(checkpoint.scenario.id) || (checkpoint.scenario.editedBy != null && checkpoint.scenario.editedBy.id != user.id)) {
 			return redirect(routes.Application.index());
 		}
 		return ok(addAnswer.render(Form.form(AnswerForm.class), user, checkpoint));
