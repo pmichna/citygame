@@ -49,8 +49,10 @@
 		</div><!-- /.col-sm-6 -->
 	</div><!-- /.row -->
 </div><!-- /.container -->
+
 <script>
 	function initialize() {
+		var marker;
 		var mapOptions = {
 			center: new google.maps.LatLng(52.22077, 21.0097),
 			zoom: 16,
@@ -68,7 +70,20 @@
 			$("#longitudeMinutes").val(lngMin);
 			$("#latitudeDegrees").val(latDeg);
 			$("#latitudeMinutes").val(latMin);
+			placeMarker(event.latLng, map);
 		});		
+		
+		function placeMarker(position, map) {
+			if(marker) {
+				marker.setPosition(position);
+			} else {
+		        marker = new google.maps.Marker({
+		          position: position,
+		          map: map
+		        });
+			}
+		        map.panTo(position);
+			}
 	}
 
 	$( document ).ready(function() {

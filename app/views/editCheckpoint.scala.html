@@ -87,12 +87,18 @@
 </div><!-- /.container -->
 <script>
 	function initialize() {
+		var marker;
+		var myLatLng = new google.maps.LatLng(@checkpoint.latitude, @checkpoint.longitude)
 		var mapOptions = {
-			center: new google.maps.LatLng(@checkpoint.latitude, @checkpoint.longitude),
+			center: myLatLng,
 			zoom: 16,
 			streetViewControl: false
 		};
 		var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+        marker = new google.maps.Marker({
+          position: myLatLng,
+          map: map
+        });
 		google.maps.event.addListener(map, 'click', function(event) {
 			var lng = event.latLng.lng();
 			var lat = event.latLng.lat();
@@ -104,7 +110,20 @@
 			$("#longitudeMinutes").val(lngMin);
 			$("#latitudeDegrees").val(latDeg);
 			$("#latitudeMinutes").val(latMin);
+			placeMarker(event.latLng, map);
 		});		
+		
+		function placeMarker(position, map) {
+			if(marker) {
+				marker.setPosition(position);
+			} else {
+		        marker = new google.maps.Marker({
+		          position: position,
+		          map: map
+		        });
+			}
+		        map.panTo(position);
+			}
 	}
 
 	$( document ).ready(function() {
