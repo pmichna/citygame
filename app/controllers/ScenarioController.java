@@ -191,6 +191,9 @@ public class ScenarioController extends Controller {
 		if(member.id == scenario.owner.id) {
 			return redirect(routes.Application.index());
 		}
+		if(scenario.owner.id != user.id) {
+			return redirect(routes.Application.index());
+		}
 		scenario.members.remove(member);
 		if(scenario.editedBy != null && scenario.editedBy.id == member.id) {
 			scenario.editedBy = null;
