@@ -41,6 +41,7 @@ public class ScenariosTest extends BaseModelTest {
 	}
 
 	@Test
+
 	public void findScenariosPublicAcceptedNotExpired() {
 
 		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
@@ -85,6 +86,7 @@ public class ScenariosTest extends BaseModelTest {
 	}
 	
 	@Test
+
 	public void editScenario() {
 		String oldName = "Scenario 1";
 		Boolean oldIsPublic = false;

@@ -1,0 +1,79 @@
+@(user: User, games: List[Game], currentPage: Integer, totalPageCount: Integer, pageSize: Integer, isFirstPage: Boolean, isListPage: Boolean)
+
+@main("My Games", user) {
+<div class="container">
+	<div class="page-header">
+		<h1>My games</h1>
+	</div>
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>#</th>
+				<th>Scenario name</th>
+				<th>Score</th>
+				<th>Start date</th>
+				<th>Status</th>
+			</tr>
+		</thead>
+		<tbody>
+			@for(g <- games) {
+			<tr>
+				<td>@{(games.indexOf(g)+1)+pageSize*currentPage}</td>
+				<td>@g.scenario.name</td>
+				<td>@g.pointsCollected</td>
+				<td>@g.startDate</td>
+				<td>@g.status</td>
+				<td> @if(g.status!=GAME_STATUS.stopped){
+				@if(g.status==GAME_STATUS.playing){ 
+					<a class="btn btn-warning btn-xs" href="@routes.GameController.pauseGameById(g.id,currentPage)"> 
+						<span class="glyphicon glyphicon-pause"></span> Pause 
+					</a> 
+				}else{ 
+					<a class="btn btn-primary btn-xs" href="@routes.GameController.playGameById(g.id,currentPage)"> 
+						<span class="glyphicon glyphicon-play"></span> Play 
+					</a> 
+				} 
+				<a class="btn btn-danger btn-xs" href="@routes.GameController.stopGameById(g.id,currentPage)"> 
+					<span class="glyphicon glyphicon-stop"></span> Stop 
+				</a> 
+				} 
+				</td>
+			</tr>
+			}
+		</tbody>
+	</table>
+	@if(totalPageCount != 1) {
+	<ul class="pagination">
+		@if(currentPage == 0) {
+		<li class="disabled">
+			<span>&laquo;</span>
+		</li>
+		} else {
+		<li>
+			<a href="@routes.GameController.viewMyGamesGET(currentPage-1)">&laquo;</a>
+		</li>
+		}
+		@for(p <- 1 to totalPageCount) {
+		@if(p == currentPage+1) {
+		<li class="active">
+			<a href="@routes.GameController.viewMyGamesGET(p-1)">@p</a>
+		</li>
+		} else {
+		<li>
+			<a href="@routes.GameController.viewMyGamesGET(p-1)">@p</a>
+		</li>
+		}
+		}
+		@if(currentPage == totalPageCount-1) {
+		<li class="disabled">
+			<span>&raquo;</span>
+		</li>
+		} else {
+		<li>
+			<a href="@routes.GameController.viewMyGamesGET(currentPage+1)">&raquo;</a>
+		</li>
+		}
+	</ul>
+	}
+</div><!-- /.container -->
+}
