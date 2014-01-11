@@ -12,11 +12,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.sql.Date;
 import play.data.validation.Constraints.*;
+import java.util.List;
 
 import com.avaje.ebean.Ebean;
 
 public class ScenarioController extends Controller {
-	private static int scenariosPageSize = 10;
+	private static int pageSize = 10;
 	
 	@Security.Authenticated(Secured.class)
 	public static Result createScenarioGET() {
@@ -52,7 +53,7 @@ public class ScenarioController extends Controller {
 			} else {
 				date = new Date(formatter.parse(day + "/" + month + "/" + year).getTime());
 			}
-			Scenario.create(name, isPublic, date, user.email);
+			Scenario.create(name, isPublic, date, user.email, user.privilege == USER_PRIVILEGE.admin);
 			return redirect(routes.ScenarioController.viewPrivateScenariosGET(0));
 		}
 	}
@@ -63,16 +64,16 @@ public class ScenarioController extends Controller {
 						.where()
 						.eq("email", session("email"))
 						.findUnique();
-		int totalPageCount = Scenario.getTotalPrivatePageCount(user.email, scenariosPageSize);
+		int totalPageCount = Scenario.getTotalPrivatePageCount(user.email, pageSize);
 		if(pageNum > totalPageCount-1) {
 			pageNum = 0;
 		}
 		return ok(viewPrivateScenarios.render(
 				user,
-				Scenario.findInvolvingUser(user.email, scenariosPageSize, pageNum),
+				Scenario.findInvolvingUser(user.email, pageSize, pageNum),
 				pageNum,
 				totalPageCount,
-				scenariosPageSize,
+				pageSize,
 				pageNum == 0,
 				pageNum == totalPageCount - 1
 			)
@@ -85,16 +86,16 @@ public class ScenarioController extends Controller {
 						.where()
 						.eq("email", session("email"))
 						.findUnique();
-		int totalPageCount = Scenario.getTotalPublicNotExpiredPageCount(scenariosPageSize, new Date(System.currentTimeMillis()));
+		int totalPageCount = Scenario.getTotalPublicAcceptedNotExpiredPageCount(pageSize, new Date(System.currentTimeMillis()));
 		if(pageNum > totalPageCount - 1) {
 			pageNum = 0;
 		}
 		return ok(viewPublicScenarios.render(
 				user,
-				Scenario.findPublicNotExpired(new Date(System.currentTimeMillis()), scenariosPageSize, pageNum),
+				Scenario.findPublicAcceptedNotExpired(new Date(System.currentTimeMillis()), pageSize, pageNum),
 				pageNum,
 				totalPageCount,
-				scenariosPageSize,
+				pageSize,
 				pageNum == 0,
 				pageNum == totalPageCount - 1
 			)
@@ -107,11 +108,12 @@ public class ScenarioController extends Controller {
 						.where()
 						.eq("email", session("email"))
 						.findUnique();
+		Boolean isAdminMode = (user.privilege == USER_PRIVILEGE.admin);
 		Scenario scenario = Scenario.find.byId(scenarioId);
-		if(!Secured.isMemberOf(scenarioId)) {
+		if(!Secured.isMemberOf(scenarioId) && !isAdminMode) {
 			return redirect(routes.ScenarioController.viewPrivateScenariosGET(0));
 		}
-		return ok(viewPrivateScenario.render(user, scenario));
+		return ok(viewPrivateScenario.render(user, scenario, isAdminMode));
 	}
 	
 	@Security.Authenticated(Secured.class)
@@ -126,9 +128,11 @@ public class ScenarioController extends Controller {
 	
 	@Security.Authenticated(Secured.class)
 	public static Result addMemberGET(Long scenarioId) {
-		User user=User.find
-				.where().eq("email", session("email")).findUnique();
-		Scenario scenario = Scenario.find.byId(scenarioId);
+		User user = User.find
+						.where()
+						.eq("email", session("email"))
+						.findUnique();
+		Scenario scenario = Scenario.find.ref(scenarioId);
 		return ok(addMember.render(Form.form(Member.class),user,scenario));
 	}
 	
@@ -162,10 +166,13 @@ public class ScenarioController extends Controller {
 		if (scenario == null) {
 			return redirect(routes.Application.index());
 		}
-		if(member.id == scenario.owner.id){
+		if(member.id == scenario.owner.id) {
 			return redirect(routes.Application.index());
 		}
 		scenario.members.remove(member);
+		if(scenario.editedBy != null && scenario.editedBy.id == member.id) {
+			scenario.editedBy = null;
+		}
 		scenario.save();
 		return redirect(routes.ScenarioController.viewPrivateScenarioGET(scenario.id));
 	}
@@ -180,7 +187,27 @@ public class ScenarioController extends Controller {
 			return redirect(routes.ScenarioController.viewPrivateScenariosGET(0));
 		}
 		Scenario scenario = Scenario.find.ref(scenarioId);
-		return ok(editScenario.render(Form.form(ScenarioForm.class), user, scenario));
+		if(scenario.editedBy != null && !scenario.editedBy.email.equals(user.email)) {
+			return ok(editScenario.render(Form.form(ScenarioForm.class), user, scenario, true));
+		}
+		scenario.editedBy = user;
+		scenario.save();
+		return ok(editScenario.render(Form.form(ScenarioForm.class), user, scenario, false));
+	}
+	
+	@Security.Authenticated(Secured.class)
+	public static Result cancelEditGET(Long scenarioId) {
+		User user = User.find
+						.where()
+						.eq("email", session("email"))
+						.findUnique();
+		Scenario scenario = Scenario.find.ref(scenarioId);
+		if(scenario == null || !scenario.editedBy.email.equals(user.email)) {
+			return redirect(routes.ScenarioController.viewPrivateScenariosGET(0));
+		}
+		scenario.editedBy = null;
+		scenario.save();
+		return redirect(routes.ScenarioController.viewPrivateScenariosGET(0));
 	}
 	
 	@Security.Authenticated(Secured.class)
@@ -194,7 +221,7 @@ public class ScenarioController extends Controller {
 		Form<ScenarioForm> editForm = Form.form(ScenarioForm.class)
 											.bindFromRequest();
 		if (editForm.hasErrors()) {
-			return badRequest(editScenario.render(editForm, user, Scenario.find.ref(scenarioId)));
+			return badRequest(editScenario.render(editForm, user, Scenario.find.ref(scenarioId), false));
 		} else {
 			String name = editForm.get().name;
 			String day = editForm.get().day;
@@ -208,9 +235,48 @@ public class ScenarioController extends Controller {
 			} else {
 				date = new Date(formatter.parse(day + "/" + month + "/" + year).getTime());
 			}
-			Scenario.edit(scenarioId, name, isPublic, date);
+			Scenario.edit(scenarioId, name, isPublic, date, user.privilege == USER_PRIVILEGE.admin);
 			return redirect(routes.ScenarioController.viewPrivateScenarioGET(scenarioId));
 		}
+	}
+	
+	@Security.Authenticated(Secured.class)
+	public static Result viewScenariosToAcceptGET(int pageNum) {
+		User user = User.find
+						.where()
+						.eq("email", session("email"))
+						.findUnique();
+		if(user.privilege != USER_PRIVILEGE.admin) {
+			return badRequest(index.render(user));
+		}
+		List<Scenario> scenarios = Scenario.findToAccept(new Date(System.currentTimeMillis()), pageSize, pageNum);
+		int totalPageCount = Scenario.getTotalToAcceptPageCount(new Date(System.currentTimeMillis()), pageSize);
+		return ok(viewScenariosToAccept.render(
+			user,
+			scenarios,
+			pageNum,
+			totalPageCount,
+			pageSize,
+			pageNum == 0,
+			pageNum == totalPageCount - 1					
+		));
+	}
+	
+	@Security.Authenticated(Secured.class)
+	public static Result acceptScenarioGET(Long scenarioId) {
+		User user = User.find
+						.where()
+						.eq("email", session("email"))
+						.findUnique();
+		if(user.privilege != USER_PRIVILEGE.admin) {
+			return badRequest(index.render(user));
+		}
+		Scenario scenario = Scenario.find.ref(scenarioId);
+		if(scenario != null) {
+			scenario.isAccepted = true;
+			scenario.save();
+		}
+		return redirect(routes.ScenarioController.viewScenariosToAcceptGET(0));
 	}
 	
 	public static class ScenarioForm {

@@ -39,6 +39,7 @@ create table scenario (
   is_accepted               tinyint(1) default 0 not null,
   expiration_date           date,
   owner_id                  bigint,
+  edited_by_id              bigint,
   constraint pk_scenario primary key (id))
 ;
 
@@ -78,6 +79,8 @@ alter table game add constraint fk_game_scenario_4 foreign key (scenario_id) ref
 create index ix_game_scenario_4 on game (scenario_id);
 alter table scenario add constraint fk_scenario_owner_5 foreign key (owner_id) references user (id) on delete restrict on update restrict;
 create index ix_scenario_owner_5 on scenario (owner_id);
+alter table scenario add constraint fk_scenario_editedBy_6 foreign key (edited_by_id) references user (id) on delete restrict on update restrict;
+create index ix_scenario_editedBy_6 on scenario (edited_by_id);
 
 
 

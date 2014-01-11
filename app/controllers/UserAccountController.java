@@ -2,28 +2,28 @@ package controllers;
 
 import play.*;
 import play.data.*;
+import play.data.validation.*;
 import play.mvc.*;
 import static play.data.Form.*;
 import views.html.*;
 import models.*;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.avaje.ebean.Ebean;
 
 public class UserAccountController extends Controller {
+	private static String adminEmail = play.Play.application().configuration().getString("application.admin");
 
 	public static Result createAccountGET() {
 		if (session("email") != null) {
 			return redirect(routes.Application.index());
 		}
-		return ok(createAccount.render(Form.form(Registration.class)));
+		return ok(createAccount.render(Form.form(RegistrationForm.class)));
 	}
 
 	public static Result createAccountPOST() {
-		Form<Registration> signupForm = Form.form(Registration.class)
-				.bindFromRequest();
+		Form<RegistrationForm> signupForm = Form.form(RegistrationForm.class).bindFromRequest();
 		if (signupForm.hasErrors()) {
 			return badRequest(createAccount.render(signupForm));
 		} else {
@@ -31,36 +31,36 @@ public class UserAccountController extends Controller {
 			String password = signupForm.get().password;
 			String alias = signupForm.get().alias;
 			String phoneNumber = signupForm.get().phoneNumber;
-			new User(email, alias, password, phoneNumber,
-					USER_PRIVILEGE.regular).save();
+			USER_PRIVILEGE privilege = USER_PRIVILEGE.regular;
+			if(email.equals(adminEmail)) {
+				privilege = USER_PRIVILEGE.admin;
+			}
+			new User(email, alias, password, phoneNumber, privilege).save();
 			return redirect(routes.Application.loginGET());
 		}
 	}
 
 	@Security.Authenticated(Secured.class)
 	public static Result deleteAccountGET() {
-		String email=request().username();
-		if(email==null){
-			//flash("error", "You need to be logged in to delete your account");
-			return redirect(routes.Application.index());
-		}
+		String email = request().username();
 		session().clear();
-		Ebean.delete(User.find.where().eq("email", email).findUnique());
-		//flash("success", "Your account has been deleted");
+		User.find.where().eq("email", email).findUnique().delete();
 		return redirect(routes.Application.index());
 	}
 
 	@Security.Authenticated(Secured.class)
 	public static Result editAccountGET() {
-		return ok(editAccount.render(Form.form(SaveChanges.class), User.find
+		return ok(editAccount.render(Form.form(SaveChangesForm.class), User.find
 				.where().eq("email", request().username()).findUnique()));
 	}
 
 	public static Result editAccountPOST() {
-		User user = User.find.where().eq("email", session("email"))
-				.findUnique();
-		Form<SaveChanges> editForm = Form.form(SaveChanges.class)
-				.bindFromRequest();
+		User user = User.find
+						.where()
+						.eq("email", session("email"))
+						.findUnique();
+		
+		Form<SaveChangesForm> editForm = Form.form(SaveChangesForm.class).bindFromRequest();
 		if (editForm.hasErrors()) {
 			return badRequest(editAccount.render(editForm, user));
 		} else {
@@ -83,25 +83,30 @@ public class UserAccountController extends Controller {
 				.eq("email", request().username()).findUnique()));
 	}
 
-	public static class Registration {
+	public static class RegistrationForm {
+		@Constraints.Required(message = "Email required")
 		public String email;
+		
+		@Constraints.Required(message = "Password required")
 		public String password;
+		
+		@Constraints.Required(message = "Alias required")
 		public String alias;
+		
+		@Constraints.Required(message = "Phone number required (9 digits)")
+		@Constraints.Pattern(value = "\\d{9}", message = "Invalid phone number. Must be 9 digits.")
 		public String phoneNumber;
 
 		public String validate() {
 			final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
-					+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-			final String PHONE_PATTERN = "\\d{9}";
-			Pattern emailPattern = Pattern.compile(EMAIL_PATTERN);
-			Matcher emailMatcher = emailPattern.matcher(email);
-			Pattern phonePattern = Pattern.compile(PHONE_PATTERN);
-			Matcher phoneMatcher = phonePattern.matcher(phoneNumber);
-
+                             + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+            Pattern emailPattern = Pattern.compile(EMAIL_PATTERN);
+            Matcher emailMatcher = emailPattern.matcher(email);
+			
 			if (!emailMatcher.matches()) {
-				return "Invalid  email address";
-			}
-
+				return "Invalid email address";
+			}            
+			
 			// check if email already registered
 			if (User.find.where().eq("email", email).findUnique() != null) {
 				return "Email already registered";
@@ -110,16 +115,6 @@ public class UserAccountController extends Controller {
 			// check if alias already registered
 			if (User.find.where().eq("alias", alias).findUnique() != null) {
 				return "Alias already registered";
-			}
-
-			// password validation
-			if (password == null || password.equals("")) {
-				return "Password cannot be empty";
-			}
-
-			// phone number validation
-			if (!phoneMatcher.matches()) {
-				return "Invalid phone number. Must be: xxxxxxxxx, where x - digit";
 			}
 
 			// check if phone number already exists
@@ -131,30 +126,32 @@ public class UserAccountController extends Controller {
 		}
 	}
 
-	public static class SaveChanges {
+	public static class SaveChangesForm {
+		@Constraints.Required(message = "Email required")
 		public String email;
+		
 		public String password;
+		
+		@Constraints.Required
 		public String alias;
+		
+		@Constraints.Required
+		@Constraints.Pattern(value = "\\d{9}", message = "Invalid phone number. Must be 9 digits.")
 		public String phoneNumber;
 
 		public String validate() {
-			// return "test";
-
 			final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
-					+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-			final String PHONE_PATTERN = "\\d{9}";
-			Pattern emailPattern = Pattern.compile(EMAIL_PATTERN);
-			Matcher emailMatcher = emailPattern.matcher(email);
-			Pattern phonePattern = Pattern.compile(PHONE_PATTERN);
-			Matcher phoneMatcher = phonePattern.matcher(phoneNumber);
-
+                             + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+            Pattern emailPattern = Pattern.compile(EMAIL_PATTERN);
+            Matcher emailMatcher = emailPattern.matcher(email);
+			
+			if (!emailMatcher.matches()) {
+				return "Invalid email address";
+			} 
+			
 			String loggedEmail = session("email");
 			User loggedUser = User.find.where().eq("email", loggedEmail)
 					.findUnique();
-
-			if (!emailMatcher.matches()) {
-				return "Invalid  email address";
-			}
 			
 			// check if email already registered
 			if (!loggedUser.email.equals(email)
@@ -166,11 +163,6 @@ public class UserAccountController extends Controller {
 			if (!loggedUser.alias.equals(alias)
 					&& User.find.where().eq("alias", alias).findUnique() != null) {
 				return "Alias already registered";
-			}
-
-			// phone number validation
-			if (!phoneMatcher.matches()) {
-				return "Invalid phone number. Must be: xxxxxxxxx, where x - digit";
 			}
 
 			// check if phone number already exists

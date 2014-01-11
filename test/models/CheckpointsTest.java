@@ -27,8 +27,8 @@ public class CheckpointsTest extends BaseModelTest {
 	
 	@Test
 	public void createAndRetrieveCheckpoint() {
-		Scenario scenario = Scenario.create("Scenario 1", false, null, userEmail);
-		Checkpoint checkpoint = Checkpoint.create(checkpointName, longitude, latitude, points, message, scenario.id);
+		Scenario scenario = Scenario.create("Scenario 1", false, null, userEmail, false);
+		Checkpoint checkpoint = Checkpoint.create(checkpointName, longitude, latitude, points, message, scenario.id, false);
 		  	
 		List<Checkpoint> results = Checkpoint.findAssignedTo(scenario.id);
 		assertEquals(1, results.size());
@@ -41,9 +41,9 @@ public class CheckpointsTest extends BaseModelTest {
 	@Test
 	public void addAndRetrievePossibleAnswer() {
 		String answer1 = "answer1";
-		Scenario scenario = Scenario.create("Scenario 1", false, null, userEmail);
-		Checkpoint checkpoint = Checkpoint.create(checkpointName, longitude, latitude, points, message, scenario.id);
-		Checkpoint.addPossibleAnswer(answer1, checkpoint.id);
+		Scenario scenario = Scenario.create("Scenario 1", false, null, userEmail, false);
+		Checkpoint checkpoint = Checkpoint.create(checkpointName, longitude, latitude, points, message, scenario.id, false);
+		Checkpoint.addPossibleAnswer(answer1, checkpoint.id, false);
 		
 		List<String> answers = Checkpoint.getAnswers(checkpoint.id);
 		assertEquals(1, answers.size());		
@@ -60,9 +60,9 @@ public class CheckpointsTest extends BaseModelTest {
 		answers.add(answer2);
 		answers.add(answer3);
 		
-		Scenario scenario = Scenario.create("Scenario 1", false, null, userEmail);
-		Checkpoint checkpoint = Checkpoint.create(checkpointName, longitude, latitude, points, message, scenario.id);
-		Checkpoint.addPossibleAnswers(answers, checkpoint.id);
+		Scenario scenario = Scenario.create("Scenario 1", false, null, userEmail, false);
+		Checkpoint checkpoint = Checkpoint.create(checkpointName, longitude, latitude, points, message, scenario.id, false);
+		Checkpoint.addPossibleAnswers(answers, checkpoint.id, false);
 		
 		List<String> results = Checkpoint.getAnswers(checkpoint.id);
 		assertEquals(3, results.size());
@@ -73,8 +73,8 @@ public class CheckpointsTest extends BaseModelTest {
 	
 	@Test
 	public void editCheckpoint() {
-		Scenario scenario = Scenario.create("Scenario 1", false, null, userEmail);
-		Checkpoint checkpoint = Checkpoint.create(checkpointName, longitude, latitude, points, message, scenario.id);
+		Scenario scenario = Scenario.create("Scenario 1", false, null, userEmail, false);
+		Checkpoint checkpoint = Checkpoint.create(checkpointName, longitude, latitude, points, message, scenario.id, false);
 		
 		String newName = "newName";
 		double newLongitude = 12.2;
@@ -82,12 +82,30 @@ public class CheckpointsTest extends BaseModelTest {
 		int newPoints = 12;
 		String newMessage = "newMessage";
 		
-		Checkpoint.editCheckpoint(checkpoint.id, newName, newLongitude, newLatitude, newPoints, newMessage);
+		Checkpoint.editCheckpoint(checkpoint.id, newName, newLongitude, newLatitude, newPoints, newMessage, false);
 		checkpoint.refresh();
 		assertEquals(newName, checkpoint.name);
 		assertEquals(newLongitude, checkpoint.longitude, DELTA);
 		assertEquals(newLatitude, checkpoint.latitude, DELTA);
 		assertEquals(newPoints, checkpoint.points);
 		assertEquals(newMessage, checkpoint.message);
+	}
+	
+	@Test
+	public void hasAnswer() {
+		Scenario scenario = Scenario.create("Scenario 1", false, null, userEmail, false);
+		Checkpoint checkpoint = Checkpoint.create(checkpointName, longitude, latitude, points, message, scenario.id, false);
+		String answer1 = "answer 1";
+		String answer2 = "answer 2";
+		String answer3 = "answer 3";
+		
+		Checkpoint.addPossibleAnswer(answer1, checkpoint.id, false);
+		Checkpoint.addPossibleAnswer(answer2, checkpoint.id, false);
+		Checkpoint.addPossibleAnswer(answer3, checkpoint.id, false);
+		
+		assertTrue(Checkpoint.hasAnswer(checkpoint.id, answer1));
+		assertTrue(Checkpoint.hasAnswer(checkpoint.id, answer2));
+		assertTrue(Checkpoint.hasAnswer(checkpoint.id, answer3));
+		assertFalse(Checkpoint.hasAnswer(checkpoint.id, "nothing"));
 	}
 }

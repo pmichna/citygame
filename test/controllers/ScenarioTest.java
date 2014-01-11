@@ -56,7 +56,7 @@ public class ScenarioTest extends BaseControllerTest {
 		Date newDate = new Date(System.currentTimeMillis());
 		Boolean newIsPublic = true;
 		
-		Scenario scenario = Scenario.create(scenarioName, !newIsPublic, null, userEmail);
+		Scenario scenario = Scenario.create(scenarioName, !newIsPublic, null, userEmail, false);
 		
 		Result result = callAction(
 				controllers.routes.ref.ScenarioController.editScenarioPOST(scenario.id),
@@ -74,6 +74,7 @@ public class ScenarioTest extends BaseControllerTest {
 		assertEquals(newName, modified.name);
 		assertEquals(newDate.toString(), modified.expirationDate.toString());
 		assertTrue(modified.isPublic);
+		assertFalse(modified.isAccepted);
 	}
 	
 	@Test
@@ -81,7 +82,7 @@ public class ScenarioTest extends BaseControllerTest {
 		Date newDate = new Date(System.currentTimeMillis());
 		Boolean newIsPublic = true;
 		
-		Scenario scenario = Scenario.create(scenarioName, !newIsPublic, null, userEmail);
+		Scenario scenario = Scenario.create(scenarioName, !newIsPublic, null, userEmail, false);
 		
 		Result result = callAction(
 				controllers.routes.ref.ScenarioController.editScenarioPOST(scenario.id),
@@ -96,6 +97,22 @@ public class ScenarioTest extends BaseControllerTest {
 		Scenario modified = Scenario.find.ref(scenario.id);
 		assertNotNull(modified);
 		assertEquals(scenarioName, modified.name);
+	}
+	
+	@Test
+	public void acceptScenario() {
+		new User("admin@citygame.com", "admin", "userPassword", "111111222",
+				USER_PRIVILEGE.admin).save();
+		Scenario scenario = Scenario.create(scenarioName, true, null, userEmail, false);
+		
+		Result result = callAction(
+				controllers.routes.ref.ScenarioController.acceptScenarioGET(scenario.id),
+				fakeRequest().withSession("email", "admin@citygame.com")
+		);
+		assertEquals(303, status(result));
+		Scenario modified = Scenario.find.ref(scenario.id);
+		assertNotNull(modified);
+		assertTrue(modified.isAccepted);
 	}
 
 }

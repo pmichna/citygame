@@ -33,14 +33,14 @@ public class Checkpoint extends Model {
 	@OneToMany(cascade = CascadeType.ALL)
 	public List<CheckpointAnswer> possibleAnswers = new ArrayList<CheckpointAnswer>();
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.PERSIST)
 	public Scenario scenario;
 
 	public static Model.Finder<Long, Checkpoint> find = new Finder<Long, Checkpoint>(
 			Long.class, Checkpoint.class);
 
 	public static Checkpoint create(String checkpointName, double longitude,
-			double latitude, int points, String message, Long scenarioId) {
+			double latitude, int points, String message, Long scenarioId, Boolean isAccepted) {
 		Checkpoint checkpoint = new Checkpoint();
 		checkpoint.name = checkpointName;
 		checkpoint.longitude = longitude;
@@ -48,6 +48,7 @@ public class Checkpoint extends Model {
 		checkpoint.points = points;
 		checkpoint.message = message;
 		checkpoint.scenario = Scenario.find.ref(scenarioId);
+		checkpoint.scenario.isAccepted = isAccepted;
 		checkpoint.save();
 		return checkpoint;
 	}
@@ -73,22 +74,24 @@ public class Checkpoint extends Model {
 		return find.where().eq("scenario.id", scenario).findList();
 	}
 
-	public static String addPossibleAnswer(String answer, Long checkpointId) {
+	public static String addPossibleAnswer(String answer, Long checkpointId, Boolean isAccepted) {
 		Checkpoint checkpoint = find.ref(checkpointId);
 		CheckpointAnswer checkpointAnswer = new CheckpointAnswer(answer);
 		checkpoint.possibleAnswers.add(checkpointAnswer);
+		checkpoint.scenario.isAccepted = isAccepted;
 		checkpoint.save();
 		return answer;
 	}
 
 	public static List<String> addPossibleAnswers(List<String> answers,
-			Long checkpointId) {
+			Long checkpointId, Boolean isAccepted) {
 		Checkpoint checkpoint = find.ref(checkpointId);
 		List<CheckpointAnswer> checkpointAnswers = new ArrayList<CheckpointAnswer>();
 		for (String a : answers) {
 			checkpointAnswers.add(new CheckpointAnswer(a));
 		}
 		checkpoint.possibleAnswers.addAll(checkpointAnswers);
+		checkpoint.scenario.isAccepted = isAccepted;
 		checkpoint.save();
 		return answers;
 	}
@@ -103,7 +106,7 @@ public class Checkpoint extends Model {
 	}
 	
 	 public static Checkpoint editCheckpoint(Long checkpointId, String checkpointName, double longitude,
-				double latitude, int points, String message) {
+				double latitude, int points, String message, Boolean isAccepted) {
     	Checkpoint checkpoint = find.ref(checkpointId);
     	if(checkpoint == null) {
     		return null;
@@ -123,8 +126,16 @@ public class Checkpoint extends Model {
 		if(checkpoint.points != points) {
 			checkpoint.points = points;
 		}
+		checkpoint.scenario.isAccepted = isAccepted;
     	checkpoint.save();
     	
     	return checkpoint;
+	}
+	
+	public static Boolean hasAnswer(Long checkpointId, String answer) {
+		return find.where()
+					.eq("id", checkpointId)
+					.eq("possibleAnswers.text", answer)
+					.findRowCount() > 0;
 	}
 }

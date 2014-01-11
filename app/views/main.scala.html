@@ -44,14 +44,19 @@
 									<a href="#" class="dropdown-toggle" data-toggle="dropdown">Scenarios <b class="caret"></b></a>
 									<ul class="dropdown-menu">
 										<li>
-											<a href="@routes.ScenarioController.viewPrivateScenariosGET()">My scenarios</a>
+											<a href="@routes.ScenarioController.viewPrivateScenariosGET()">Private</a>
 										</li>
 										<li>
-											<a href="@routes.ScenarioController.viewPublicScenariosGET()">Public scenarios</a>
+											<a href="@routes.ScenarioController.viewPublicScenariosGET()">Public</a>
 										</li>
 										<li>
-											<a href="@routes.ScenarioController.createScenarioGET()">New scenario</a>
+											<a href="@routes.ScenarioController.createScenarioGET()">Create new</a>
 										</li>
+										@if(user.privilege == USER_PRIVILEGE.admin) {
+											<li>
+												<a href="@routes.ScenarioController.viewScenariosToAcceptGET(0)">Moderate</a>
+											</li>
+										}
 									</ul>
 								</li>
 							</ul>
