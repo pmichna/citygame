@@ -38,13 +38,30 @@ public class CheckpointAnswerController extends Controller {
 			return badRequest(addAnswer.render(createForm, user, checkpoint));
 		} else {
 			String text = createForm.get().text;
-			if(Checkpoint.hasAnswer(checkpoint.id, text)) {
+			if(Checkpoint.hasAnswer(checkpoint.id, text))	 {
 				createForm.reject("Answer already exists");
 				return badRequest(addAnswer.render(createForm, user, checkpoint));
 			}
 			Checkpoint.addPossibleAnswer(text, checkpointId, user.privilege == USER_PRIVILEGE.admin);
 			return redirect(routes.CheckpointController.editCheckpointGET(checkpoint.id));
 		}
+	}
+	
+	@Security.Authenticated(Secured.class)
+	public static Result deleteCheckpointAnswerGET(Long answerId) {
+		User user = User.find
+						.where()
+						.eq("email", session("email"))
+						.findUnique();		
+		Checkpoint checkpoint = Checkpoint.find.where().eq("possibleAnswers.id", answerId).findUnique();
+		if(!checkpoint.scenario.members.contains(user)) {
+			return redirect(routes.Application.index());
+		}
+		if(checkpoint.scenario.editedBy != null && checkpoint.scenario.editedBy.id != user.id) {
+			return redirect(routes.ScenarioController.editScenarioGET(checkpoint.scenario.id));
+		}
+		CheckpointAnswer.find.byId(answerId).delete();
+		return redirect(routes.CheckpointController.editCheckpointGET(checkpoint.id));
 	}
 	
 	public static class AnswerForm {
