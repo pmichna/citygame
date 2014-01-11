@@ -65,9 +65,6 @@ public class ScenarioController extends Controller {
 						.eq("email", session("email"))
 						.findUnique();
 		int totalPageCount = Scenario.getTotalPrivatePageCount(user.email, pageSize);
-		if(totalPageCount==0){
-			totalPageCount=1;
-		}
 		if(pageNum > totalPageCount-1) {
 			pageNum = 0;
 		}
@@ -76,9 +73,7 @@ public class ScenarioController extends Controller {
 				Scenario.findInvolvingUser(user.email, pageSize, pageNum),
 				pageNum,
 				totalPageCount,
-				pageSize,
-				pageNum == 0,
-				pageNum == totalPageCount - 1
+				pageSize
 			)
 		);
 	}
@@ -93,17 +88,12 @@ public class ScenarioController extends Controller {
 		if(pageNum > totalPageCount - 1) {
 			pageNum = 0;
 		}
-		if(totalPageCount==0){
-			totalPageCount=1;
-		}
 		return ok(viewPublicScenarios.render(
 				user,
 				Scenario.findPublicAcceptedNotExpired(new Date(System.currentTimeMillis()), pageSize, pageNum),
 				pageNum,
 				totalPageCount,
-				pageSize,
-				pageNum == 0,
-				pageNum == totalPageCount - 1
+				pageSize
 			)
 		);
 	}
@@ -257,17 +247,12 @@ public class ScenarioController extends Controller {
 		}
 		List<Scenario> scenarios = Scenario.findToAccept(new Date(System.currentTimeMillis()), pageSize, pageNum);
 		int totalPageCount = Scenario.getTotalToAcceptPageCount(new Date(System.currentTimeMillis()), pageSize);
-		if(totalPageCount==0){
-			totalPageCount=1;
-		}
 		return ok(viewScenariosToAccept.render(
 			user,
 			scenarios,
 			pageNum,
 			totalPageCount,
-			pageSize,
-			pageNum == 0,
-			pageNum == totalPageCount - 1					
+			pageSize
 		));
 	}
 	

@@ -27,14 +27,14 @@ public class GameController extends Controller {
 		if (pageNum > totalPageCount - 1) {
 			pageNum = 0;
 		}
-		if(totalPageCount==0){
-			totalPageCount=1;
-		}
 		Logger.debug("Page num:" + pageNum+" totalPageCount:" + totalPageCount);
-		return ok(viewMyGames.render(user,
-				Game.findGames(user, gamesPageSize, pageNum), pageNum,
-				totalPageCount, gamesPageSize, pageNum == 0,
-				pageNum == totalPageCount - 1));
+		return ok(viewMyGames.render(
+					user,
+					Game.findGames(user, gamesPageSize, pageNum),
+					pageNum,
+					totalPageCount,
+					gamesPageSize)
+		);
 	}
 
 	private static class GameThread implements Runnable {
@@ -121,8 +121,13 @@ public class GameController extends Controller {
 				isFirstPage = true;
 				isListPage = false;
 			}
-			return ok(viewMyGames.render(user, games, pageNumber,
-					totalPageCount, gamesPageSize, isFirstPage, isListPage));
+			return ok(viewMyGames.render(
+									user,
+									games,
+									pageNumber,
+									totalPageCount,
+									gamesPageSize)
+			);
 		} else
 			return redirect(routes.GameController.viewMyGamesGET(pageNumber));
 	}

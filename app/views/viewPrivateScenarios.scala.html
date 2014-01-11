@@ -1,4 +1,4 @@
-@(user: User, scenarios: List[Scenario], currentPage: Integer, totalPageCount: Integer, pageSize: Integer, isFirstPage: Boolean, isLastPage: Boolean)
+@(user: User, scenarios: List[Scenario], currentPage: Integer, totalPageCount: Integer, pageSize: Integer)
 
 @main("Private scenarios", user) {
 	<div class="container">
@@ -36,7 +36,7 @@
 				}
 			</tbody>
 		</table>
-		@if(totalPageCount != 1) {
+		@if(totalPageCount > 1) {
 			<ul class="pagination">
 				@if(currentPage == 0) {
 					<li class="disabled"><span>&laquo;</span></li>

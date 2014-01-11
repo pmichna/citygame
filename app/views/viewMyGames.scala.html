@@ -1,4 +1,4 @@
-@(user: User, games: List[Game], currentPage: Integer, totalPageCount: Integer, pageSize: Integer, isFirstPage: Boolean, isListPage: Boolean)
+@(user: User, games: List[Game], currentPage: Integer, totalPageCount: Integer, pageSize: Integer)
 
 @main("My Games", user) {
 <div class="container">
@@ -42,7 +42,7 @@
 			}
 		</tbody>
 	</table>
-	@if(totalPageCount != 1) {
+	@if(totalPageCount > 1) {
 	<ul class="pagination">
 		@if(currentPage == 0) {
 		<li class="disabled">
