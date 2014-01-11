@@ -33,7 +33,7 @@ public class GamesTest extends BaseModelTest {
 		user2 = new User(user2Email, user2Alias, user2Password, user2PhoneNumber,
 				USER_PRIVILEGE.regular);
 		user2.save();
-		scenario = Scenario.create(scenarioName,true,null,user1Email);
+		scenario = Scenario.create(scenarioName,true,null,user1Email,true);
 	}
 	
 	

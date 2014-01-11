@@ -44,7 +44,7 @@ public class GameTest extends BaseControllerTest {
 		java.util.Calendar cal = java.util.Calendar.getInstance();
 		java.util.Date utilDate = cal.getTime();
 		java.sql.Date sqlDate = new Date(utilDate.getTime());
-		scenario = Scenario.create(scenarioName, true, null, user1Email);
+		scenario = Scenario.create(scenarioName, true, null, user1Email,true);
 		game=Game.createNewGame(user1, scenario, sqlDate);
 	}
 

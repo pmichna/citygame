@@ -15,9 +15,9 @@ import java.util.regex.Pattern;
 
 public class TestDataController extends Controller {
 	public static Result loadTestData() {
-		for (int i = 0; i < 10; i++) {
+		for (int i = 10; i < 30; i++) {
 			User tempUser = new User("testUser" + i + "@citygame.com",
-					"testUser" + i, "test", "11111111" + i,
+					"testUser" + i, "test", "1111111" + i,
 					USER_PRIVILEGE.regular);
 			if (tempUser != null){
 				if (User.find.where().eq("email", tempUser.email).findUnique() == null
@@ -31,7 +31,7 @@ public class TestDataController extends Controller {
 				String scenarioName="public scenario " + tempUser.alias;
 				if(Scenario.find.where().eq("name",scenarioName).findList().size()<1){
 					Scenario.create(scenarioName, true,
-							null, tempUser.email);
+							null, tempUser.email,true);
 				}
 				
 		}

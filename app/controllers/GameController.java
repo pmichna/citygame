@@ -140,7 +140,7 @@ public class GameController extends Controller {
 		java.util.Calendar cal = java.util.Calendar.getInstance();
 		java.util.Date utilDate = cal.getTime();
 		java.sql.Date sqlDate = new Date(utilDate.getTime());
-		return Scenario.create(name, false, sqlDate, user.email);
+		return Scenario.create(name, false, sqlDate, user.email,false);
 
 	}
 

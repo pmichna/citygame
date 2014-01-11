@@ -36,26 +36,6 @@
 				}
 			</tbody>
 		</table>
-		@if(totalPageCount != 1) {
-			<ul class="pagination">
-				@if(currentPage == 0) {
-					<li class="disabled"><span>&laquo;</span></li>
-				} else {
-					<li><a href="@routes.ScenarioController.viewPrivateScenariosGET(currentPage-1)">&laquo;</a></li>
-				}
-				@for(p <- 1 to totalPageCount) {
-					@if(p == currentPage+1) {
-						<li class="active"><a href="@routes.ScenarioController.viewPrivateScenariosGET(p-1)">@p</a></li>
-					} else {
-						<li><a href="@routes.ScenarioController.viewPrivateScenariosGET(p-1)">@p</a></li>
-					}
-				}
-				@if(currentPage == totalPageCount-1) {
-					<li class="disabled"><span>&raquo;</span></li>
-				} else {
-					<li><a href="@routes.ScenarioController.viewPrivateScenariosGET(currentPage+1)">&raquo;</a></li>
-				}
-			</ul>
-		}
+		@pagination(totalPageCount,currentPage)
 	</div><!-- /.container -->
 }
