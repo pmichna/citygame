@@ -129,24 +129,48 @@ public class ScenarioController extends Controller {
 						.eq("email", session("email"))
 						.findUnique();
 		Scenario scenario = Scenario.find.ref(scenarioId);
+		if(scenario.owner.id != user.id) {
+			return redirect(routes.Application.index());
+		}
 		return ok(addMember.render(Form.form(Member.class),user,scenario));
 	}
 	
 	@Security.Authenticated(Secured.class)
 	public static Result addMemberPOST(Long scenarioId) {
-		User user = User.find.where().eq("email", session("email"))
-				.findUnique();
+		User user = User.find
+						.where()
+						.eq("email", session("email"))
+						.findUnique();
+		Scenario scenario = Scenario.find.ref(scenarioId);
+		if(scenario.owner.id != user.id) {
+			return redirect(routes.Application.index());
+		}
+		
 		Form<Member> addForm = Form.form(Member.class).bindFromRequest();
-		Scenario scenario = Scenario.find.byId(scenarioId);
+
 		if (addForm.hasErrors()) {
 			return badRequest(addMember.render(addForm, user,
 					scenario));
 		} else {
 			User member = User.find.where().eq("email", addForm.get().email).findUnique();
-			if(!scenario.members.contains(member)){
-				scenario.members.add(member);
-				scenario.save();
+			if(member == null) {
+				addForm.reject("User doesn't exist");
+				return ok(addMember.render(
+					addForm,
+					user,
+					scenario
+				));
 			}
+			if(scenario.members.contains(member)) {
+				addForm.reject("User already added");
+				return ok(addMember.render(
+					addForm,
+					user,
+					scenario
+				));
+			}
+			scenario.members.add(member);
+			scenario.save();
 			return redirect(routes.ScenarioController.editScenarioGET(scenarioId));
 		}
 	}
