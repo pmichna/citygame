@@ -273,6 +273,24 @@ public class ScenarioController extends Controller {
 		return redirect(routes.ScenarioController.viewScenariosToAcceptGET(0));
 	}
 	
+	@Security.Authenticated(Secured.class)
+	public static Result deleteScenarioGET(Long scenarioId) {
+		User user = User.find
+						.where()
+						.eq("email", session("email"))
+						.findUnique();
+		Scenario scenario = Scenario.find.ref(scenarioId);
+		if(scenario.owner.id != user.id) {
+			return redirect(routes.Application.index());
+		}
+		List<Game> games = Game.find.where().eq("scenario.id", scenarioId).findList();
+		for(Game g: games) {
+			g.delete();
+		}
+		scenario.delete();
+		return redirect(routes.ScenarioController.viewPrivateScenariosGET(0));
+	}
+	
 	public static class ScenarioForm {
 		
 		@Required(message = "Name is required")

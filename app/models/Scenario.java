@@ -28,10 +28,10 @@ public class Scenario extends Model {
 	@ManyToOne
 	public User owner;
 
-	@ManyToMany
+	@ManyToMany(cascade = CascadeType.ALL)
 	public List<User> members = new ArrayList<User>();
 
-	@OneToMany
+	@OneToMany(cascade = CascadeType.ALL)
 	public List<Checkpoint> checkpoints = new ArrayList<Checkpoint>();
 	
 	@ManyToOne

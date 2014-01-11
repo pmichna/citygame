@@ -33,6 +33,10 @@ public class Game extends Model{
 	public Date startDate;
 	public int pointsCollected;
 	
+	public static Finder<Long,Game> find = new Finder<Long,Game>(
+	        Long.class, Game.class
+	    );
+	
 	
 	public Game(User user, Scenario scenario, Date date){
 		this.user = user;
@@ -59,14 +63,7 @@ public class Game extends Model{
 		Game game = new Game(user, scenario,date);
 		game.save();
 		return game;
-	}
-	
-	
-	public static Finder<Long,Game> find = new Finder<Long,Game>(
-	        Long.class, Game.class
-	    );
-	
-	
+	}	
 	
 	public static List<Game> getUserGames(String userEmail) {
 		//User user = User.find.where().eq("user",userEmail).findUnique();

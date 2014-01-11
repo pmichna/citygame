@@ -9,6 +9,7 @@ import views.html.*;
 import models.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.List;
 
 import com.avaje.ebean.Ebean;
 
@@ -44,6 +45,16 @@ public class UserAccountController extends Controller {
 	public static Result deleteAccountGET() {
 		String email = request().username();
 		session().clear();
+		List<Scenario> editedScenarios = Scenario.find.where().eq("editedBy.email", email).findList();
+		for(Scenario s: editedScenarios) {
+			s.editedBy = null;
+			s.save();
+		}
+		List<Scenario> ownedScenarios = Scenario.find.where().eq("owner.email", email).findList();
+		for(Scenario s: ownedScenarios) {
+			s.owner = null;
+			s.save();
+		}
 		User.find.where().eq("email", email).findUnique().delete();
 		return redirect(routes.Application.index());
 	}

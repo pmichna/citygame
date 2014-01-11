@@ -27,14 +27,14 @@ public class User extends Model {
     @Column(length=60,nullable=false)
     public String passwordHash;
 
-    @ManyToMany(mappedBy = "members")
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "members")
     public List<Scenario> scenarios = new ArrayList<Scenario>();
 
     @Enumerated(EnumType.STRING)
     @Column(nullable=false)
     public USER_PRIVILEGE privilege;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     public List<Game> games = new ArrayList<Game>();
     
     
