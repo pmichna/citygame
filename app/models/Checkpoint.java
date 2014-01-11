@@ -74,13 +74,13 @@ public class Checkpoint extends Model {
 		return find.where().eq("scenario.id", scenario).findList();
 	}
 
-	public static String addPossibleAnswer(String answer, Long checkpointId, Boolean isAccepted) {
+	public static CheckpointAnswer addPossibleAnswer(String answer, Long checkpointId, Boolean isAccepted) {
 		Checkpoint checkpoint = find.ref(checkpointId);
 		CheckpointAnswer checkpointAnswer = new CheckpointAnswer(answer);
 		checkpoint.possibleAnswers.add(checkpointAnswer);
 		checkpoint.scenario.isAccepted = isAccepted;
 		checkpoint.save();
-		return answer;
+		return checkpointAnswer;
 	}
 
 	public static List<String> addPossibleAnswers(List<String> answers,

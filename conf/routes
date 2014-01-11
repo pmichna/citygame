@@ -36,6 +36,8 @@ GET  	/checkpoints/delete/:checkpoint						controllers.CheckpointController.remo
 		
 GET		/checkpoints/:checkpoint/answers/add				controllers.CheckpointAnswerController.createCheckpointAnswerGET(checkpoint: Long)
 POST	/checkpoints/:checkpoint/answers/add				controllers.CheckpointAnswerController.createCheckpointAnswerPOST(checkpoint: Long)
+GET		/answers/:answer/edit								controllers.CheckpointAnswerController.editCheckpointAnswerGET(answer: Long)
+POST	/answers/:answer/edit								controllers.CheckpointAnswerController.editCheckpointAnswerPOST(answer: Long)
 GET		/answers/delete/:answer								controllers.CheckpointAnswerController.deleteCheckpointAnswerGET(answer: Long)
 
 

@@ -22,4 +22,13 @@ public class CheckpointAnswer extends Model {
 	public CheckpointAnswer(String text) {
 		this.text = text;
 	}
+	
+	public static CheckpointAnswer edit(Long checkpointAnswerId, String text, Boolean isAccepted) {
+		CheckpointAnswer ca = find.ref(checkpointAnswerId);
+		ca.text = text;
+		ca.save();
+		Checkpoint checkpoint = Checkpoint.find.where().eq("possibleAnswers.id", checkpointAnswerId).findUnique();
+		checkpoint.scenario.isAccepted = isAccepted;
+		return ca;
+	}
 }

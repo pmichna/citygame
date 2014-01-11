@@ -63,7 +63,7 @@
 				<td>@{checkpoint.possibleAnswers.indexOf(c)+1}</td>
 				<td>@c.text</td>
 				<td>
-					<a class="btn btn-warning btn-xs" @if(isLocked){disabled="disabled"} href="#"> <span class="glyphicon glyphicon-pencil"></span> Edit </a>
+					<a class="btn btn-warning btn-xs" @if(isLocked){disabled="disabled"} href="@routes.CheckpointAnswerController.editCheckpointAnswerGET(c.id)"> <span class="glyphicon glyphicon-pencil"></span> Edit </a>
 					<a class="btn btn-danger btn-xs" @if(isLocked){disabled="disabled"} href="@routes.CheckpointAnswerController.deleteCheckpointAnswerGET(c.id)"> <span class="glyphicon glyphicon-remove"></span> Remove </a>
 				</td>
 			</tr>

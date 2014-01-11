@@ -64,6 +64,48 @@ public class CheckpointAnswerController extends Controller {
 		return redirect(routes.CheckpointController.editCheckpointGET(checkpoint.id));
 	}
 	
+	@Security.Authenticated(Secured.class)
+	public static Result editCheckpointAnswerGET(Long checkpointAnswerId) {
+		User user = User.find
+						.where()
+						.eq("email", session("email"))
+						.findUnique();	
+		
+		CheckpointAnswer checkpointAnswer = CheckpointAnswer.find.ref(checkpointAnswerId);
+		Checkpoint checkpoint = Checkpoint.find.where().eq("possibleAnswers.id", checkpointAnswerId).findUnique();
+		if(checkpointAnswer == null || !Secured.isMemberOf(checkpoint.scenario.id) ||
+			(checkpoint.scenario.editedBy != null && checkpoint.scenario.editedBy.id != user.id)) {
+			return redirect(routes.Application.index());
+		}
+		return ok(editAnswer.render(
+			Form.form(AnswerForm.class),
+			user,
+			checkpointAnswer)
+		);		
+	}
+	
+	public static Result editCheckpointAnswerPOST(Long checkpointAnswerId) {
+		Form<AnswerForm> editForm = Form.form(AnswerForm.class).bindFromRequest();
+		User user = User.find
+						.where()
+						.eq("email", session("email"))
+						.findUnique();
+		
+		Checkpoint checkpoint = Checkpoint.find.where().eq("possibleAnswers.id", checkpointAnswerId).findUnique();
+		CheckpointAnswer checkpointAnswer = CheckpointAnswer.find.ref(checkpointAnswerId);
+		if (editForm.hasErrors()) {
+			return badRequest(editAnswer.render(editForm, user, checkpointAnswer));
+		} else {
+			String text = editForm.get().text;
+			if(Checkpoint.hasAnswer(checkpoint.id, text)) {
+				editForm.reject("Answer already exists");
+				return badRequest(editAnswer.render(editForm, user, checkpointAnswer));
+			}
+			CheckpointAnswer.edit(checkpointAnswerId, text, user.privilege == USER_PRIVILEGE.admin);
+			return redirect(routes.CheckpointController.editCheckpointGET(checkpoint.id));
+		}
+	}
+	
 	public static class AnswerForm {
 		
 		@Required(message = "Answer is required")
