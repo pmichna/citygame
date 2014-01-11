@@ -42,8 +42,19 @@ public class Application extends Controller {
 	}
 
 	public static Result logoutGET() {
+		User user = User.find
+						.where()
+						.eq("email", session("email"))
+						.findUnique();
+		if(user == null) {
+			return redirect(routes.Application.index());
+		}
 		session().clear();
 		flash("success", "You've been logged out");
+		for(Scenario s: user.scenarios) {
+			s.editedBy = null;
+			s.save();
+		}
 		return redirect(routes.Application.loginGET());
 	}
 	

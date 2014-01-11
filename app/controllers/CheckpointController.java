@@ -60,8 +60,11 @@ public class CheckpointController extends Controller {
 						.eq("email", session("email"))
 						.findUnique();
 		Checkpoint checkpoint = Checkpoint.find.ref(checkpointId);
+		if(checkpoint == null) {
+			return redirect(routes.Application.index());
+		}
 		Scenario scenario = checkpoint.scenario;
-		if (checkpoint == null || !Secured.isMemberOf(scenario.id)) {
+		if (!Secured.isMemberOf(scenario.id)) {
 			return redirect(routes.Application.index());
 		}
 		if(scenario.editedBy != null && !scenario.editedBy.email.equals(user.email)) {
