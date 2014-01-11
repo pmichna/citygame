@@ -63,11 +63,11 @@ public class Checkpoint extends Model {
 	}
 	
 	public int getLatitudeDegrees() {
-		return (int) this.longitude;
+		return (int) this.latitude;
 	}
 	
 	public double getLatitudeMinutes() {
-		return (longitude - getLongitudeDegrees())*60;
+		return (latitude - getLatitudeDegrees())*60;
 	}
 
 	public static List<Checkpoint> findAssignedTo(Long scenario) {
