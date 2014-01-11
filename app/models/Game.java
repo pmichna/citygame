@@ -22,6 +22,8 @@ public class Game extends Model{
 
 	@ManyToMany
 	public List<Checkpoint> visitedCheckpoints = new ArrayList<Checkpoint>();
+	@ManyToMany
+	public List<Checkpoint> answeredCheckpoints = new ArrayList<Checkpoint>();
 
 	@ManyToOne
 	public Scenario scenario;

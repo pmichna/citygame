@@ -10,6 +10,7 @@ import models.*;
 import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Result;
+import scala.collection.concurrent.Debug;
 import views.html.*;
 
 public class GameController extends Controller {
@@ -27,14 +28,11 @@ public class GameController extends Controller {
 		if (pageNum > totalPageCount - 1) {
 			pageNum = 0;
 		}
-		Logger.debug("Page num:" + pageNum+" totalPageCount:" + totalPageCount);
-		return ok(viewMyGames.render(
-					user,
-					Game.findGames(user, gamesPageSize, pageNum),
-					pageNum,
-					totalPageCount,
-					gamesPageSize)
-		);
+		Logger.debug("Page num:" + pageNum + " totalPageCount:"
+				+ totalPageCount);
+		return ok(viewMyGames.render(user,
+				Game.findGames(user, gamesPageSize, pageNum), pageNum,
+				totalPageCount, gamesPageSize));
 	}
 
 	private static class GameThread implements Runnable {
@@ -45,7 +43,7 @@ public class GameController extends Controller {
 			this.userEmail = userEmail;
 			this.scenarioId = scenarioId;
 		}
-		
+
 		@Override
 		public void run() {
 
@@ -67,19 +65,40 @@ public class GameController extends Controller {
 					return;
 
 				// game loop, will continue till game is stopped
-				for (int i = 0; i < 10; i++) {
-					// while (game.status != GAME_STATUS.stopped) {
+				while (game.status != GAME_STATUS.stopped) {
 
-					// Find events to process for this phone number
+					// Find events to process for this phone number and this scenario
 					List<GameEvent> currentEvents = GameEvent.find.where()
-							.eq("userPhoneNumber", user.phoneNumber).findList();
-					// Process events
-					for (GameEvent e : currentEvents) {
-						// If event was an sms message
-						if (e.message != null) {
-							// do something with sms
-						} else {
-							// if message is empty
+							.eq("userPhoneNumber", user.phoneNumber)
+							.eq("scenario",scenario)
+							.findList();
+
+					// if game is paused, only empty all events
+					if (game.status != GAME_STATUS.paused) {
+						//check current position
+						
+						
+						// Process events
+						for (GameEvent e : currentEvents) {
+							// If event was an sms message
+							if (e.message != null) {
+								// do something with sms
+								// check if answer is correct
+								Logger.debug("Message being processed: "
+										+ e.message);
+								boolean checkAnswer = Checkpoint.hasAnswer(e.checkpoint.id, e.message);
+								Logger.debug("Maching answer:"
+										+ checkAnswer);
+								// if checkpoint does not match, search further
+								if (!checkAnswer)
+									continue;
+								// if answers match add points and mark it as answered
+								game.pointsCollected += e.checkpoint.points;
+								game.answeredCheckpoints.add(e.checkpoint);
+								game.save();
+							} else {
+								// if message is empty
+							}
 						}
 					}
 					// remove all processed events
@@ -101,7 +120,7 @@ public class GameController extends Controller {
 		t.start();
 		return redirect(routes.GameController.viewMyGamesGET(0));
 	}
-	
+
 	public static Result changeGameStatusById(Long gameId, Integer pageNumber,
 			GAME_STATUS status) {
 
@@ -121,13 +140,8 @@ public class GameController extends Controller {
 				isFirstPage = true;
 				isListPage = false;
 			}
-			return ok(viewMyGames.render(
-									user,
-									games,
-									pageNumber,
-									totalPageCount,
-									gamesPageSize)
-			);
+			return ok(viewMyGames.render(user, games, pageNumber,
+					totalPageCount, gamesPageSize));
 		} else
 			return redirect(routes.GameController.viewMyGamesGET(pageNumber));
 	}
@@ -144,19 +158,19 @@ public class GameController extends Controller {
 	public static Result playGameById(Long gameId, Integer pageNumber) {
 		return changeGameStatusById(gameId, pageNumber, GAME_STATUS.playing);
 	}
-	
+
 	synchronized public static Scenario saveScenario(String name, User user) {
 		java.util.Calendar cal = java.util.Calendar.getInstance();
 		java.util.Date utilDate = cal.getTime();
 		java.sql.Date sqlDate = new Date(utilDate.getTime());
-		return Scenario.create(name, false, sqlDate, user.email,false);
+		return Scenario.create(name, false, sqlDate, user.email, false);
 
 	}
 
 	synchronized public static Scenario getScenario(Long scenarioId) {
 		return Scenario.find.byId(scenarioId);
 	}
-	
+
 	synchronized public static User getUser(Long userId) {
 		return User.find.byId(userId);
 	}

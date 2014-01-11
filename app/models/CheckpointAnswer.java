@@ -31,4 +31,5 @@ public class CheckpointAnswer extends Model {
 		checkpoint.scenario.isAccepted = isAccepted;
 		return ca;
 	}
+	
 }
