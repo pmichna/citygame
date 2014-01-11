@@ -147,9 +147,11 @@ public class ScenarioController extends Controller {
 				scenario.members.add(member);
 				scenario.save();
 			}
-			return redirect(routes.ScenarioController.viewPrivateScenarioGET(scenarioId));
+			return redirect(routes.ScenarioController.editScenarioGET(scenarioId));
 		}
 	}
+	
+	
 	@Security.Authenticated(Secured.class)
 	public static Result removeMemberGET(Long scenarioId, Long memberId) {
 		User user = User.find
@@ -170,7 +172,7 @@ public class ScenarioController extends Controller {
 			scenario.editedBy = null;
 		}
 		scenario.save();
-		return redirect(routes.ScenarioController.viewPrivateScenarioGET(scenario.id));
+		return redirect(routes.ScenarioController.editScenarioGET(scenario.id));
 	}
 	
 	@Security.Authenticated(Secured.class)
