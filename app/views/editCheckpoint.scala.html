@@ -22,62 +22,94 @@
 	        Sorry, another user opened this scenario for edition.
 		</div>
 	}
-	@helper.form(routes.CheckpointController.editCheckpointPOST(checkpoint.id, scenario.id)) {
-	<input type="hidden" name="scenarioId" value="@scenario.id">
-	<input type="hidden" name="checkpointId" value="@checkpoint.id">
-	<div class="form-group ">
-		<input id="name" type="text" class="form-control" name="name" placeholder="Checkpoint name" value="@checkpoint.name">
+	
+	<div class="row">
+		<div class="col-sm-6" id="map-canvas"></div>
+		<div class="col-sm-6">
+		@helper.form(routes.CheckpointController.editCheckpointPOST(checkpoint.id, scenario.id)) {
+		<input type="hidden" name="scenarioId" value="@scenario.id">
+		<input type="hidden" name="checkpointId" value="@checkpoint.id">
+		<div class="form-group ">
+			<input id="name" type="text" class="form-control" name="name" placeholder="Checkpoint name" value="@checkpoint.name">
 
-	</div>
-	<div class="form-group ">
-		<input id="longitudeDegrees" type="number" class="form-control" name="longitudeDegrees" placeholder="Longitude degrees" value="@checkpoint.getLongitudeDegrees()">
-	</div>
-	<div class="form-group ">
-		<input id="longitudeMinutes" type="number" class="form-control" name="longitudeMinutes" placeholder="Longitude minutes" value="@checkpoint.getLongitudeMinutes()">
-	</div>
-	<div class="form-group ">
-		<input id="latitudeDegrees" type="number" class="form-control" name="latitudeDegrees" placeholder="Latitude degrees" value="@checkpoint.getLatitudeDegrees()">
-	</div>
-	<div class="form-group ">
-		<input id="latitudeMinutes" type="number" class="form-control" name="latitudeMinutes" placeholder="Latitude minutes" value="@checkpoint.getLatitudeMinutes()">
-	</div>
-
-	<div class="form-group ">
-		<input id="message" type="text" name="message" class="form-control" placeholder="Message to send"  value="@checkpoint.message">
-	</div>
-	<div class="form-group ">
-		<input id="points" type="number" class="form-control" name="points" placeholder="Points" value="@checkpoint.points">
-	</div>
+		</div>
+		<div class="form-group ">
+			<input id="latitudeDegrees" type="number" class="form-control" name="latitudeDegrees" placeholder="Latitude degrees" value="@checkpoint.getLatitudeDegrees()">
+		</div>
+		<div class="form-group ">
+			<input id="latitudeMinutes" type="number" class="form-control" name="latitudeMinutes" placeholder="Latitude minutes" value="@checkpoint.getLatitudeMinutes()">
+		</div>
+		<div class="form-group ">
+			<input id="longitudeDegrees" type="number" class="form-control" name="longitudeDegrees" placeholder="Longitude degrees" value="@checkpoint.getLongitudeDegrees()">
+		</div>
+		<div class="form-group ">
+			<input id="longitudeMinutes" type="number" class="form-control" name="longitudeMinutes" placeholder="Longitude minutes" value="@checkpoint.getLongitudeMinutes()">
+		</div>
+		<div class="form-group ">
+			<input id="message" type="text" name="message" class="form-control" placeholder="Message to send"  value="@checkpoint.message">
+		</div>
+		<div class="form-group ">
+			<input id="points" type="number" class="form-control" name="points" placeholder="Points" value="@checkpoint.points">
+		</div>
 	
-	<h4>Possible answers</h4>
-	<table class="table table-striped">
-		<thead>
-			<tr>
-				<th>#</th>
-				<th>text</th>
-			</tr>
-		</thead>
-		<tbody>
-			@for(c <- checkpoint.possibleAnswers) {
-			<tr>
-				<td>@{checkpoint.possibleAnswers.indexOf(c)+1}</td>
-				<td>@c.text</td>
-				<td>
-					<a class="btn btn-warning btn-xs" @if(isLocked){disabled="disabled"} href="@routes.CheckpointAnswerController.editCheckpointAnswerGET(c.id)"> <span class="glyphicon glyphicon-pencil"></span> Edit </a>
-					<a class="btn btn-danger btn-xs" @if(isLocked){disabled="disabled"} href="@routes.CheckpointAnswerController.deleteCheckpointAnswerGET(c.id)"> <span class="glyphicon glyphicon-remove"></span> Remove </a>
-				</td>
-			</tr>
-			}
-		</tbody>
-	</table>
+		<h4>Possible answers</h4>
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>#</th>
+					<th>text</th>
+				</tr>
+			</thead>
+			<tbody>
+				@for(c <- checkpoint.possibleAnswers) {
+				<tr>
+					<td>@{checkpoint.possibleAnswers.indexOf(c)+1}</td>
+					<td>@c.text</td>
+					<td>
+						<a class="btn btn-warning btn-xs" @if(isLocked){disabled="disabled"} href="@routes.CheckpointAnswerController.editCheckpointAnswerGET(c.id)"> <span class="glyphicon glyphicon-pencil"></span> Edit </a>
+						<a class="btn btn-danger btn-xs" @if(isLocked){disabled="disabled"} href="@routes.CheckpointAnswerController.deleteCheckpointAnswerGET(c.id)"> <span class="glyphicon glyphicon-remove"></span> Remove </a>
+					</td>
+				</tr>
+				}
+			</tbody>
+		</table>
 	
-	<a class="btn btn-primary" @if(isLocked){disabled="disabled"} href="@routes.CheckpointAnswerController.createCheckpointAnswerGET(checkpoint.id)"> <span class="glyphicon glyphicon-plus"></span> Add possible answer</a>
+		<a class="btn btn-primary" @if(isLocked){disabled="disabled"} href="@routes.CheckpointAnswerController.createCheckpointAnswerGET(checkpoint.id)"> <span class="glyphicon glyphicon-plus"></span> Add possible answer</a>
 	
-	<div class="form-group">
-	<button type="submit" class="btn btn-default btn-lg" @if(isLocked){disabled="disabled"}>
-		Save
-	</button>
-	</div>
-	}
+		<div class="form-group">
+		<button type="submit" class="btn btn-default btn-lg" @if(isLocked){disabled="disabled"}>
+			Save
+		</button>
+		</div>
+		}
+	</div><!-- /.col-sm-6 -->
+	</div><!-- /.row -->
 </div><!-- /.container -->
+<script>
+	function initialize() {
+		var mapOptions = {
+			center: new google.maps.LatLng(52.22077, 21.0097),
+			zoom: 16,
+			streetViewControl: false
+		};
+		var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+		google.maps.event.addListener(map, 'click', function(event) {
+			var lng = event.latLng.lng();
+			var lat = event.latLng.lat();
+			var lngDeg = parseInt(lng, 10);
+			var latDeg = parseInt(lat, 10);
+			var lngMin = (lng - lngDeg)*60;
+			var latMin = (lat - latDeg)*60;
+			$("#longitudeDegrees").val(lngDeg);
+			$("#longitudeMinutes").val(lngMin);
+			$("#latitudeDegrees").val(latDeg);
+			$("#latitudeMinutes").val(latMin);
+		});		
+	}
+
+	$( document ).ready(function() {
+		google.maps.event.addDomListener(window, 'load', initialize);
+
+	});
+</script>
 }

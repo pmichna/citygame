@@ -59,7 +59,7 @@ public class Checkpoint extends Model {
 	}
 	
 	public double getLongitudeMinutes() {
-		return (longitude - getLongitudeDegrees())*4;
+		return (longitude - getLongitudeDegrees())*60;
 	}
 	
 	public int getLatitudeDegrees() {
