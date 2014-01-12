@@ -95,14 +95,14 @@ public class User extends Model {
     	User user = find.where().eq("phoneNumber",number).findUnique();
     	user.lastLatitude=latitude;
     	user.lastLongitude=longitude;
-    	user.update();
+    	user.save();
     	
     }
     
     public static void setUserLocation(String number,boolean accepted){
     	User user = find.where().eq("phoneNumber",number).findUnique();
     	user.acceptedLocation=accepted;
-    	user.update();
+    	user.save();
     }
     
     
