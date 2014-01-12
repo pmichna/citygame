@@ -48,7 +48,7 @@ public class User extends Model {
       this.passwordHash = BCrypt.hashpw(password, BCrypt.gensalt());
       this.phoneNumber = phoneNumber;
       this.privilege = privilege;
-      this.acceptedLocation = true;
+      this.acceptedLocation = false;
     }
 
     public static Finder<Long, User> find = new Finder<Long,User>(
@@ -97,6 +97,12 @@ public class User extends Model {
     	user.lastLongitude=longitude;
     	user.update();
     	
+    }
+    
+    public static void setUserLocation(String number,boolean accepted){
+    	User user = find.where().eq("phoneNumber",number).findUnique();
+    	user.acceptedLocation=accepted;
+    	user.update();
     }
     
     

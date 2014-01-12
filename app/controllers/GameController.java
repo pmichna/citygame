@@ -152,6 +152,7 @@ public class GameController extends Controller {
 					// Wait before next game loop iteration to not waste server
 					// resources
 					Thread.sleep(20000);
+					game.refresh();
 				}
 			} catch (InterruptedException e) {
 				e.printStackTrace();

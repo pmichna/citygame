@@ -52,12 +52,12 @@ public class LocationController extends Controller {
 						if(latitude.getLength()==0 || longitude.getLength()==0){
 							Logger.error("Failed to get coordinates");
 							if(response.getBody().indexOf("<description>msisdn not allowed</description>")!=-1){
-								Logger.error("Msisdn not allowed for:"+number);
-								GameEvent.createGameEvent(number, "msisdn not allowed", GAME_EVENT_TYPE.msisdnError);
+								Logger.info("Msisdn not allowed for:"+number);
+								User.setUserLocation(number,false);
 							}
 							if(response.getBody().indexOf("<description>getLocation limit reached</description>")!=-1){
-								Logger.error("Msisdn limit reached for: "+number);
-								GameEvent.createGameEvent(number, "msisdn limit reached", GAME_EVENT_TYPE.msisdnError);
+								Logger.info("Msisdn limit reached for: "+number);
+								
 							}
 							return ok("Failed to get coordinates");
 						}
@@ -69,6 +69,7 @@ public class LocationController extends Controller {
 						+" Longitude: "+ longitudeDouble
 						+" Latitude: "+ latitudeDouble);
 						User.setUserPosition(number,longitudeDouble,latitudeDouble);
+						User.setUserLocation(number,true);
 						GameEvent.createGameEvent(longitudeDouble,latitudeDouble,number);
 						
 						return ok(latitude.item(0).getTextContent()+" "+longitude.item(0).getTextContent());
