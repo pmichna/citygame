@@ -84,6 +84,17 @@ public class Scenario extends Model {
 		return find.where().eq("owner.email",userEmail).findList();
 	}
 	
+	public List<Checkpoint> findNearbyCheckpoints(double longitude, double latitude){
+		List<Checkpoint> nearby = new ArrayList<Checkpoint>();
+		for(Checkpoint c:checkpoints){
+			if((c.longitude-longitude)*(c.longitude-longitude)+
+					(c.latitude-latitude)*(c.latitude-latitude)<0.0002){
+						nearby.add(c);
+					}	
+		}
+		return nearby;
+	}
+	
 	public static List<Scenario> findInvolvingUser(String user, int pageSize, int pageNum) {
 		PagingList<Scenario> pagingList = find.where()
 												.eq("members.email", user)

@@ -19,12 +19,12 @@ import models.*;
 public class LocationController extends Controller {
 
 	public static play.libs.F.Promise<Result> locationControllerGET(
-			String number) {
+			final String number) {
 
-		String feedUrl = "https://api2.orange.pl/terminallocation/?msisdn="
-				+ number;
+		String feedUrl = "https://api2.orange.pl/terminallocation/";
 		
 		final play.libs.F.Promise<Result> resultPromise = WS.url(feedUrl)
+				.setQueryParameter("msisdn",number)
 				.setAuth("48509237274", "Y7A7HNM3EFF3LF", com.ning.http.client.Realm.AuthScheme.BASIC).get()
 				.map(new Function<WS.Response, Result>() {
 
@@ -49,8 +49,14 @@ public class LocationController extends Controller {
 						} catch (Exception e) {
 							Logger.debug("Failed to properly pase location file");
 						}
-						if(latitude.getLength()==0 || longitude.getLength()==0)
-							return ok("");
+						if(latitude.getLength()==0 || longitude.getLength()==0){
+							return ok("Failed to get coordinates");
+						}
+						GameEvent.createGameEvent(
+								Long.parseLong(longitude.item(0).getTextContent()),
+								Long.parseLong(latitude.item(0).getTextContent()),
+								number);
+						
 						return ok(latitude.item(0).getTextContent()+" "+longitude.item(0).getTextContent());
 					}
 				});

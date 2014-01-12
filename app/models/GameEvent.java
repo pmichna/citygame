@@ -22,21 +22,39 @@ public class GameEvent extends Model {
 	
 	@ManyToOne
 	public Scenario scenario;
+	
 	@ManyToOne
 	public Checkpoint checkpoint;
+	
 	public String message;
+	public Double longitude;
+	public Double latitude;
 
 	GameEvent(String message, String userPhoneNumber, Long scenarioId, Long checkpointId) {
 		this.userPhoneNumber=userPhoneNumber;
 		this.message = message;
 		scenario=Scenario.find.byId(scenarioId);
 		checkpoint=Checkpoint.find.byId(checkpointId);
+		this.longitude=null;
+		this.latitude=null;
+	}
+	
+	GameEvent(double longitude, double latitude, String userPhoneNumber){
+		this.userPhoneNumber=userPhoneNumber;
+		this.longitude=longitude;
+		this.latitude=latitude;
+		this.message=null;
 	}
 
 	
-	synchronized public static GameEvent createGameEvent(String phoneNumber, String message, Long scenarioId, Long checkpointId){
-		
+	public static GameEvent createGameEvent(String phoneNumber, String message, Long scenarioId, Long checkpointId){
 		GameEvent event=new GameEvent(message,phoneNumber,scenarioId,checkpointId);
+		event.save();
+		return event;
+	}
+	
+	public static GameEvent createGameEvent(double longitude, double latitude, String userPhoneNumber){
+		GameEvent event=new GameEvent(longitude,latitude,userPhoneNumber);
 		event.save();
 		return event;
 	}

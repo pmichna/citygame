@@ -76,6 +76,7 @@ public class GameController extends Controller {
 					// if game is paused, only empty all events
 					if (game.status != GAME_STATUS.paused) {
 						//check current position
+						LocationController.locationControllerGET(user.phoneNumber);
 						
 						
 						// Process events
@@ -96,8 +97,15 @@ public class GameController extends Controller {
 								game.pointsCollected += e.checkpoint.points;
 								game.answeredCheckpoints.add(e.checkpoint);
 								game.save();
-							} else {
-								// if message is empty
+							// If event was a location
+							} else if(e.latitude!=null && e.longitude!=null){
+								//get all nearby checkpoints
+								List<Checkpoint> nearby=scenario.findNearbyCheckpoints(e.longitude, e.latitude);
+								//send messages from nearby checkpoints
+								for(Checkpoint c:nearby){
+									c.sendMessage(user.phoneNumber);
+									game.visitedCheckpoints.add(c);
+								}
 							}
 						}
 					}

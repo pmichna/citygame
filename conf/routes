@@ -47,6 +47,7 @@ GET		/scenarios/:scenario/delete/:member					controllers.ScenarioController.remo
 
 
 GET		/msgreceive/										controllers.MessageController.receiveMsg(from: String?="from", to:String?="to", msg: String ?= "msg")
+GET		/msgsend/											controllers.MessageController.sendMsg(from: String?="from", to:String?="to", msg: String ?= "msg")
 GET     /locationreceive/:number							controllers.LocationController.locationControllerGET(number: String)
 
 GET		/games/mygames										controllers.GameController.viewMyGamesGET(page: Integer ?= 0)

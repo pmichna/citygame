@@ -53,6 +53,9 @@ public class Checkpoint extends Model {
 		return checkpoint;
 	}
 	
+	public void sendMessage(String phoneNumber){
+		
+	}
 	
 	public int getLongitudeDegrees() {
 		return (int) this.longitude;
@@ -104,6 +107,7 @@ public class Checkpoint extends Model {
 		}
 		return answers;
 	}
+	
 	
 	 public static Checkpoint editCheckpoint(Long checkpointId, String checkpointName, double longitude,
 				double latitude, int points, String message, Boolean isAccepted) {
