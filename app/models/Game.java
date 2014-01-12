@@ -79,4 +79,27 @@ public class Game extends Model{
 												.findPagingList(pageSize);
 		return pagingList.getTotalPageCount();
 	}
+	
+	public static List<GameAggregate> getRankingGames(Long scenarioId) {
+		
+	    String sql = "SELECT u.alias, max(points_collected) as points"
+					+ " from game g"
+					+ " join user u on u.id = g.user_id"
+					+ " where g.scenario_id = :scenarioId"
+					+ " group by u.id"
+					+ " ORDER BY points desc";
+		
+		List<SqlRow> sqlRows = Ebean.createSqlQuery(sql)
+									.setParameter("scenarioId", scenarioId)
+									.findList();
+		List<GameAggregate> games = new ArrayList<GameAggregate>(sqlRows.size());
+		
+		for(int i = 0; i < sqlRows.size(); i++) {
+			String alias = sqlRows.get(i).getString("alias");
+			Integer points = sqlRows.get(i).getInteger("points");		
+			games.add(new GameAggregate(alias, points));
+		}
+       
+		return games;
+	}
 }

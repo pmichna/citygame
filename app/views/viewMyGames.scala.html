@@ -23,12 +23,12 @@
 				<td>@g.pointsCollected</td>
 				<td>@g.startDate</td>
 				<td>@g.status</td>
-				<td> @if(g.status!=GAME_STATUS.stopped){
-				@if(g.status==GAME_STATUS.playing){ 
+				<td> @if(g.status != GAME_STATUS.stopped){
+				@if(g.status == GAME_STATUS.playing){ 
 					<a class="btn btn-warning btn-xs" href="@routes.GameController.pauseGameById(g.id,currentPage)"> 
 						<span class="glyphicon glyphicon-pause"></span> Pause 
 					</a> 
-				}else{ 
+				} else { 
 					<a class="btn btn-primary btn-xs" href="@routes.GameController.playGameById(g.id,currentPage)"> 
 						<span class="glyphicon glyphicon-play"></span> Play 
 					</a> 

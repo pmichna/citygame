@@ -13,7 +13,7 @@ import java.text.SimpleDateFormat;
 import java.sql.Date;
 import play.data.validation.Constraints.*;
 import java.util.List;
-
+import java.util.ArrayList;
 import com.avaje.ebean.Ebean;
 
 public class ScenarioController extends Controller {
@@ -327,13 +327,12 @@ public class ScenarioController extends Controller {
 						.eq("email", session("email"))
 						.findUnique();
 		
-		List<Game> games = Game.find
-								.where()
-								.eq("scenario.id", scenarioId)
-								.eq("status", GAME_STATUS.stopped)
-								.findList();
-		Ebean.sort(games, "game.pointsCollected, desc");
-		return ok(viewScenarioRanking.render(user, games));
+		Scenario scenario = Scenario.find.ref(scenarioId);
+		if(scenario == null || (!scenario.isPublic && !scenario.members.contains(user))) {
+			return redirect(routes.Application.index());
+		}
+		List<GameAggregate> games = Game.getRankingGames(scenarioId);
+		return ok(viewScenarioRanking.render(user, games, scenario));
 	}
 	
 	public static class ScenarioForm {

@@ -114,6 +114,7 @@ public class GameController extends Controller {
 						.where()
 						.eq("email", session("email"))
 						.findUnique();
+		Logger.debug("dupa 1");
 		
 		final play.libs.F.Promise<Result> resultPromise = WS.url(feedUrl)
 															.setQueryParameter("msisdn", user.phoneNumber)
@@ -125,12 +126,17 @@ public class GameController extends Controller {
 																public Result apply(WS.Response response) {
 																	DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 																	DocumentBuilder db = null;
+
 																	try {
 																		db = dbf.newDocumentBuilder();
 																		InputSource is = new InputSource();
+																		Logger.debug(response.getBody().toString());
 																		is.setCharacterStream(new StringReader(response.getBody().toString()));
 																		Document doc = db.parse(is);
 																		opcodeNode = doc.getElementsByTagName("opcode");
+																		if(opcodeNode.item(0) == null) {
+																			return ok(badNumber.render(user));
+																		}
 																	} catch (Exception e) {
 																		Logger.debug("Failed to properly pase location file");
 																	}
