@@ -44,8 +44,10 @@ public class CheckpointController extends Controller {
 			double latitudeMinutes = createForm.get().latitudeMinutes;
 			String message = createForm.get().message;
 			int points = createForm.get().points;
+
 			double longitude = longitudeDegrees + longitudeMinutes / 60;
 			double latitude = latitudeDegrees + latitudeMinutes / 60;
+
 
 			Checkpoint.create(name, longitude, latitude, points, message,
 					scenarioId, user.privilege == USER_PRIVILEGE.admin);
@@ -170,7 +172,9 @@ public class CheckpointController extends Controller {
 	
 		@Required(message = "Longitude minutes required")
 		@Min(value = 0, message = "Longitude minutes can't be lower than 0")
+
 		@Max(value = 60, message = "Longitude minutes can't be greater than 59.9999999999999999")
+
 		public Double longitudeMinutes;
 		
 		@Required(message = "Latitude degrees required")

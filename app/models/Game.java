@@ -22,6 +22,8 @@ public class Game extends Model{
 
 	@ManyToMany
 	public List<Checkpoint> visitedCheckpoints = new ArrayList<Checkpoint>();
+	@ManyToMany
+	public List<Checkpoint> answeredCheckpoints = new ArrayList<Checkpoint>();
 
 	@ManyToOne
 	public Scenario scenario;
@@ -55,11 +57,6 @@ public class Game extends Model{
 	}
 	
 	synchronized public static Game createNewGame(User user, Scenario scenario, java.sql.Date date) {	
-		Logger.debug("Game: run 0");
-		Logger.debug("User: "+user.alias+" Scenario:"+scenario.name);
-		if(Game.find.where().eq("user",user).eq("scenario",scenario).findList().size()>0)
-			return null;
-		Logger.debug("Game: run 1");
 		Game game = new Game(user, scenario,date);
 		game.save();
 		return game;

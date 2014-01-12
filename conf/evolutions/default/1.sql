@@ -35,7 +35,13 @@ create table game (
 create table game_event (
   id                        bigint auto_increment not null,
   user_phone_number         varchar(9) not null,
+  type                      integer,
+  scenario_id               bigint,
+  checkpoint_id             bigint,
   message                   varchar(255),
+  longitude                 double,
+  latitude                  double,
+  constraint ck_game_event_type check (type in (0,1,2,3,4)),
   constraint pk_game_event primary key (id))
 ;
 
@@ -57,6 +63,9 @@ create table user (
   phone_number              varchar(9) not null,
   password_hash             varchar(60) not null,
   privilege                 varchar(7) not null,
+  accepted_location         tinyint(1) default 0,
+  last_latitude             double,
+  last_longitude            double,
   constraint ck_user_privilege check (privilege in ('regular','admin')),
   constraint uq_user_email unique (email),
   constraint uq_user_alias unique (alias),
@@ -84,10 +93,14 @@ alter table game add constraint fk_game_user_3 foreign key (user_id) references 
 create index ix_game_user_3 on game (user_id);
 alter table game add constraint fk_game_scenario_4 foreign key (scenario_id) references scenario (id) on delete restrict on update restrict;
 create index ix_game_scenario_4 on game (scenario_id);
-alter table scenario add constraint fk_scenario_owner_5 foreign key (owner_id) references user (id) on delete restrict on update restrict;
-create index ix_scenario_owner_5 on scenario (owner_id);
-alter table scenario add constraint fk_scenario_editedBy_6 foreign key (edited_by_id) references user (id) on delete restrict on update restrict;
-create index ix_scenario_editedBy_6 on scenario (edited_by_id);
+alter table game_event add constraint fk_game_event_scenario_5 foreign key (scenario_id) references scenario (id) on delete restrict on update restrict;
+create index ix_game_event_scenario_5 on game_event (scenario_id);
+alter table game_event add constraint fk_game_event_checkpoint_6 foreign key (checkpoint_id) references checkpoint (id) on delete restrict on update restrict;
+create index ix_game_event_checkpoint_6 on game_event (checkpoint_id);
+alter table scenario add constraint fk_scenario_owner_7 foreign key (owner_id) references user (id) on delete restrict on update restrict;
+create index ix_scenario_owner_7 on scenario (owner_id);
+alter table scenario add constraint fk_scenario_editedBy_8 foreign key (edited_by_id) references user (id) on delete restrict on update restrict;
+create index ix_scenario_editedBy_8 on scenario (edited_by_id);
 
 
 
