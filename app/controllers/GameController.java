@@ -8,15 +8,26 @@ import com.avaje.ebean.PagingList;
 
 import models.*;
 import play.Logger;
-import play.mvc.Controller;
-import play.mvc.Result;
+import play.mvc.*;
 import views.html.*;
+import play.libs.F.Function;
+import play.libs.WS;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.*;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import java.io.StringReader;
 
 public class GameController extends Controller {
 	private static int gamesPageSize = 10;
 	// time used in each game refresh
 	private static int refreshTime = 100;
 
+	@Security.Authenticated(Secured.class)
 	public static Result viewMyGamesGET(int pageNum) {
 		User user = User.find.where().eq("email", session("email"))
 				.findUnique();
@@ -96,12 +107,82 @@ public class GameController extends Controller {
 
 	}
 
-	public static Result startGameGET(Long scenarioId) {
-		Thread t = new Thread(new GameThread(session("email"), scenarioId));
-		t.start();
-		return redirect(routes.GameController.viewMyGamesGET(0));
+	@Security.Authenticated(Secured.class)
+	public static play.libs.F.Promise<Result> startGameGET(final Long scenarioId) {
+		String feedUrl = "https://api2.orange.pl/getopcode/";
+		final User user = User.find
+						.where()
+						.eq("email", session("email"))
+						.findUnique();
+		
+		final play.libs.F.Promise<Result> resultPromise = WS.url(feedUrl)
+															.setQueryParameter("msisdn", user.phoneNumber)
+															.setAuth("48509237274", "Y7A7HNM3EFF3LF")
+															.get()
+															.map(new Function<WS.Response, Result>() {
+																NodeList opcodeNode = null;
+
+																public Result apply(WS.Response response) {
+																	DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+																	DocumentBuilder db = null;
+																	try {
+																		db = dbf.newDocumentBuilder();
+																		InputSource is = new InputSource();
+																		is.setCharacterStream(new StringReader(response.getBody().toString()));
+																		Document doc = db.parse(is);
+																		opcodeNode = doc.getElementsByTagName("opcode");
+																	} catch (Exception e) {
+																		Logger.debug("Failed to properly pase location file");
+																	}
+																	String opcode = opcodeNode.item(0).getTextContent();
+																	Scenario scenario = Scenario.find.ref(scenarioId);
+																	if(scenario == null) {
+																		return redirect(routes.Application.index());
+																	}
+																	if(!opcode.equals("26003")) {
+																		return ok(badNumber.render(user));
+																	}
+																	Thread t = new Thread(new GameThread(session("email"), scenarioId));
+																	t.start();
+																	return redirect(routes.GameController.viewMyGamesGET(0));
+																}
+															});
+		return resultPromise;	
 	}
 	
+	public static play.libs.F.Promise<Result> locationControllerGET(String number) {
+
+		String feedUrl = "https://api2.orange.pl/terminallocation/?msisdn=";
+
+		final play.libs.F.Promise<Result> resultPromise = WS.url(feedUrl)
+															.setAuth("48509237274", "Y7A7HNM3EFF3LF")
+															.get()
+															.map(new Function<WS.Response, Result>() {
+																NodeList longitude = null;
+																NodeList latitude = null;
+
+																public Result apply(WS.Response response) {
+																	DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+																	DocumentBuilder db = null;
+																	try {
+																		db = dbf.newDocumentBuilder();
+																		InputSource is = new InputSource();
+																		is.setCharacterStream(new StringReader(response.getBody().toString()));
+																		Document doc = db.parse(is);
+																		longitude = doc.getElementsByTagName("longitude");
+																		latitude = doc.getElementsByTagName("latitude");
+																	} catch (Exception e) {
+																		Logger.debug("Failed to properly pase location file");
+																	}
+																	if(latitude.getLength()==0 || longitude.getLength()==0)
+																		return ok("");
+																	return ok(latitude.item(0).getTextContent()+" "+longitude.item(0).getTextContent());
+																}
+															});
+		return resultPromise;
+	}
+	
+	@Security.Authenticated(Secured.class)
 	public static Result changeGameStatusById(Long gameId, Integer pageNumber,
 			GAME_STATUS status) {
 
@@ -132,15 +213,18 @@ public class GameController extends Controller {
 			return redirect(routes.GameController.viewMyGamesGET(pageNumber));
 	}
 
+	@Security.Authenticated(Secured.class)
 	public static Result pauseGameById(Long gameId, Integer pageNumber) {
 
 		return changeGameStatusById(gameId, pageNumber, GAME_STATUS.paused);
 	}
 
+	@Security.Authenticated(Secured.class)
 	public static Result stopGameById(Long gameId, Integer pageNumber) {
 		return changeGameStatusById(gameId, pageNumber, GAME_STATUS.stopped);
 	}
 
+	@Security.Authenticated(Secured.class)
 	public static Result playGameById(Long gameId, Integer pageNumber) {
 		return changeGameStatusById(gameId, pageNumber, GAME_STATUS.playing);
 	}
