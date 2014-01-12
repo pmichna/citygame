@@ -103,12 +103,12 @@ public class GameController extends Controller {
 								game.visitedCheckpoints.add(c);
 								}
 							}
-							game.update();
+							game.save();
 
 							// if user does not have correctly set location
 						} else {
 							game.status = GAME_STATUS.paused;
-							game.update();
+							game.save();
 							continue;
 						}
 
@@ -140,10 +140,8 @@ public class GameController extends Controller {
 								// answered
 								game.pointsCollected += e.checkpoint.points;
 								game.answeredCheckpoints.add(e.checkpoint);
-								game.update();
-
+								game.save();
 							}
-
 						}
 						// remove all processed events
 						Ebean.delete(currentEvents);

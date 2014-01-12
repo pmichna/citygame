@@ -43,7 +43,7 @@ public class GameEvent extends Model {
 		checkpoint = Checkpoint.find.byId(checkpointId);
 		this.longitude = null;
 		this.latitude = null;
-		type = GAME_EVENT_TYPE.location;
+		type = GAME_EVENT_TYPE.smsReceive;
 	}
 
 	public GameEvent(double longitude, double latitude, String userPhoneNumber) {
