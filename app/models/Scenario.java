@@ -90,11 +90,12 @@ public class Scenario extends Model {
 	
 	public List<Checkpoint> findNearbyCheckpoints(double longitude, double latitude){
 		List<Checkpoint> nearby = new ArrayList<Checkpoint>();
-		
+		Logger.debug("finding checkpoints");
 		for(Checkpoint c:checkpoints){
 			Logger.debug("Longitude: "+longitude);
-			//Logger.debug("Distance: "+(c.longitude-longitude)*(c.longitude-longitude)+
-			//		(c.latitude-latitude)*(c.latitude-latitude));
+			Logger.debug("Longitude d: "+(c.longitude-longitude));
+			Logger.debug("Distance: "+(c.longitude-longitude)*(c.longitude-longitude)+
+					(c.latitude-latitude)*(c.latitude-latitude));
 			if((c.longitude-longitude)*(c.longitude-longitude)+
 					(c.latitude-latitude)*(c.latitude-latitude)<0.05*0.05){
 						nearby.add(c);

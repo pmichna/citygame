@@ -91,5 +91,13 @@ public class User extends Model {
     	return user;
     }
     
+    public static void setUserPosition(String number, double longitude, double latitude){
+    	User user = find.where().eq("phoneNumber",number).findUnique();
+    	user.lastLatitude=latitude;
+    	user.lastLongitude=longitude;
+    	user.update();
+    	
+    }
+    
     
 }

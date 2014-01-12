@@ -47,7 +47,7 @@ public class GameEvent extends Model {
 	}
 
 	GameEvent(double longitude, double latitude, String userPhoneNumber) {
-		Logger.debug("Created new location event, longitude:"+longitude+" latitude: "+latitude);
+		//Logger.debug("Created new location event, longitude:"+longitude+" latitude: "+latitude);
 		this.userPhoneNumber = userPhoneNumber;
 		this.longitude = longitude;
 		this.latitude = latitude;
@@ -78,7 +78,6 @@ public class GameEvent extends Model {
 
 	public static GameEvent createGameEvent(double longitude, double latitude,
 			String userPhoneNumber) {
-		Logger.debug("wat");
 		GameEvent event = new GameEvent(longitude, latitude, userPhoneNumber);
 		event.save();
 		return event;

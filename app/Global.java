@@ -20,7 +20,7 @@ public class Global extends GlobalSettings {
 	    			GameController.startGame(g);
 	    		}
 	    	}
-	    	UserAccountController.startUserThread(u.email);
+	    	
 	    }
 	 }  
 }

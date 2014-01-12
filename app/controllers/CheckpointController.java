@@ -44,7 +44,7 @@ public class CheckpointController extends Controller {
 			double latitudeMinutes = createForm.get().latitudeMinutes;
 			String message = createForm.get().message;
 			int points = createForm.get().points;
-			double longitude = longitudeDegrees + longitudeMinutes / 4L;
+			double longitude = longitudeDegrees + longitudeMinutes / 60L;
 			double latitude = latitudeDegrees + latitudeMinutes / 60L;
 
 			Checkpoint.create(name, longitude, latitude, points, message,

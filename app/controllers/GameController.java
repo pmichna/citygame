@@ -76,12 +76,13 @@ public class GameController extends Controller {
 					if (game.status != GAME_STATUS.paused) {
 
 						// check current position
-						
+						LocationController.locationControllerGET(game.user.phoneNumber);
+						Logger.debug("acceptedLocation:" +game.user.acceptedLocation);
 						if (game.user.acceptedLocation) {
 							List<Checkpoint> nearby = game.scenario
 									.findNearbyCheckpoints(game.user.lastLongitude,
 											game.user.lastLatitude);
-							if(nearby.size()>0)
+							
 							Logger.debug("Nearby checkpooints #: "+nearby.size());
 							// send messages from nearby checkpoints
 							for (Checkpoint c : nearby) {
@@ -138,7 +139,7 @@ public class GameController extends Controller {
 
 					// Wait before next game loop iteration to not waste server
 					// resources
-					Thread.sleep(1000);
+					Thread.sleep(20000);
 				}
 			} catch (InterruptedException e) {
 				e.printStackTrace();

@@ -63,11 +63,13 @@ public class LocationController extends Controller {
 						}
 						
 						//Logger.debug("Latitude:"+latitude.item(0).getTextContent());
-						Logger.info("Received location of number: " +number);
-						GameEvent.createGameEvent(
-								Long.parseLong(longitude.item(0).getTextContent()),
-								Long.parseLong(latitude.item(0).getTextContent()),
-								number);
+						double longitudeDouble=Double.parseDouble(longitude.item(0).getTextContent());
+						double latitudeDouble=Double.parseDouble(latitude.item(0).getTextContent());
+						Logger.info("Received location of number: " +number
+						+" Longitude: "+ longitudeDouble
+						+" Latitude: "+ latitudeDouble);
+						User.setUserPosition(number,longitudeDouble,latitudeDouble);
+						GameEvent.createGameEvent(longitudeDouble,latitudeDouble,number);
 						
 						return ok(latitude.item(0).getTextContent()+" "+longitude.item(0).getTextContent());
 					}

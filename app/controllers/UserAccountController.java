@@ -40,7 +40,7 @@ public class UserAccountController extends Controller {
 				privilege = USER_PRIVILEGE.admin;
 			}
 			new User(email, alias, password, phoneNumber, privilege).save();
-			startUserThread(email);
+			
 			return redirect(routes.Application.loginGET());
 		}
 	}
@@ -181,74 +181,6 @@ public class UserAccountController extends Controller {
 		}
 	}
 
-	public static void startUserThread(String email) {
-		Thread t = new Thread(new LocationSetter(email));
-		t.start();
-	}
+	
 
-	private static class LocationSetter implements Runnable {
-		User user;
-
-		public LocationSetter(String email) {
-			this.user = User.find.where().eq("email", email).findUnique();
-		}
-
-		@Override
-		public void run() {
-
-			try {
-				Logger.info("Started location checker");
-				// game loop, will continue as long as user exists
-				while (true) {
-
-					// check current position
-					LocationController.locationControllerGET(user.phoneNumber);
-
-					// Find events to process for this phone number and this
-					// scenario
-					List<GameEvent> currentEvents = GameEvent.find.where()
-							.eq("userPhoneNumber", user.phoneNumber).findList();
-					if (currentEvents.size() > 0)
-						Logger.debug("Number of events in useraccountcontroller: "
-								+ currentEvents.size());
-
-					// Process events
-					for (GameEvent e : currentEvents) {
-
-						// If event was a location
-						if (e.type == GAME_EVENT_TYPE.location) {
-							Logger.debug("[event] New location " + e.longitude
-									+ " " + e.latitude);
-							user.lastLatitude = e.latitude;
-							user.lastLongitude = e.longitude;
-							user.save();
-						}
-
-						// If we got msisdn error
-						else if (e.type == GAME_EVENT_TYPE.msisdnError) {
-
-							// set users acceptedLocation to false
-							user.acceptedLocation = false;
-
-							// stop checking events
-							// if event cannot be parsed, leave it in queue
-						} else {
-							currentEvents.remove(e);
-						}
-
-					}
-					// remove all processed events
-					Ebean.delete(currentEvents);
-
-					// Wait before next game loop iteration to not waste server
-					// resources
-					Thread.sleep(20000);
-				}
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-
-		}
-
-	}
 }
