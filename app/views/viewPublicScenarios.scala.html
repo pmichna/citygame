@@ -5,47 +5,52 @@
 		<div class="page-header">
 			<h1>Scenarios</h1>
 		</div>
-		<table class="table table-striped">
-			<thead>
-				<tr>
-					<th>#</th>
-					<th>Scenario name</th>
-				</tr>
-			</thead>
-			<tbody>
-				@for(s <- scenarios) {
+		@if(scenarios.size() == 0) {
+			Sorry, there are no public scenarios yet.
+		}
+		@if(scenarios.size() > 0) {
+			<table class="table table-striped">
+				<thead>
 					<tr>
-						<td>@{(scenarios.indexOf(s)+1)+pageSize*currentPage}</td>
-						<td>@s.name</td>
-						<td>
-						<a class="btn btn-info btn-xs" href="@routes.ScenarioController.viewPublicScenarioGET(s.id)">
-							<span class="glyphicon glyphicon-search"></span> View
-						</a>
-						</td>
+						<th>#</th>
+						<th>Scenario name</th>
 					</tr>
-				}
-			</tbody>
-		</table>
-		@if(totalPageCount > 1) {
-			<ul class="pagination">
-				@if(currentPage == 0) {
-					<li class="disabled"><span>&laquo;</span></li>
-				} else {
-					<li><a href="@routes.ScenarioController.viewPublicScenariosGET(currentPage-1)">&laquo;</a></li>
-				}
-				@for(p <- 1 to totalPageCount) {
-					@if(p == currentPage+1) {
-						<li class="active"><a href="@routes.ScenarioController.viewPublicScenariosGET(p-1)">@p</a></li>
-					} else {
-						<li><a href="@routes.ScenarioController.viewPublicScenariosGET(p-1)">@p</a></li>
+				</thead>
+				<tbody>
+					@for(s <- scenarios) {
+						<tr>
+							<td>@{(scenarios.indexOf(s)+1)+pageSize*currentPage}</td>
+							<td>@s.name</td>
+							<td>
+							<a class="btn btn-info btn-xs" href="@routes.ScenarioController.viewPublicScenarioGET(s.id)">
+								<span class="glyphicon glyphicon-search"></span> View
+							</a>
+							</td>
+						</tr>
 					}
-				}
-				@if(currentPage == totalPageCount-1) {
-					<li class="disabled"><span>&raquo;</span></li>
-				} else {
-					<li><a href="@routes.ScenarioController.viewPublicScenariosGET(currentPage+1)">&raquo;</a></li>
-				}
-			</ul>
+				</tbody>
+			</table>
+			@if(totalPageCount > 1) {
+				<ul class="pagination">
+					@if(currentPage == 0) {
+						<li class="disabled"><span>&laquo;</span></li>
+					} else {
+						<li><a href="@routes.ScenarioController.viewPublicScenariosGET(currentPage-1)">&laquo;</a></li>
+					}
+					@for(p <- 1 to totalPageCount) {
+						@if(p == currentPage+1) {
+							<li class="active"><a href="@routes.ScenarioController.viewPublicScenariosGET(p-1)">@p</a></li>
+						} else {
+							<li><a href="@routes.ScenarioController.viewPublicScenariosGET(p-1)">@p</a></li>
+						}
+					}
+					@if(currentPage == totalPageCount-1) {
+						<li class="disabled"><span>&raquo;</span></li>
+					} else {
+						<li><a href="@routes.ScenarioController.viewPublicScenariosGET(currentPage+1)">&raquo;</a></li>
+					}
+				</ul>
+			}
 		}
 	</div><!-- /.container -->
 }

@@ -316,6 +316,10 @@ public class ScenarioController extends Controller {
 		for(Game g: games) {
 			g.delete();
 		}
+		List<GameEvent> events = GameEvent.find.where().eq("scenario.id", scenarioId).findList();
+		for(GameEvent ge: events) {
+			ge.delete();
+		}
 		scenario.delete();
 		return redirect(routes.ScenarioController.viewPrivateScenariosGET(0));
 	}
