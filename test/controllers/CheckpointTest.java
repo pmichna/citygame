@@ -68,9 +68,9 @@ public class CheckpointTest extends BaseControllerTest {
 											.findUnique();
 		assertNotNull(checkpoint);
 		assertEquals(checkpointName, checkpoint.name);
-		double longitude = longitudeDegrees + longitudeMinutes / 4L;
+		double longitude = longitudeDegrees + longitudeMinutes / 60;
 		assertEquals(longitude, checkpoint.longitude, DELTA);
-		double latitude = latitudeDegrees + latitudeMinutes / 60L;
+		double latitude = latitudeDegrees + latitudeMinutes / 60;
 		assertEquals(latitude, checkpoint.latitude, DELTA);
 	}
 	
@@ -400,7 +400,7 @@ public class CheckpointTest extends BaseControllerTest {
 		ImmutableMap.Builder<String, String> mapBuilder = ImmutableMap.builder();
 		mapBuilder.put("name", checkpointName);
 		mapBuilder.put("longitudeDegrees", Integer.toString(longitudeDegrees));
-		mapBuilder.put("longitudeMinutes", "4");
+		mapBuilder.put("longitudeMinutes", "60");
 		mapBuilder.put("latitudeDegrees", Integer.toString(latitudeDegrees));
 		mapBuilder.put("latitudeMinutes", Double.toString(latitudeMinutes));
 		mapBuilder.put("message", message);
@@ -595,7 +595,7 @@ public class CheckpointTest extends BaseControllerTest {
 		Checkpoint modified = Checkpoint.find.ref(checkpoint.id);
 		assertNotNull(modified);
 		assertEquals(newName, modified.name);
-		double newLongitude = newLongitudeDegrees + newLongitudeMinutes/4;
+		double newLongitude = newLongitudeDegrees + newLongitudeMinutes/60;
 		assertEquals(newLongitude, modified.longitude, DELTA);
 		double newLatitude = newLatitudeDegrees + newLatitudeMinutes/60;
 		assertEquals(newLatitude, modified.latitude, DELTA);
