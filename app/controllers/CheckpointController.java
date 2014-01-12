@@ -170,7 +170,7 @@ public class CheckpointController extends Controller {
 	
 		@Required(message = "Longitude minutes required")
 		@Min(value = 0, message = "Longitude minutes can't be lower than 0")
-		@Max(value = (long) 3.9999, message = "Longitude minutes can't be greater than 4")
+		@Max(value = (long) 59.9999, message = "Longitude minutes can't be greater than 4")
 		public Double longitudeMinutes;
 		
 		@Required(message = "Latitude degrees required")

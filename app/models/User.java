@@ -37,6 +37,10 @@ public class User extends Model {
     @OneToMany
     public List<Game> games = new ArrayList<Game>();
     
+    @Column
+    public boolean acceptedLocation;
+    public double lastLatitude=0;
+    public double lastLongitude=0;
     
     public User(String email, String alias, String password, String phoneNumber, USER_PRIVILEGE privilege) {
       this.email = email;
@@ -44,6 +48,7 @@ public class User extends Model {
       this.passwordHash = BCrypt.hashpw(password, BCrypt.gensalt());
       this.phoneNumber = phoneNumber;
       this.privilege = privilege;
+      this.acceptedLocation = true;
     }
 
     public static Finder<Long, User> find = new Finder<Long,User>(

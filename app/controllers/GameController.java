@@ -35,85 +35,110 @@ public class GameController extends Controller {
 				totalPageCount, gamesPageSize));
 	}
 
+	public static Game createAndStartGame(String userEmail, Long scenarioId){
+		java.util.Calendar cal = java.util.Calendar.getInstance();
+		java.util.Date utilDate = cal.getTime();
+		java.sql.Date sqlDate = new Date(utilDate.getTime());
+		User user = User.find.where().eq("email", userEmail)
+				.findUnique();
+		Scenario scenario = Scenario.find.byId(scenarioId);
+		if (user == null || scenario == null)
+			return null;
+		Game game = Game.createNewGame(user, scenario, sqlDate);
+		//MessageController.sendMsg(user.phoneNumber, "costam");
+		startGame(game);
+		return game;
+		
+	}
+	
+	public static void startGame(Game game){
+		Thread t = new Thread(new GameThread(game));
+		t.start();
+	}
+	
 	private static class GameThread implements Runnable {
-		String userEmail;
-		Long scenarioId;
 
-		public GameThread(String userEmail, Long scenarioId) {
-			this.userEmail = userEmail;
-			this.scenarioId = scenarioId;
+		Game game;
+
+		public GameThread(Game game) {
+			this.game = game;
 		}
 
 		@Override
 		public void run() {
 
 			try {
-				java.util.Calendar cal = java.util.Calendar.getInstance();
-				java.util.Date utilDate = cal.getTime();
-				java.sql.Date sqlDate = new Date(utilDate.getTime());
-
-				// create game
-				User user = User.find.where().eq("email", userEmail)
-						.findUnique();
-				Scenario scenario = Scenario.find.byId(scenarioId);
-
-				if (user == null || scenario == null)
-					return;
-				Game game = Game.createNewGame(user, scenario, sqlDate);
-
-				if (game == null)
-					return;
-
+				Logger.info("Started new game thread");
 				// game loop, will continue till game is stopped
 				while (game.status != GAME_STATUS.stopped) {
 
-					// Find events to process for this phone number and this scenario
-					List<GameEvent> currentEvents = GameEvent.find.where()
-							.eq("userPhoneNumber", user.phoneNumber)
-							.eq("scenario",scenario)
-							.findList();
-
-					// if game is paused, only empty all events
+					// if game is paused, do nothing
 					if (game.status != GAME_STATUS.paused) {
-						//check current position
-						LocationController.locationControllerGET(user.phoneNumber);
+
+						// check current position
 						
-						
+						if (game.user.acceptedLocation) {
+							List<Checkpoint> nearby = game.scenario
+									.findNearbyCheckpoints(game.user.lastLongitude,
+											game.user.lastLatitude);
+							if(nearby.size()>0)
+							Logger.debug("Nearby checkpooints #: "+nearby.size());
+							// send messages from nearby checkpoints
+							for (Checkpoint c : nearby) {
+								if(!game.visitedCheckpoints.contains(c)){
+								c.sendMessage(game.user.phoneNumber);
+								game.visitedCheckpoints.add(c);
+								}
+							}
+							game.update();
+
+							// if user does not have correctly set location
+						} else {
+							game.status = GAME_STATUS.paused;
+							game.update();
+							continue;
+						}
+
+						// Find events to process for this phone number and this
+						// scenario
+						List<GameEvent> currentEvents = GameEvent.find.where()
+								.eq("userPhoneNumber", game.user.phoneNumber)
+								.eq("scenario", game.scenario).findList();
+						if (currentEvents.size() > 0)
+							Logger.debug("events number:"
+									+ currentEvents.size());
 						// Process events
 						for (GameEvent e : currentEvents) {
+							Logger.debug("events");
 							// If event was an sms message
-							if (e.message != null) {
+							if (e.type == GAME_EVENT_TYPE.smsReceive) {
 								// do something with sms
 								// check if answer is correct
-								Logger.debug("Message being processed: "
+								Logger.debug("[event] Message being processed: "
 										+ e.message);
-								boolean checkAnswer = Checkpoint.hasAnswer(e.checkpoint.id, e.message);
-								Logger.debug("Maching answer:"
+								boolean checkAnswer = Checkpoint.hasAnswer(
+										e.checkpoint.id, e.message);
+								Logger.debug("[event] Maching answer:"
 										+ checkAnswer);
 								// if checkpoint does not match, search further
 								if (!checkAnswer)
 									continue;
-								// if answers match add points and mark it as answered
+								// if answers match add points and mark it as
+								// answered
 								game.pointsCollected += e.checkpoint.points;
 								game.answeredCheckpoints.add(e.checkpoint);
-								game.save();
-							// If event was a location
-							} else if(e.latitude!=null && e.longitude!=null){
-								//get all nearby checkpoints
-								List<Checkpoint> nearby=scenario.findNearbyCheckpoints(e.longitude, e.latitude);
-								//send messages from nearby checkpoints
-								for(Checkpoint c:nearby){
-									c.sendMessage(user.phoneNumber);
-									game.visitedCheckpoints.add(c);
-								}
+								game.update();
+
 							}
+
 						}
+						// remove all processed events
+						Ebean.delete(currentEvents);
 					}
-					// remove all processed events
-					Ebean.delete(currentEvents);
+
 					// Wait before next game loop iteration to not waste server
 					// resources
-					Thread.sleep(30);
+					Thread.sleep(1000);
 				}
 			} catch (InterruptedException e) {
 				e.printStackTrace();
@@ -124,8 +149,7 @@ public class GameController extends Controller {
 	}
 
 	public static Result startGameGET(Long scenarioId) {
-		Thread t = new Thread(new GameThread(session("email"), scenarioId));
-		t.start();
+		createAndStartGame(session("email"), scenarioId);
 		return redirect(routes.GameController.viewMyGamesGET(0));
 	}
 

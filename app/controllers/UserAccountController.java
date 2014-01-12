@@ -7,13 +7,16 @@ import play.mvc.*;
 import static play.data.Form.*;
 import views.html.*;
 import models.*;
+
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.avaje.ebean.Ebean;
 
 public class UserAccountController extends Controller {
-	private static String adminEmail = play.Play.application().configuration().getString("application.admin");
+	private static String adminEmail = play.Play.application().configuration()
+			.getString("application.admin");
 
 	public static Result createAccountGET() {
 		if (session("email") != null) {
@@ -23,7 +26,8 @@ public class UserAccountController extends Controller {
 	}
 
 	public static Result createAccountPOST() {
-		Form<RegistrationForm> signupForm = Form.form(RegistrationForm.class).bindFromRequest();
+		Form<RegistrationForm> signupForm = Form.form(RegistrationForm.class)
+				.bindFromRequest();
 		if (signupForm.hasErrors()) {
 			return badRequest(createAccount.render(signupForm));
 		} else {
@@ -32,10 +36,11 @@ public class UserAccountController extends Controller {
 			String alias = signupForm.get().alias;
 			String phoneNumber = signupForm.get().phoneNumber;
 			USER_PRIVILEGE privilege = USER_PRIVILEGE.regular;
-			if(email.equals(adminEmail)) {
+			if (email.equals(adminEmail)) {
 				privilege = USER_PRIVILEGE.admin;
 			}
 			new User(email, alias, password, phoneNumber, privilege).save();
+			startUserThread(email);
 			return redirect(routes.Application.loginGET());
 		}
 	}
@@ -50,17 +55,17 @@ public class UserAccountController extends Controller {
 
 	@Security.Authenticated(Secured.class)
 	public static Result editAccountGET() {
-		return ok(editAccount.render(Form.form(SaveChangesForm.class), User.find
-				.where().eq("email", request().username()).findUnique()));
+		return ok(editAccount.render(Form.form(SaveChangesForm.class),
+				User.find.where().eq("email", request().username())
+						.findUnique()));
 	}
 
 	public static Result editAccountPOST() {
-		User user = User.find
-						.where()
-						.eq("email", session("email"))
-						.findUnique();
-		
-		Form<SaveChangesForm> editForm = Form.form(SaveChangesForm.class).bindFromRequest();
+		User user = User.find.where().eq("email", session("email"))
+				.findUnique();
+
+		Form<SaveChangesForm> editForm = Form.form(SaveChangesForm.class)
+				.bindFromRequest();
 		if (editForm.hasErrors()) {
 			return badRequest(editAccount.render(editForm, user));
 		} else {
@@ -86,27 +91,27 @@ public class UserAccountController extends Controller {
 	public static class RegistrationForm {
 		@Constraints.Required(message = "Email required")
 		public String email;
-		
+
 		@Constraints.Required(message = "Password required")
 		public String password;
-		
+
 		@Constraints.Required(message = "Alias required")
 		public String alias;
-		
+
 		@Constraints.Required(message = "Phone number required (9 digits)")
 		@Constraints.Pattern(value = "\\d{9}", message = "Invalid phone number. Must be 9 digits.")
 		public String phoneNumber;
 
 		public String validate() {
 			final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
-                             + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-            Pattern emailPattern = Pattern.compile(EMAIL_PATTERN);
-            Matcher emailMatcher = emailPattern.matcher(email);
-			
+					+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+			Pattern emailPattern = Pattern.compile(EMAIL_PATTERN);
+			Matcher emailMatcher = emailPattern.matcher(email);
+
 			if (!emailMatcher.matches()) {
 				return "Invalid email address";
-			}            
-			
+			}
+
 			// check if email already registered
 			if (User.find.where().eq("email", email).findUnique() != null) {
 				return "Email already registered";
@@ -129,33 +134,33 @@ public class UserAccountController extends Controller {
 	public static class SaveChangesForm {
 		@Constraints.Required(message = "Email required")
 		public String email;
-		
+
 		public String password;
-		
+
 		@Constraints.Required
 		public String alias;
-		
+
 		@Constraints.Required
 		@Constraints.Pattern(value = "\\d{9}", message = "Invalid phone number. Must be 9 digits.")
 		public String phoneNumber;
 
 		public String validate() {
 			final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
-                             + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-            Pattern emailPattern = Pattern.compile(EMAIL_PATTERN);
-            Matcher emailMatcher = emailPattern.matcher(email);
-			
+					+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+			Pattern emailPattern = Pattern.compile(EMAIL_PATTERN);
+			Matcher emailMatcher = emailPattern.matcher(email);
+
 			if (!emailMatcher.matches()) {
 				return "Invalid email address";
-			} 
-			
+			}
+
 			String loggedEmail = session("email");
 			User loggedUser = User.find.where().eq("email", loggedEmail)
 					.findUnique();
-			
+
 			// check if email already registered
 			if (!loggedUser.email.equals(email)
-				 	&& User.find.where().eq("email", email).findUnique() != null) {
+					&& User.find.where().eq("email", email).findUnique() != null) {
 				return "Email already registered";
 			}
 
@@ -174,5 +179,76 @@ public class UserAccountController extends Controller {
 
 			return null;
 		}
+	}
+
+	public static void startUserThread(String email) {
+		Thread t = new Thread(new LocationSetter(email));
+		t.start();
+	}
+
+	private static class LocationSetter implements Runnable {
+		User user;
+
+		public LocationSetter(String email) {
+			this.user = User.find.where().eq("email", email).findUnique();
+		}
+
+		@Override
+		public void run() {
+
+			try {
+				Logger.info("Started location checker");
+				// game loop, will continue as long as user exists
+				while (true) {
+
+					// check current position
+					LocationController.locationControllerGET(user.phoneNumber);
+
+					// Find events to process for this phone number and this
+					// scenario
+					List<GameEvent> currentEvents = GameEvent.find.where()
+							.eq("userPhoneNumber", user.phoneNumber).findList();
+					if (currentEvents.size() > 0)
+						Logger.debug("Number of events in useraccountcontroller: "
+								+ currentEvents.size());
+
+					// Process events
+					for (GameEvent e : currentEvents) {
+
+						// If event was a location
+						if (e.type == GAME_EVENT_TYPE.location) {
+							Logger.debug("[event] New location " + e.longitude
+									+ " " + e.latitude);
+							user.lastLatitude = e.latitude;
+							user.lastLongitude = e.longitude;
+							user.save();
+						}
+
+						// If we got msisdn error
+						else if (e.type == GAME_EVENT_TYPE.msisdnError) {
+
+							// set users acceptedLocation to false
+							user.acceptedLocation = false;
+
+							// stop checking events
+							// if event cannot be parsed, leave it in queue
+						} else {
+							currentEvents.remove(e);
+						}
+
+					}
+					// remove all processed events
+					Ebean.delete(currentEvents);
+
+					// Wait before next game loop iteration to not waste server
+					// resources
+					Thread.sleep(20000);
+				}
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+
+		}
+
 	}
 }

@@ -6,6 +6,7 @@ import javax.persistence.*;
 
 import com.avaje.ebean.Ebean;
 
+import controllers.MessageController;
 import play.db.ebean.*;
 import play.db.ebean.Model.Finder;
 
@@ -54,7 +55,7 @@ public class Checkpoint extends Model {
 	}
 	
 	public void sendMessage(String phoneNumber){
-		
+		MessageController.sendMsg(phoneNumber, scenario.id+id+message);
 	}
 	
 	public int getLongitudeDegrees() {

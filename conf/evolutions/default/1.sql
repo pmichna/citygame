@@ -35,9 +35,13 @@ create table game (
 create table game_event (
   id                        bigint auto_increment not null,
   user_phone_number         varchar(9) not null,
+  type                      integer,
   scenario_id               bigint,
   checkpoint_id             bigint,
   message                   varchar(255),
+  longitude                 double,
+  latitude                  double,
+  constraint ck_game_event_type check (type in (0,1,2,3,4)),
   constraint pk_game_event primary key (id))
 ;
 
@@ -59,6 +63,9 @@ create table user (
   phone_number              varchar(9) not null,
   password_hash             varchar(60) not null,
   privilege                 varchar(7) not null,
+  accepted_location         tinyint(1) default 0,
+  last_latitude             double,
+  last_longitude            double,
   constraint ck_user_privilege check (privilege in ('regular','admin')),
   constraint uq_user_email unique (email),
   constraint uq_user_alias unique (alias),

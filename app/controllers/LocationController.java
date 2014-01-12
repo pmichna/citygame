@@ -25,7 +25,7 @@ public class LocationController extends Controller {
 		
 		final play.libs.F.Promise<Result> resultPromise = WS.url(feedUrl)
 				.setQueryParameter("msisdn",number)
-				.setAuth("48509237274", "Y7A7HNM3EFF3LF", com.ning.http.client.Realm.AuthScheme.BASIC).get()
+				.setAuth("48509237274", "Y7A7HNM3EFF3LF").get()
 				.map(new Function<WS.Response, Result>() {
 
 					NodeList longitude = null;
@@ -47,11 +47,23 @@ public class LocationController extends Controller {
 							latitude = doc.getElementsByTagName("latitude");
 
 						} catch (Exception e) {
-							Logger.debug("Failed to properly pase location file");
+							Logger.error("Failed to properly parse location file");
 						}
 						if(latitude.getLength()==0 || longitude.getLength()==0){
+							Logger.error("Failed to get coordinates");
+							if(response.getBody().indexOf("<description>msisdn not allowed</description>")!=-1){
+								Logger.error("Msisdn not allowed for:"+number);
+								GameEvent.createGameEvent(number, "msisdn not allowed", GAME_EVENT_TYPE.msisdnError);
+							}
+							if(response.getBody().indexOf("<description>getLocation limit reached</description>")!=-1){
+								Logger.error("Msisdn limit reached for: "+number);
+								GameEvent.createGameEvent(number, "msisdn limit reached", GAME_EVENT_TYPE.msisdnError);
+							}
 							return ok("Failed to get coordinates");
 						}
+						
+						//Logger.debug("Latitude:"+latitude.item(0).getTextContent());
+						Logger.info("Received location of number: " +number);
 						GameEvent.createGameEvent(
 								Long.parseLong(longitude.item(0).getTextContent()),
 								Long.parseLong(latitude.item(0).getTextContent()),
