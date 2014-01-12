@@ -319,6 +319,22 @@ public class ScenarioController extends Controller {
 		scenario.delete();
 		return redirect(routes.ScenarioController.viewPrivateScenariosGET(0));
 	}
+
+	@Security.Authenticated(Secured.class)
+	public static Result viewScenarioRankingGET(Long scenarioId) {
+		User user = User.find
+						.where()
+						.eq("email", session("email"))
+						.findUnique();
+		
+		List<Game> games = Game.find
+								.where()
+								.eq("scenario.id", scenarioId)
+								.eq("status", GAME_STATUS.stopped)
+								.findList();
+		Ebean.sort(games, "game.pointsCollected, desc");
+		return ok(viewScenarioRanking.render(user, games));
+	}
 	
 	public static class ScenarioForm {
 		

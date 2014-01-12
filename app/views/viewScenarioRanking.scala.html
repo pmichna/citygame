@@ -1,0 +1,24 @@
+@(user: User, games: List[Game])
+
+@main("Scenario ranking", user) {
+<div class="container">
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>#</th>
+				<th>User</th>
+				<th>Points</th>
+			</tr>
+		</thead>
+		<tbody>
+			@for(g <- games) {
+			<tr>
+				<td>@{games.indexOf(g)+1}</td>
+				<td>@g.user.alias</td>
+				<td>@g.pointsCollected</td>
+			</tr>
+			}
+		</tbody>
+	</table>
+</div><!-- /.container -->
+}

@@ -45,6 +45,7 @@ GET		/answers/delete/:answer								controllers.CheckpointAnswerController.delet
 GET		/scenarios/:scenario/members/add					controllers.ScenarioController.addMemberGET(scenario: Long)
 POST	/scenarios/:scenario/members/add					controllers.ScenarioController.addMemberPOST(scenario: Long)
 GET		/scenarios/:scenario/delete/:member					controllers.ScenarioController.removeMemberGET(scenario:Long, member: Long)
+GET		/scenarios/:scenario/ranking						controllers.ScenarioController.viewScenarioRankingGET(scenario: Long)
 
 
 GET		/msgreceive											controllers.MessageController.receiveMsg(from: String, to: String, msg: String)
