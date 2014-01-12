@@ -35,7 +35,7 @@ public class GameEvent extends Model {
 	public Double longitude;
 	public Double latitude;
 
-	GameEvent(String message, String userPhoneNumber, Long scenarioId,
+	public GameEvent(String message, String userPhoneNumber, Long scenarioId,
 			Long checkpointId) {
 		this.userPhoneNumber = userPhoneNumber;
 		this.message = message;
@@ -46,7 +46,7 @@ public class GameEvent extends Model {
 		type = GAME_EVENT_TYPE.location;
 	}
 
-	GameEvent(double longitude, double latitude, String userPhoneNumber) {
+	public GameEvent(double longitude, double latitude, String userPhoneNumber) {
 		this.userPhoneNumber = userPhoneNumber;
 		this.longitude = longitude;
 		this.latitude = latitude;
@@ -54,7 +54,7 @@ public class GameEvent extends Model {
 		type = GAME_EVENT_TYPE.location;
 	}
 
-	GameEvent(String userPhoneNumber, String message, GAME_EVENT_TYPE type) {
+	public GameEvent(String userPhoneNumber, String message, GAME_EVENT_TYPE type) {
 		this.type = type;
 		this.userPhoneNumber = userPhoneNumber;
 		this.message = message;

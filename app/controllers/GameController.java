@@ -89,7 +89,7 @@ public class GameController extends Controller {
 
 						// check current position
 						LocationController.locationControllerGET(game.user.phoneNumber);
-						Logger.debug("acceptedLocation:" +game.user.acceptedLocation);
+						Logger.debug("acceptedLocation:" + game.user.acceptedLocation);
 						if (game.user.acceptedLocation) {
 							List<Checkpoint> nearby = game.scenario
 									.findNearbyCheckpoints(game.user.lastLongitude,

@@ -23,7 +23,7 @@ public class MessageController extends Controller {
 		Logger.debug("Received message: " + msg);
 		Logger.debug("from: " + from);
 		Logger.debug("to: " + to);
-		if (User.find.where().eq("phoneNumber", to).findList().size() < 1) {
+		if (User.find.where().eq("phoneNumber", from).findList().size() < 1) {
 			Logger.error("Couldn't find phone number");
 			return ok("<response><status>400</status></response>");
 		}
@@ -43,9 +43,9 @@ public class MessageController extends Controller {
 			Logger.error("Checkpoint does not exist");
 			return ok("<response><status>400</status></response>");
 		}
-		GameEvent.createGameEvent(to, tokens[2], scenarioId, checkpointId);
+		GameEvent.createGameEvent(from, tokens[2], scenarioId, checkpointId);
 		Logger.info("Message received");
-		return ok("Message received");
+		return ok("<response><status>200</status></response>");
 	}
 
 	public static Promise<Result> sendMsg(String to, String msg) {
