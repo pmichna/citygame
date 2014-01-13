@@ -89,7 +89,7 @@ public class GameController extends Controller {
 
 						// check current position
 						LocationController.locationControllerGET(game.user.phoneNumber);
-						Logger.debug("acceptedLocation:" +game.user.acceptedLocation);
+						Logger.debug("acceptedLocation:" + game.user.acceptedLocation);
 						if (game.user.acceptedLocation) {
 							List<Checkpoint> nearby = game.scenario
 									.findNearbyCheckpoints(game.user.lastLongitude,
@@ -103,12 +103,12 @@ public class GameController extends Controller {
 								game.visitedCheckpoints.add(c);
 								}
 							}
-							game.update();
+							game.save();
 
 							// if user does not have correctly set location
 						} else {
 							game.status = GAME_STATUS.paused;
-							game.update();
+							game.save();
 							continue;
 						}
 
@@ -140,10 +140,8 @@ public class GameController extends Controller {
 								// answered
 								game.pointsCollected += e.checkpoint.points;
 								game.answeredCheckpoints.add(e.checkpoint);
-								game.update();
-
+								game.save();
 							}
-
 						}
 						// remove all processed events
 						Ebean.delete(currentEvents);
@@ -162,10 +160,66 @@ public class GameController extends Controller {
 
 	}
 
+	@Security.Authenticated(Secured.class)
+	public static play.libs.F.Promise<Result> startGameGET(final Long scenarioId) {
+		final User user = User.find
+						.where()
+						.eq("email", session("email"))
+						.findUnique();
+		final Scenario scenario = Scenario.find.ref(scenarioId);
+		
+		
+		final String feedUrl = "https://api2.orange.pl/terminallocation/";
+		
+		final play.libs.F.Promise<Result> resultPromise = WS.url(feedUrl)
+				.setQueryParameter("msisdn", user.phoneNumber)
+				.setAuth("48509237274", "Y7A7HNM3EFF3LF").get()
+				.map(new Function<WS.Response, Result>() {				
+					
+					NodeList longitude = null;
+					NodeList latitude = null;
 
-	public static Result startGameGET(Long scenarioId) {
-		createAndStartGame(session("email"), scenarioId);
-		return redirect(routes.GameController.viewMyGamesGET(0));
+					public Result apply(WS.Response response) {
+						if(user == null || scenario == null) {
+							return redirect(routes.Application.index());
+						}
+						if(!scenario.isPublic && !scenario.members.contains(user)) {
+							return redirect(routes.Application.index());
+						}
+						//response.body.asXml();
+						DocumentBuilderFactory dbf = DocumentBuilderFactory
+								.newInstance();
+						DocumentBuilder db = null;
+						try {
+							db = dbf.newDocumentBuilder();
+							InputSource is = new InputSource();
+							is.setCharacterStream(new StringReader(response
+									.getBody().toString()));
+
+							Document doc = db.parse(is);
+							longitude = doc.getElementsByTagName("longitude");
+							latitude = doc.getElementsByTagName("latitude");
+
+						} catch (Exception e) {
+							Logger.error("Failed to properly parse location file");
+						}
+						if(latitude.getLength()==0 || longitude.getLength()==0){
+							Logger.error("Failed to get coordinates");
+							if(response.getBody().indexOf("<description>msisdn not allowed</description>")!=-1){
+								Logger.info("Msisdn not allowed for:" + user.phoneNumber);
+								User.setUserLocation(user.phoneNumber, false);
+								return ok(locationForbidden.render(user));
+							}
+							if(response.getBody().indexOf("<description>getLocation limit reached</description>")!=-1){
+								Logger.info("Msisdn limit reached for: "+ user.phoneNumber);
+							}
+							return ok("Failed to get coordinates");
+						}
+						createAndStartGame(session("email"), scenarioId);
+						return redirect(routes.GameController.viewMyGamesGET(0));						
+					}
+				});
+		return resultPromise;
 	}
 
 	public static Result changeGameStatusById(Long gameId, Integer pageNumber,

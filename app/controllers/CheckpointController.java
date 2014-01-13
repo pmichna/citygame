@@ -49,9 +49,9 @@ public class CheckpointController extends Controller {
 			double latitude = latitudeDegrees + latitudeMinutes / 60;
 
 
-			Checkpoint.create(name, longitude, latitude, points, message,
+			Checkpoint checkpoint = Checkpoint.create(name, longitude, latitude, points, message,
 					scenarioId, user.privilege == USER_PRIVILEGE.admin);
-			return redirect(routes.ScenarioController.editScenarioGET(scenarioId));
+			return redirect(routes.CheckpointController.editCheckpointGET(checkpoint.id));
 		}
 	}
 
