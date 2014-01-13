@@ -97,7 +97,7 @@ public class Scenario extends Model {
 			Logger.debug("Distance: "+(c.longitude-longitude)*(c.longitude-longitude)+
 					(c.latitude-latitude)*(c.latitude-latitude));
 			if((c.longitude-longitude)*(c.longitude-longitude)+
-					(c.latitude-latitude)*(c.latitude-latitude)<0.05*0.05){
+					(c.latitude-latitude)*(c.latitude-latitude)<0.0025*0.0025){
 						nearby.add(c);
 					}	
 		}
