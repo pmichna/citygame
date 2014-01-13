@@ -30,9 +30,9 @@ public class GameController extends Controller {
 	private static int refreshTime = 100;
 	
 	private static String orangeUser = play.Play.application().configuration()
-			.getString("orange.user");
+			.getString("application.orangeUser");
 	private static String orangePass = play.Play.application().configuration()
-			.getString("orange.pass");
+			.getString("application.orangePass");
 
 	@Security.Authenticated(Secured.class)
 	public static Result viewMyGamesGET(int pageNum) {
@@ -178,7 +178,7 @@ public class GameController extends Controller {
 		
 		final play.libs.F.Promise<Result> resultPromise = WS.url(feedUrl)
 				.setQueryParameter("msisdn", user.phoneNumber)
-				.setAuth("orangeUser", "orangePass").get()
+				.setAuth(orangeUser, orangePass).get()
 				.map(new Function<WS.Response, Result>() {				
 					
 					NodeList longitude = null;
@@ -207,6 +207,8 @@ public class GameController extends Controller {
 
 						} catch (Exception e) {
 							Logger.error("Failed to properly parse location file");
+							Logger.info(orangeUser);
+							Logger.info(orangePass);
 						}
 						if(latitude.getLength()==0 || longitude.getLength()==0){
 							Logger.error("Failed to get coordinates");
