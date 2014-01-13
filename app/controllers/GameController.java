@@ -28,6 +28,11 @@ public class GameController extends Controller {
 	private static int gamesPageSize = 10;
 	// time used in each game refresh
 	private static int refreshTime = 100;
+	
+	private static String orangeUser = play.Play.application().configuration()
+			.getString("orange.user");
+	private static String orangePass = play.Play.application().configuration()
+			.getString("orange.pass");
 
 	@Security.Authenticated(Secured.class)
 	public static Result viewMyGamesGET(int pageNum) {
@@ -173,7 +178,7 @@ public class GameController extends Controller {
 		
 		final play.libs.F.Promise<Result> resultPromise = WS.url(feedUrl)
 				.setQueryParameter("msisdn", user.phoneNumber)
-				.setAuth("48509237274", "Y7A7HNM3EFF3LF").get()
+				.setAuth("orangeUser", "orangePass").get()
 				.map(new Function<WS.Response, Result>() {				
 					
 					NodeList longitude = null;

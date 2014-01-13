@@ -19,6 +19,11 @@ import models.*;
 
 public class MessageController extends Controller {
 
+	private static String orangeUser = play.Play.application().configuration()
+			.getString("orange.user");
+	private static String orangePass = play.Play.application().configuration()
+			.getString("orange.pass");
+
 	public static Result receiveMsg(String from, String to, String msg) {
 		Logger.debug("Received message: " + msg);
 		Logger.debug("from: " + from);
@@ -55,7 +60,7 @@ public class MessageController extends Controller {
 		final play.libs.F.Promise<Result> resultPromise = WS.url(feedUrl)
 				.setQueryParameter("to", to)
 				.setQueryParameter("msg", msg)
-				.setAuth("48509237274", "Y7A7HNM3EFF3LF").get()
+				.setAuth("orangeUser", "orangePass").get()
 				.map(new Function<WS.Response, Result>() {
 
 					public Result apply(WS.Response response) {

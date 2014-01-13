@@ -17,6 +17,11 @@ import sun.net.www.protocol.http.AuthScheme;
 import models.*;
 
 public class LocationController extends Controller {
+	
+	private static String orangeUser = play.Play.application().configuration()
+			.getString("orange.user");
+	private static String orangePass = play.Play.application().configuration()
+			.getString("orange.pass");
 
 	public static play.libs.F.Promise<Result> locationControllerGET(
 			final String number) {
@@ -25,7 +30,7 @@ public class LocationController extends Controller {
 		
 		final play.libs.F.Promise<Result> resultPromise = WS.url(feedUrl)
 				.setQueryParameter("msisdn",number)
-				.setAuth("48509237274", "Y7A7HNM3EFF3LF").get()
+				.setAuth("orangeUser", "orangePass").get()
 				.map(new Function<WS.Response, Result>() {
 
 					NodeList longitude = null;
