@@ -46,6 +46,9 @@ public class ScenarioController extends Controller {
 			String month = createForm.get().month;
 			String year = createForm.get().year;
 			Boolean isPublic = createForm.get().isPublic;
+			if(isPublic == null) {
+				isPublic = false;
+			}
 			DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 			Date date;
 			if(day.equals("dd") || month.equals("mm") || year.equals("yyyy")){
