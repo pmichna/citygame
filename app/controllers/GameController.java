@@ -143,9 +143,11 @@ public class GameController extends Controller {
 									continue;
 								// if answers match add points and mark it as
 								// answered
-								game.pointsCollected += e.checkpoint.points;
-								game.answeredCheckpoints.add(e.checkpoint);
-								game.save();
+								if(!game.answeredCheckpoints.contains(e.message)) {
+									game.pointsCollected += e.checkpoint.points;
+									game.answeredCheckpoints.add(e.checkpoint);
+									game.save();
+								}
 							}
 						}
 						// remove all processed events
