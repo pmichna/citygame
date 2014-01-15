@@ -353,6 +353,18 @@ public class ScenarioController extends Controller {
 		public String day;
 		public String month;
 		public String year;
+		
+		public String validate() {
+		    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		    sdf.setLenient(false);
+		    java.util.Date date = sdf.parse(year + "-" + month + "-" + day, new java.text.ParsePosition(0));
+			if(date == null){
+				return "Wrong date";
+			}
+			else {
+				return null;
+			}
+		}
 	}
 	
 	public static class Member {
