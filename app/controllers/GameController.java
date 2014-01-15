@@ -118,11 +118,12 @@ public class GameController extends Controller {
 		@Override
 		public void run() {
 			try {
-				Logger.info("Started new game thread");
+				Logger.info("Started new game thread for game id: " + game.id);
 				// game loop, will continue till game is stopped
 				while (game.status != GAME_STATUS.stopped) {
 					// if game is paused, do nothing
 					if (game.status != GAME_STATUS.paused) {
+						Logger.info("Thread for game id: " + game.id + " working");
 						if(game.sentCheckpoints.size() == 0) {
 							Checkpoint checkpointToSend = Game.findLowestNotSentCheckpoint(game.id);
 							sendMessage(game.user.phoneNumber, checkpointToSend);
@@ -186,6 +187,7 @@ public class GameController extends Controller {
 					Thread.sleep(20000);
 					game.refresh();
 				}
+				Logger.info("Thread for game id: " + game.id + " stopping");
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
