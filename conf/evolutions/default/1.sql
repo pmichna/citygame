@@ -11,6 +11,7 @@ create table checkpoint (
   points                    integer not null,
   message                   varchar(160) not null,
   scenario_id               bigint,
+  checkpoint_index          integer not null,
   constraint pk_checkpoint primary key (id))
 ;
 

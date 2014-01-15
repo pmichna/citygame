@@ -1,4 +1,4 @@
-@(form: Form[ScenarioController.ScenarioForm], user: User, scenario: Scenario, isLocked: Boolean)
+@(form: Form[ScenarioController.ScenarioForm], user: User, scenario: Scenario, sortedCheckpoints: List[Checkpoint], isLocked: Boolean)
 
 @main("Edit scenario", user) {
 	<div class="container">
@@ -115,14 +115,14 @@
 			<table class="table table-striped">
 				<thead>
 					<tr>
-						<th>#</th>
+						<th>Index</th>
 						<th>Checkpoint name</th>
 					</tr>
 				</thead>
 				<tbody>
-					@for(c <- scenario.checkpoints) {
+					@for(c <- sortedCheckpoints) {
 					<tr>
-						<td>@{scenario.checkpoints.indexOf(c)+1}</td>
+						<td>@{c.checkpointIndex}</td>
 						<td>@c.name</td>
 						<td>
 							<a class="btn btn-warning btn-xs" @if(isLocked){disabled="disabled"} href="@routes.CheckpointController.editCheckpointGET(c.id)"><span class="glyphicon glyphicon-pencil"></span> Edit</a>

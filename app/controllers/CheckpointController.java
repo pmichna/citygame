@@ -44,13 +44,14 @@ public class CheckpointController extends Controller {
 			double latitudeMinutes = createForm.get().latitudeMinutes;
 			String message = createForm.get().message;
 			int points = createForm.get().points;
+			int index = createForm.get().index;
 
 			double longitude = longitudeDegrees + longitudeMinutes / 60;
 			double latitude = latitudeDegrees + latitudeMinutes / 60;
 
 
 			Checkpoint checkpoint = Checkpoint.create(name, longitude, latitude, points, message,
-					scenarioId, user.privilege == USER_PRIVILEGE.admin);
+					scenarioId, user.privilege == USER_PRIVILEGE.admin, index);
 			return redirect(routes.CheckpointController.editCheckpointGET(checkpoint.id));
 		}
 	}
@@ -119,9 +120,10 @@ public class CheckpointController extends Controller {
 			int points = editionForm.get().points;
 			double longitude = longitudeDegrees + longitudeMinutes / 60;
 			double latitude = latitudeDegrees + latitudeMinutes / 60;
+			int index = editionForm.get().index;
 
 			Checkpoint.editCheckpoint(checkpointId, name, longitude, latitude,
-					points, message, user.privilege == USER_PRIVILEGE.admin);
+					points, message, user.privilege == USER_PRIVILEGE.admin, index);
 			return ok(viewCheckpoint.render(user, scenario, checkpoint, true));
 		}
 	}
@@ -191,6 +193,9 @@ public class CheckpointController extends Controller {
 		@Required(message = "Points are required")
 		@Min(value = 1, message = "Points min. = 1")
 		public Integer points;	
+		
+		@Required(message = "Checkpoint index is required")
+		public Integer index;
 		
 		public String validate() {
 			if((longitudeDegrees == 180 && longitudeMinutes != 0) ||
