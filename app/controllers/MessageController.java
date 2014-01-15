@@ -57,7 +57,7 @@ public class MessageController extends Controller {
 	public static Promise<Result> sendMsg(String to, String msg) {
 		String feedUrl = "https://api2.orange.pl/sendsms/";
 		//msg = msg.replace(' ', '+');
-		Logger.info("Sending SMS to: "+to+" with msg: "+msg);
+		Logger.info("Sending SMS to: " + to + " with msg: " + msg);
 		final play.libs.F.Promise<Result> resultPromise = WS.url(feedUrl)
 				.setQueryParameter("to", to)
 				.setQueryParameter("msg", msg)

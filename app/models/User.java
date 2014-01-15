@@ -38,7 +38,7 @@ public class User extends Model {
     public List<Game> games = new ArrayList<Game>();
     
     @Column
-    public boolean acceptedLocation;
+    public Boolean acceptedLocation;
     public double lastLatitude=0;
     public double lastLongitude=0;
     

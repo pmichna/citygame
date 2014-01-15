@@ -90,6 +90,7 @@ public class GameController extends Controller {
 	}
 	
 	private static Boolean isInProximity(double lon1, double lat1, double lon2, double lat2) {
+		Logger.debug("calculating distance btw. lat1 = " + lat1 + ", lon1 = " + lon1 + "; lat2 = " + lat2 + ", lon2 = " + lon2);
 		int R = 6371; // km
 		double dLat = Math.toRadians(lat2-lat1);
 		double dLon = Math.toRadians(lon2-lon1);
@@ -100,7 +101,7 @@ public class GameController extends Controller {
 		        Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
 		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
 		double d = R * c;
-		Logger.info("Distane = " + d);
+		Logger.info("Distance = " + d);
 		if(d < 0.25) { //km
 			return true;
 		}
