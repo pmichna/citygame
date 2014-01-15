@@ -34,6 +34,9 @@ public class GameEvent extends Model {
 	public String message;
 	public Double longitude;
 	public Double latitude;
+	
+	public static Finder<Long, GameEvent> find = new Finder<Long, GameEvent>(
+			Long.class, GameEvent.class);
 
 	public GameEvent(String message, String userPhoneNumber, Long scenarioId,
 			Long checkpointId) {
@@ -81,8 +84,14 @@ public class GameEvent extends Model {
 		event.save();
 		return event;
 	}
-
-	public static Finder<Long, GameEvent> find = new Finder<Long, GameEvent>(
-			Long.class, GameEvent.class);
+	
+	public static Boolean wasSmsReceived(String message, String userPhoneNumber, Long scenarioId, Long checkpointId) {
+		return find.where()
+					.eq("message", message)
+					.eq("userPhoneNumber", userPhoneNumber)
+					.eq("scenario.id", scenarioId)
+					.eq("checkpoint.id", checkpointId)
+					.findRowCount() > 0;
+	}
 
 }

@@ -48,8 +48,14 @@ public class MessageController extends Controller {
 			Logger.error("Checkpoint does not exist");
 			return ok("<response><status>400</status></response>");
 		}
-		GameEvent.createGameEvent(from, tokens[2], scenarioId, checkpointId);
 		Logger.info("Message received");
+		if(GameEvent.wasSmsReceived(tokens[2], from, scenarioId, checkpointId)) {
+			Logger.info("Message was already sent. Not adding points.");
+		} else {
+			GameEvent.createGameEvent(from, tokens[2], scenarioId, checkpointId);
+			Logger.info("Message new - adding points.");
+		}
+		
 		return ok("<response><status>200</status></response>");
 	}
 

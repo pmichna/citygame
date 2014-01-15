@@ -20,10 +20,10 @@ public class Game extends Model{
 	@ManyToOne
 	public User user;
 
-	@ManyToMany(cascade = CascadeType.REMOVE)
+	@ManyToMany(cascade = CascadeType.ALL)
 	public List<Checkpoint> visitedCheckpoints = new ArrayList<Checkpoint>();
 	
-	@ManyToMany(cascade = CascadeType.REMOVE)
+	@ManyToMany(cascade = CascadeType.ALL)
 	public List<Checkpoint> answeredCheckpoints = new ArrayList<Checkpoint>();
 
 	@ManyToOne

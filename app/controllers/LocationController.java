@@ -13,7 +13,6 @@ import play.Logger;
 import play.libs.F.Function;
 import play.libs.WS;
 import play.mvc.*;
-import sun.net.www.protocol.http.AuthScheme;
 import models.*;
 
 public class LocationController extends Controller {
@@ -68,16 +67,16 @@ public class LocationController extends Controller {
 						}
 						
 						//Logger.debug("Latitude:"+latitude.item(0).getTextContent());
-						double longitudeDouble=Double.parseDouble(longitude.item(0).getTextContent());
-						double latitudeDouble=Double.parseDouble(latitude.item(0).getTextContent());
+						double longitudeDouble = Double.parseDouble(longitude.item(0).getTextContent());
+						double latitudeDouble = Double.parseDouble(latitude.item(0).getTextContent());
 						Logger.info("Received location of number: " +number
 						+" Longitude: "+ longitudeDouble
 						+" Latitude: "+ latitudeDouble);
-						User.setUserPosition(number,longitudeDouble,latitudeDouble);
-						User.setUserLocation(number,true);
-						GameEvent.createGameEvent(longitudeDouble,latitudeDouble,number);
+						User.setUserPosition(number, longitudeDouble,latitudeDouble);
+						User.setUserLocation(number, true);
+						GameEvent.createGameEvent(longitudeDouble, latitudeDouble, number);
 						
-						return ok(latitude.item(0).getTextContent()+" "+longitude.item(0).getTextContent());
+						return ok(latitude.item(0).getTextContent() + " " + longitude.item(0).getTextContent());
 					}
 				});
 		return resultPromise;

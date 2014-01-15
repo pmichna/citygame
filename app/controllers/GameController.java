@@ -100,12 +100,12 @@ public class GameController extends Controller {
 									.findNearbyCheckpoints(game.user.lastLongitude,
 											game.user.lastLatitude);
 							
-							Logger.debug("Nearby checkpooints #: "+nearby.size());
+							Logger.debug("Nearby checkpooints #: " + nearby.size());
 							// send messages from nearby checkpoints
 							for (Checkpoint c : nearby) {
-								if(!game.visitedCheckpoints.contains(c)){
-								c.sendMessage(game.user.phoneNumber);
-								game.visitedCheckpoints.add(c);
+								if(!game.visitedCheckpoints.contains(c)) {
+									c.sendMessage(game.user.phoneNumber);
+									game.visitedCheckpoints.add(c);
 								}
 							}
 							game.save();
