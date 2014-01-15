@@ -75,10 +75,10 @@ create table user (
 ;
 
 
-create table game_visitedcheckpoint (
+create table game_sentcheckpoint (
   game_id                        bigint not null,
   checkpoint_id                  bigint not null,
-  constraint pk_game_visitedcheckpoint primary key (game_id, checkpoint_id))
+  constraint pk_game_sentcheckpoint primary key (game_id, checkpoint_id))
 ;
 
 create table game_answeredcheckpoint (
@@ -111,9 +111,9 @@ create index ix_scenario_editedBy_8 on scenario (edited_by_id);
 
 
 
-alter table game_visitedcheckpoint add constraint fk_game_visitedcheckpoint_game_01 foreign key (game_id) references game (id) on delete restrict on update restrict;
+alter table game_sentcheckpoint add constraint fk_game_sentcheckpoint_game_01 foreign key (game_id) references game (id) on delete restrict on update restrict;
 
-alter table game_visitedcheckpoint add constraint fk_game_visitedcheckpoint_checkpoint_02 foreign key (checkpoint_id) references checkpoint (id) on delete restrict on update restrict;
+alter table game_sentcheckpoint add constraint fk_game_sentcheckpoint_checkpoint_02 foreign key (checkpoint_id) references checkpoint (id) on delete restrict on update restrict;
 
 alter table game_answeredcheckpoint add constraint fk_game_answeredcheckpoint_game_01 foreign key (game_id) references game (id) on delete restrict on update restrict;
 
@@ -133,7 +133,7 @@ drop table checkpoint_answer;
 
 drop table game;
 
-drop table game_visitedcheckpoint;
+drop table game_sentcheckpoint;
 
 drop table game_answeredcheckpoint;
 

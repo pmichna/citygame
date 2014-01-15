@@ -58,10 +58,6 @@ public class Checkpoint extends Model {
 		return checkpoint;
 	}
 	
-	public void sendMessage(String phoneNumber){
-		MessageController.sendMsg(phoneNumber, scenario.id + "*" + id + ": " + message);
-	}
-	
 	public int getLongitudeDegrees() {
 		return (int) this.longitude;
 	}

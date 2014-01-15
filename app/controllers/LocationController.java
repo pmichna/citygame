@@ -22,8 +22,7 @@ public class LocationController extends Controller {
 	private static String orangePass = play.Play.application().configuration()
 			.getString("application.orangePass");
 
-	public static play.libs.F.Promise<Result> locationControllerGET(
-			final String number) {
+	public static play.libs.F.Promise<Result> locationControllerGET(final String number) {
 
 		String feedUrl = "https://api2.orange.pl/terminallocation/";
 		
@@ -57,7 +56,7 @@ public class LocationController extends Controller {
 							Logger.error("Failed to get coordinates");
 							if(response.getBody().indexOf("<description>msisdn not allowed</description>")!=-1){
 								Logger.info("Msisdn not allowed for:"+number);
-								User.setUserLocation(number,false);
+								User.setUserLocation(number, false);
 							}
 							if(response.getBody().indexOf("<description>getLocation limit reached</description>")!=-1){
 								Logger.info("Msisdn limit reached for: "+number);
@@ -73,9 +72,7 @@ public class LocationController extends Controller {
 						+" Longitude: "+ longitudeDouble
 						+" Latitude: "+ latitudeDouble);
 						User.setUserPosition(number, longitudeDouble, latitudeDouble);
-						User.setUserLocation(number, true);
-						//GameEvent.createGameEvent(longitudeDouble, latitudeDouble, number);
-						
+						User.setUserLocation(number, true);						
 						return ok(latitude.item(0).getTextContent() + " " + longitude.item(0).getTextContent());
 					}
 				});
