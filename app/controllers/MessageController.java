@@ -19,6 +19,11 @@ import models.*;
 
 public class MessageController extends Controller {
 
+	private static String orangeUser = play.Play.application().configuration()
+			.getString("application.orangeUser");
+	private static String orangePass = play.Play.application().configuration()
+			.getString("application.orangePass");
+
 	public static Result receiveMsg(String from, String to, String msg) {
 		Logger.debug("Received message: " + msg);
 		Logger.debug("from: " + from);
@@ -43,8 +48,9 @@ public class MessageController extends Controller {
 			Logger.error("Checkpoint does not exist");
 			return ok("<response><status>400</status></response>");
 		}
-		GameEvent.createGameEvent(from, tokens[2], scenarioId, checkpointId);
 		Logger.info("Message received");
+		GameEvent.createGameEvent(from, tokens[2], scenarioId, checkpointId);
+		
 		return ok("<response><status>200</status></response>");
 	}
 
@@ -55,7 +61,7 @@ public class MessageController extends Controller {
 		final play.libs.F.Promise<Result> resultPromise = WS.url(feedUrl)
 				.setQueryParameter("to", to)
 				.setQueryParameter("msg", msg)
-				.setAuth("48509237274", "Y7A7HNM3EFF3LF").get()
+				.setAuth(orangeUser, orangePass).get()
 				.map(new Function<WS.Response, Result>() {
 
 					public Result apply(WS.Response response) {

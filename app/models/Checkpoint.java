@@ -36,12 +36,15 @@ public class Checkpoint extends Model {
 
 	@ManyToOne(cascade = CascadeType.PERSIST)
 	public Scenario scenario;
+	
+	@Column(nullable = false)
+	public int checkpointIndex;
 
 	public static Model.Finder<Long, Checkpoint> find = new Finder<Long, Checkpoint>(
 			Long.class, Checkpoint.class);
 
 	public static Checkpoint create(String checkpointName, double longitude,
-			double latitude, int points, String message, Long scenarioId, Boolean isAccepted) {
+			double latitude, int points, String message, Long scenarioId, Boolean isAccepted, int index) {
 		Checkpoint checkpoint = new Checkpoint();
 		checkpoint.name = checkpointName;
 		checkpoint.longitude = longitude;
@@ -50,12 +53,9 @@ public class Checkpoint extends Model {
 		checkpoint.message = message;
 		checkpoint.scenario = Scenario.find.ref(scenarioId);
 		checkpoint.scenario.isAccepted = isAccepted;
+		checkpoint.checkpointIndex = index;
 		checkpoint.save();
 		return checkpoint;
-	}
-	
-	public void sendMessage(String phoneNumber){
-		MessageController.sendMsg(phoneNumber, scenario.id+"*"+id+": "+message);
 	}
 	
 	public int getLongitudeDegrees() {
@@ -111,7 +111,7 @@ public class Checkpoint extends Model {
 	
 	
 	 public static Checkpoint editCheckpoint(Long checkpointId, String checkpointName, double longitude,
-				double latitude, int points, String message, Boolean isAccepted) {
+				double latitude, int points, String message, Boolean isAccepted, int index) {
     	Checkpoint checkpoint = find.ref(checkpointId);
     	if(checkpoint == null) {
     		return null;
@@ -132,6 +132,7 @@ public class Checkpoint extends Model {
 			checkpoint.points = points;
 		}
 		checkpoint.scenario.isAccepted = isAccepted;
+		checkpoint.checkpointIndex = index;
     	checkpoint.save();
     	
     	return checkpoint;

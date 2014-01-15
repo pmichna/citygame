@@ -52,22 +52,5 @@ public class GamesTest extends BaseModelTest {
 		assertEquals(0,results.get(0).pointsCollected);
 		assertEquals(GAME_STATUS.playing,results.get(0).status);
 	}
-	
-	@Test
-	public void tryToCreateDuplicateGame(){
-		java.util.Calendar cal = java.util.Calendar.getInstance();
-		java.util.Date utilDate = cal.getTime();
-		java.sql.Date sqlDate = new Date(utilDate.getTime());
-		
-		Game game1;
-		Game game2;
 
-		game1=Game.createNewGame(user1, scenario,sqlDate);
-		game2=Game.createNewGame(user1, scenario, sqlDate);
-		assertNull(game2);
-
-		game2=Game.createNewGame(user2, scenario, sqlDate);
-		assertNotNull(game2);
-		
-	}
 }

@@ -46,6 +46,9 @@ public class ScenarioController extends Controller {
 			String month = createForm.get().month;
 			String year = createForm.get().year;
 			Boolean isPublic = createForm.get().isPublic;
+			if(isPublic == null) {
+				isPublic = false;
+			}
 			DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 			Date date;
 			if(day.equals("dd") || month.equals("mm") || year.equals("yyyy")){
@@ -106,10 +109,11 @@ public class ScenarioController extends Controller {
 						.findUnique();
 		Boolean isAdminMode = (user.privilege == USER_PRIVILEGE.admin);
 		Scenario scenario = Scenario.find.byId(scenarioId);
+		List<Checkpoint> sortedCheckpoints = Checkpoint.find.where().eq("scenario.id", scenario.id).orderBy("checkpoint_index asc").findList();
 		if(!Secured.isMemberOf(scenarioId) && !isAdminMode) {
 			return redirect(routes.ScenarioController.viewPrivateScenariosGET(0));
 		}
-		return ok(viewPrivateScenario.render(user, scenario, isAdminMode));
+		return ok(viewPrivateScenario.render(user, scenario, sortedCheckpoints, isAdminMode));
 	}
 	
 	@Security.Authenticated(Secured.class)
@@ -212,12 +216,13 @@ public class ScenarioController extends Controller {
 			return redirect(routes.ScenarioController.viewPrivateScenariosGET(0));
 		}
 		Scenario scenario = Scenario.find.ref(scenarioId);
+		List<Checkpoint> sortedCheckpoints = Checkpoint.find.where().eq("scenario.id", scenario.id).orderBy("checkpoint_index asc").findList();
 		if(scenario.editedBy != null && !scenario.editedBy.email.equals(user.email)) {
-			return ok(editScenario.render(Form.form(ScenarioForm.class), user, scenario, true));
+			return ok(editScenario.render(Form.form(ScenarioForm.class), user, scenario, sortedCheckpoints, true));
 		}
 		scenario.editedBy = user;
 		scenario.save();
-		return ok(editScenario.render(Form.form(ScenarioForm.class), user, scenario, false));
+		return ok(editScenario.render(Form.form(ScenarioForm.class), user, scenario, sortedCheckpoints, false));
 	}
 	
 	@Security.Authenticated(Secured.class)
@@ -245,8 +250,9 @@ public class ScenarioController extends Controller {
 		
 		Form<ScenarioForm> editForm = Form.form(ScenarioForm.class)
 											.bindFromRequest();
+		List<Checkpoint> sortedCheckpoints = Checkpoint.find.where().eq("scenario.id", scenarioId).orderBy("checkpoint_index asc").findList();
 		if (editForm.hasErrors()) {
-			return badRequest(editScenario.render(editForm, user, Scenario.find.ref(scenarioId), false));
+			return badRequest(editScenario.render(editForm, user, Scenario.find.ref(scenarioId), sortedCheckpoints, false));
 		} else {
 			String name = editForm.get().name;
 			String day = editForm.get().day;

@@ -1,4 +1,4 @@
-@(user: User, scenario: Scenario, isAdminMode: Boolean)
+@(user: User, scenario: Scenario, sortedCheckpoints: List[Checkpoint], isAdminMode: Boolean)
 
 @main("View scenarios", user) {
 <div class="container">
@@ -77,15 +77,15 @@
 	<table class="table table-striped">
 		<thead>
 			<tr>
-				<th>#</th>
+				<th>Index</th>
 				<th>Checkpoint name</th>
 			</tr>
 		</thead>
 		<tbody>
 
-			@for(c <- scenario.checkpoints) {
+			@for(c <- sortedCheckpoints) {
 			<tr>
-				<td>@{scenario.checkpoints.indexOf(c)+1}</td>
+				<td>@{c.checkpointIndex}</td>
 				<td>@c.name</td>
 				<td>
 					<a class="btn btn-info btn-xs" href="@routes.CheckpointController.viewCheckpointGET(c.id)"> <span class="glyphicon glyphicon-search"></span> View </a>

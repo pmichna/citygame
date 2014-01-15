@@ -5,43 +5,54 @@
 	<div class="page-header">
 		<h1>My games</h1>
 	</div>
-	<table class="table table-striped">
-		<thead>
-			<tr>
-				<th>#</th>
-				<th>Scenario name</th>
-				<th>Score</th>
-				<th>Start date</th>
-				<th>Status</th>
-			</tr>
-		</thead>
-		<tbody>
-			@for(g <- games) {
-			<tr>
-				<td>@{(games.indexOf(g)+1)+pageSize*currentPage}</td>
-				<td>@g.scenario.name</td>
-				<td>@g.pointsCollected</td>
-				<td>@g.startDate</td>
-				<td>@g.status</td>
-				<td> @if(g.status != GAME_STATUS.stopped){
-				@if(g.status == GAME_STATUS.playing){ 
-					<a class="btn btn-warning btn-xs" href="@routes.GameController.pauseGameById(g.id,currentPage)"> 
-						<span class="glyphicon glyphicon-pause"></span> Pause 
+	@if(games.size() > 0) {
+		<div class="alert alert-info">
+			<p>You are going to receive messages in the following format: <i>number1</i>*<i>number2</i>*<i>message</i>.<p>
+			<p>For the given message you need to answer in the format: 77*<i>number1</i>*<i>number2</i>*<i>your answer</i>.</p>
+			<p><i>number1</i> and <i>number2</i> are the same as in the message you received.</p>
+			<p>Send your answers to 551. Remember, you need to have your phone number in Orange.</p>
+		</div>
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>#</th>
+					<th>Scenario name</th>
+					<th>Score</th>
+					<th>Start date</th>
+					<th>Status</th>
+				</tr>
+			</thead>
+			<tbody>
+				@for(g <- games) {
+				<tr>
+					<td>@{(games.indexOf(g)+1)+pageSize*currentPage}</td>
+					<td>@g.scenario.name</td>
+					<td>@g.pointsCollected</td>
+					<td>@g.startDate</td>
+					<td>@g.status</td>
+					<td> @if(g.status != GAME_STATUS.stopped){
+					@if(g.status == GAME_STATUS.playing){ 
+						<a class="btn btn-warning btn-xs" href="@routes.GameController.pauseGameById(g.id,currentPage)"> 
+							<span class="glyphicon glyphicon-pause"></span> Pause 
+						</a> 
+					} else { 
+						<a class="btn btn-primary btn-xs" href="@routes.GameController.playGameById(g.id,currentPage)"> 
+							<span class="glyphicon glyphicon-play"></span> Play 
+						</a> 
+					} 
+					<a class="btn btn-danger btn-xs" href="@routes.GameController.stopGameById(g.id,currentPage)"> 
+						<span class="glyphicon glyphicon-stop"></span> Stop 
 					</a> 
-				} else { 
-					<a class="btn btn-primary btn-xs" href="@routes.GameController.playGameById(g.id,currentPage)"> 
-						<span class="glyphicon glyphicon-play"></span> Play 
-					</a> 
-				} 
-				<a class="btn btn-danger btn-xs" href="@routes.GameController.stopGameById(g.id,currentPage)"> 
-					<span class="glyphicon glyphicon-stop"></span> Stop 
-				</a> 
-				} 
-				</td>
-			</tr>
-			}
-		</tbody>
-	</table>
+					} 
+					</td>
+				</tr>
+				}
+			</tbody>
+		</table>
+	} else {
+		<p>Sorry, you have no games.</p>
+		<p>To start a game you need to view a scenario (Scenarios menu -> Editable or Public -> View) and click "Play scenario".</p>
+	}
 	@if(totalPageCount > 1) {
 	<ul class="pagination">
 		@if(currentPage == 0) {

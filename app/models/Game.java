@@ -20,10 +20,12 @@ public class Game extends Model{
 	@ManyToOne
 	public User user;
 
-	@ManyToMany(cascade = CascadeType.REMOVE)
-	public List<Checkpoint> visitedCheckpoints = new ArrayList<Checkpoint>();
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name="game_sentcheckpoint")
+	public List<Checkpoint> sentCheckpoints = new ArrayList<Checkpoint>();
 	
-	@ManyToMany(cascade = CascadeType.REMOVE)
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name="game_answeredcheckpoint")
 	public List<Checkpoint> answeredCheckpoints = new ArrayList<Checkpoint>();
 
 	@ManyToOne
@@ -99,5 +101,16 @@ public class Game extends Model{
 		}
        
 		return games;
+	}
+	
+	public static Checkpoint findLowestNotSentCheckpoint(Long gameId) {
+		Game game = find.byId(gameId);
+		Checkpoint lowestCheckpoint = null;
+		for(Checkpoint ch: game.scenario.checkpoints) {
+			if(!game.sentCheckpoints.contains(ch) && (lowestCheckpoint == null || ch.checkpointIndex < lowestCheckpoint.checkpointIndex)) {
+				lowestCheckpoint = ch;
+			}
+		}
+		return lowestCheckpoint;
 	}
 }
