@@ -21,9 +21,11 @@ public class Game extends Model{
 	public User user;
 
 	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name="game_visitedcheckpoint")
 	public List<Checkpoint> visitedCheckpoints = new ArrayList<Checkpoint>();
 	
 	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name="game_answeredcheckpoint")
 	public List<Checkpoint> answeredCheckpoints = new ArrayList<Checkpoint>();
 
 	@ManyToOne

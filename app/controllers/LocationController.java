@@ -72,9 +72,9 @@ public class LocationController extends Controller {
 						Logger.info("Received location of number: " +number
 						+" Longitude: "+ longitudeDouble
 						+" Latitude: "+ latitudeDouble);
-						User.setUserPosition(number, longitudeDouble,latitudeDouble);
+						User.setUserPosition(number, longitudeDouble, latitudeDouble);
 						User.setUserLocation(number, true);
-						GameEvent.createGameEvent(longitudeDouble, latitudeDouble, number);
+						//GameEvent.createGameEvent(longitudeDouble, latitudeDouble, number);
 						
 						return ok(latitude.item(0).getTextContent() + " " + longitude.item(0).getTextContent());
 					}

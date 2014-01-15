@@ -74,10 +74,16 @@ create table user (
 ;
 
 
-create table game_checkpoint (
+create table game_visitedcheckpoint (
   game_id                        bigint not null,
   checkpoint_id                  bigint not null,
-  constraint pk_game_checkpoint primary key (game_id, checkpoint_id))
+  constraint pk_game_visitedcheckpoint primary key (game_id, checkpoint_id))
+;
+
+create table game_answeredcheckpoint (
+  game_id                        bigint not null,
+  checkpoint_id                  bigint not null,
+  constraint pk_game_answeredcheckpoint primary key (game_id, checkpoint_id))
 ;
 
 create table scenario_user (
@@ -104,9 +110,13 @@ create index ix_scenario_editedBy_8 on scenario (edited_by_id);
 
 
 
-alter table game_checkpoint add constraint fk_game_checkpoint_game_01 foreign key (game_id) references game (id) on delete restrict on update restrict;
+alter table game_visitedcheckpoint add constraint fk_game_visitedcheckpoint_game_01 foreign key (game_id) references game (id) on delete restrict on update restrict;
 
-alter table game_checkpoint add constraint fk_game_checkpoint_checkpoint_02 foreign key (checkpoint_id) references checkpoint (id) on delete restrict on update restrict;
+alter table game_visitedcheckpoint add constraint fk_game_visitedcheckpoint_checkpoint_02 foreign key (checkpoint_id) references checkpoint (id) on delete restrict on update restrict;
+
+alter table game_answeredcheckpoint add constraint fk_game_answeredcheckpoint_game_01 foreign key (game_id) references game (id) on delete restrict on update restrict;
+
+alter table game_answeredcheckpoint add constraint fk_game_answeredcheckpoint_checkpoint_02 foreign key (checkpoint_id) references checkpoint (id) on delete restrict on update restrict;
 
 alter table scenario_user add constraint fk_scenario_user_scenario_01 foreign key (scenario_id) references scenario (id) on delete restrict on update restrict;
 
@@ -122,7 +132,9 @@ drop table checkpoint_answer;
 
 drop table game;
 
-drop table game_checkpoint;
+drop table game_visitedcheckpoint;
+
+drop table game_answeredcheckpoint;
 
 drop table game_event;
 

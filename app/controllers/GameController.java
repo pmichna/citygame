@@ -83,15 +83,12 @@ public class GameController extends Controller {
 
 		@Override
 		public void run() {
-
 			try {
 				Logger.info("Started new game thread");
 				// game loop, will continue till game is stopped
 				while (game.status != GAME_STATUS.stopped) {
-
 					// if game is paused, do nothing
 					if (game.status != GAME_STATUS.paused) {
-
 						// check current position
 						LocationController.locationControllerGET(game.user.phoneNumber);
 						Logger.debug("acceptedLocation:" + game.user.acceptedLocation);
@@ -99,7 +96,6 @@ public class GameController extends Controller {
 							List<Checkpoint> nearby = game.scenario
 									.findNearbyCheckpoints(game.user.lastLongitude,
 											game.user.lastLatitude);
-							
 							Logger.debug("Nearby checkpooints #: " + nearby.size());
 							// send messages from nearby checkpoints
 							for (Checkpoint c : nearby) {
@@ -109,19 +105,17 @@ public class GameController extends Controller {
 								}
 							}
 							game.save();
-
 							// if user does not have correctly set location
 						} else {
 							game.status = GAME_STATUS.paused;
 							game.save();
 							continue;
 						}
-
 						// Find events to process for this phone number and this
 						// scenario
 						List<GameEvent> currentEvents = GameEvent.find.where()
 								.eq("userPhoneNumber", game.user.phoneNumber)
-								.eq("scenario", game.scenario).findList();
+								.eq("scenario.id", game.scenario.id).findList();
 						if (currentEvents.size() > 0)
 							Logger.debug("events number:"
 									+ currentEvents.size());
@@ -143,7 +137,7 @@ public class GameController extends Controller {
 									continue;
 								// if answers match add points and mark it as
 								// answered
-								if(!game.answeredCheckpoints.contains(e.message)) {
+								if(!game.answeredCheckpoints.contains(e.checkpoint)) {
 									game.pointsCollected += e.checkpoint.points;
 									game.answeredCheckpoints.add(e.checkpoint);
 									game.save();
@@ -151,7 +145,9 @@ public class GameController extends Controller {
 							}
 						}
 						// remove all processed events
-						Ebean.delete(currentEvents);
+						for(GameEvent ge: currentEvents) {
+							ge.delete();
+						}
 					}
 
 					// Wait before next game loop iteration to not waste server
@@ -162,9 +158,7 @@ public class GameController extends Controller {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-
 		}
-
 	}
 
 	@Security.Authenticated(Secured.class)

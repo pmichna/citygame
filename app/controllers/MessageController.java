@@ -49,12 +49,7 @@ public class MessageController extends Controller {
 			return ok("<response><status>400</status></response>");
 		}
 		Logger.info("Message received");
-		if(GameEvent.wasSmsReceived(tokens[2], from, scenarioId, checkpointId)) {
-			Logger.info("Message was already sent. Not adding points.");
-		} else {
-			GameEvent.createGameEvent(from, tokens[2], scenarioId, checkpointId);
-			Logger.info("Message new - adding points.");
-		}
+		GameEvent.createGameEvent(from, tokens[2], scenarioId, checkpointId);
 		
 		return ok("<response><status>200</status></response>");
 	}
