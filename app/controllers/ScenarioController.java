@@ -56,8 +56,8 @@ public class ScenarioController extends Controller {
 			} else {
 				date = new Date(formatter.parse(day + "/" + month + "/" + year).getTime());
 			}
-			Scenario.create(name, isPublic, date, user.email, user.privilege == USER_PRIVILEGE.admin);
-			return redirect(routes.ScenarioController.viewPrivateScenariosGET(0));
+			Scenario newScenario = Scenario.create(name, isPublic, date, user.email, user.privilege == USER_PRIVILEGE.admin);
+			return redirect(routes.ScenarioController.editScenarioGET(newScenario.id));
 		}
 	}
 	
