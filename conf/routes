@@ -41,12 +41,10 @@ GET		/answers/:answer/edit								controllers.CheckpointAnswerController.editChe
 POST	/answers/:answer/edit								controllers.CheckpointAnswerController.editCheckpointAnswerPOST(answer: Long)
 GET		/answers/delete/:answer								controllers.CheckpointAnswerController.deleteCheckpointAnswerGET(answer: Long)
 
-
 GET		/scenarios/:scenario/members/add					controllers.ScenarioController.addMemberGET(scenario: Long)
 POST	/scenarios/:scenario/members/add					controllers.ScenarioController.addMemberPOST(scenario: Long)
 GET		/scenarios/:scenario/delete/:member					controllers.ScenarioController.removeMemberGET(scenario:Long, member: Long)
 GET		/scenarios/:scenario/ranking						controllers.ScenarioController.viewScenarioRankingGET(scenario: Long)
-
 
 GET		/msgreceive/										controllers.MessageController.receiveMsg(from: String?="from", to:String?="to", message: String ?= "msg")
 GET		/msgsend/											controllers.MessageController.sendMsg(to:String?="to", msg: String ?= "msg")
@@ -57,9 +55,6 @@ GET		/games/pause/:gameId								controllers.GameController.pauseGameById(gameId
 GET		/games/play/:gameId									controllers.GameController.playGameById(gameId: Long, page: Integer ?= 0)
 GET		/games/stop/:gameId									controllers.GameController.stopGameById(gameId: Long, page: Integer ?= 0)
 GET		/games/start/:gameId								controllers.GameController.startGameGET(gameId: Long)
-
-GET		/testData											controllers.TestDataController.loadTestData()
-
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file             							controllers.Assets.at(path="/public", file)
