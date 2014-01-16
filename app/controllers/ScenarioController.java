@@ -355,7 +355,7 @@ public class ScenarioController extends Controller {
 		public String year;
 		
 		public String validate() {
-			if(day.equals("dd") || month.equals("mm") || year.equals"yyyy") {
+			if(day.equals("dd") || month.equals("mm") || year.equals("yyyy")) {
 				return null;
 			}
 		    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
