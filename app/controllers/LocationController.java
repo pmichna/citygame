@@ -35,7 +35,6 @@ public class LocationController extends Controller {
 					NodeList latitude = null;
 
 					public Result apply(WS.Response response) {
-						//response.body.asXml();
 						DocumentBuilderFactory dbf = DocumentBuilderFactory
 								.newInstance();
 						DocumentBuilder db = null;
@@ -52,24 +51,21 @@ public class LocationController extends Controller {
 						} catch (Exception e) {
 							Logger.error("Failed to properly parse location file");
 						}
-						if(latitude.getLength()==0 || longitude.getLength()==0){
+						if(latitude.getLength() == 0 || longitude.getLength() == 0) {
 							Logger.error("Failed to get coordinates");
-							if(response.getBody().indexOf("<description>msisdn not allowed</description>")!=-1){
-								Logger.info("Msisdn not allowed for:"+number);
+							if(response.getBody().indexOf("<description>msisdn not allowed</description>") != -1){
+								Logger.info("Msisdn not allowed for:" + number);
 								User.setUserLocation(number, false);
 							}
-							if(response.getBody().indexOf("<description>getLocation limit reached</description>")!=-1){
-								Logger.info("Msisdn limit reached for: "+number);
+							if(response.getBody().indexOf("<description>getLocation limit reached</description>") != -1){
+								Logger.info("Msisdn limit reached for: " + number);
 								
 							}
 							return ok("Failed to get coordinates");
 						}
-						
-						//Logger.debug("Latitude:"+latitude.item(0).getTextContent());
 						double longitudeDouble = Double.parseDouble(longitude.item(0).getTextContent());
 						double latitudeDouble = Double.parseDouble(latitude.item(0).getTextContent());
-						Logger.info("Received location of number: " +number
-						+" Longitude: "+ longitudeDouble
+						Logger.info("Received location of number: " + number + " Longitude: " + longitudeDouble
 						+" Latitude: "+ latitudeDouble);
 						User.setUserPosition(number, longitudeDouble, latitudeDouble);
 						User.setUserLocation(number, true);						

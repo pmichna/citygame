@@ -92,18 +92,15 @@ public class User extends Model {
     }
     
     public static void setUserPosition(String number, double longitude, double latitude){
-    	User user = find.where().eq("phoneNumber",number).findUnique();
-    	user.lastLatitude=latitude;
-    	user.lastLongitude=longitude;
+    	User user = find.where().eq("phoneNumber", number).findUnique();
+    	user.lastLatitude = latitude;
+    	user.lastLongitude = longitude;
     	user.save();
-    	
     }
     
     public static void setUserLocation(String number,boolean accepted){
-    	User user = find.where().eq("phoneNumber",number).findUnique();
-    	user.acceptedLocation=accepted;
+    	User user = find.where().eq("phoneNumber", number).findUnique();
+    	user.acceptedLocation = accepted;
     	user.save();
-    }
-    
-    
+    }   
 }
