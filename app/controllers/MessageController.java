@@ -28,6 +28,7 @@ public class MessageController extends Controller {
 		Logger.debug("Received message: " + message);
 		Logger.debug("from: " + from);
 		Logger.debug("to: " + to);
+		Logger.info("Received message: " + message + ", from: " + from + ", to: " + to);
 		if (User.find.where().eq("phoneNumber", from).findList().size() < 1) {
 			Logger.error("Couldn't find phone number");
 			return ok("<response><status>400</status></response>");
