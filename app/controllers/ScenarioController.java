@@ -56,8 +56,8 @@ public class ScenarioController extends Controller {
 			} else {
 				date = new Date(formatter.parse(day + "/" + month + "/" + year).getTime());
 			}
-			Scenario.create(name, isPublic, date, user.email, user.privilege == USER_PRIVILEGE.admin);
-			return redirect(routes.ScenarioController.viewPrivateScenariosGET(0));
+			Scenario newScenario = Scenario.create(name, isPublic, date, user.email, user.privilege == USER_PRIVILEGE.admin);
+			return redirect(routes.ScenarioController.editScenarioGET(newScenario.id));
 		}
 	}
 	
@@ -353,6 +353,18 @@ public class ScenarioController extends Controller {
 		public String day;
 		public String month;
 		public String year;
+		
+		public String validate() {
+		    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		    sdf.setLenient(false);
+		    java.util.Date date = sdf.parse(year + "-" + month + "-" + day, new java.text.ParsePosition(0));
+			if(date == null){
+				return "Wrong date";
+			}
+			else {
+				return null;
+			}
+		}
 	}
 	
 	public static class Member {

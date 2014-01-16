@@ -50,15 +50,26 @@ public class UserAccountController extends Controller {
 	public static Result deleteAccountGET() {
 		String email = request().username();
 		session().clear();
+		User user = User.find.where().eq("email", email).findUnique();
+		if(user == null) {
+			return redirect(routes.Application.index());
+		}
 		List<Scenario> editedScenarios = Scenario.find.where().eq("editedBy.email", email).findList();
 		for(Scenario s: editedScenarios) {
 			s.editedBy = null;
 			s.save();
 		}
+		List<Game> ownedGames = Game.find.where().eq("user.email", email).findList();
+		for(Game g: ownedGames) {
+			g.delete();
+		}
+		List<GameEvent> events = GameEvent.find.where().eq("userPhoneNumber", user.phoneNumber).findList();
+		for(GameEvent ge: events) {
+			ge.delete();
+		}
 		List<Scenario> ownedScenarios = Scenario.find.where().eq("owner.email", email).findList();
 		for(Scenario s: ownedScenarios) {
-			s.owner = null;
-			s.save();
+			s.delete();
 		}
 		User.find.where().eq("email", email).findUnique().delete();
 		return redirect(routes.Application.index());

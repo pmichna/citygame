@@ -6,7 +6,7 @@ import play.mvc.*;
 import static play.data.Form.*;
 import views.html.*;
 import models.*;
-
+import java.util.List;
 import play.data.validation.Constraints.*;
 
 public class CheckpointController extends Controller {
@@ -158,9 +158,17 @@ public class CheckpointController extends Controller {
 		if (checkpoint == null) {
 			return redirect(routes.Application.index());
 		}
-
+		List<Game> games = Game.find.where().or(
+			com.avaje.ebean.Expr.eq("sentCheckpoints.id", checkpointId),
+			com.avaje.ebean.Expr.eq("answeredCheckpoints.id", checkpointId)
+		).findList();
+		for(Game g: games) {
+			g.answeredCheckpoints.remove(checkpoint);
+			g.sentCheckpoints.remove(checkpoint);
+			g.save();
+		}
 		checkpoint.delete();
-		return redirect(routes.ScenarioController.viewPrivateScenarioGET(scenarioId));
+		return redirect(routes.ScenarioController.editScenarioGET(scenarioId));
 	}
 
 	public static class CheckpointForm {
