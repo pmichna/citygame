@@ -154,6 +154,7 @@ public class GameController extends Controller {
 								}
 								// if answers match add points and mark it as
 								// answered
+								game.user.refresh();
 								if(!isInProximity(game.user.lastLongitude, game.user.lastLatitude, e.checkpoint.longitude, e.checkpoint.latitude)) {
 									sendErrorLocationMessage(game.user.phoneNumber);
 									game.refresh();
