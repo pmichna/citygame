@@ -24,8 +24,8 @@ public class MessageController extends Controller {
 	private static String orangePass = play.Play.application().configuration()
 			.getString("application.orangePass");
 
-	public static Result receiveMsg(String from, String to, String msg) {
-		Logger.debug("Received message: " + msg);
+	public static Result receiveMsg(String from, String to, String message) {
+		Logger.debug("Received message: " + message);
 		Logger.debug("from: " + from);
 		Logger.debug("to: " + to);
 		if (User.find.where().eq("phoneNumber", from).findList().size() < 1) {
@@ -33,7 +33,7 @@ public class MessageController extends Controller {
 			return ok("<response><status>400</status></response>");
 		}
 		String delims = "[*]";
-		String[] tokens = msg.split(delims);
+		String[] tokens = message.split(delims);
 		if (tokens.length < 3) {
 			Logger.error("Message does not have proper format");
 			return ok("<response><status>400</status></response>");
