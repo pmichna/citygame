@@ -74,35 +74,39 @@
 	</table>
 
 	<h4>Checkpoints</h4>
-	<table class="table table-striped">
-		<thead>
-			<tr>
-				<th>Index</th>
-				<th>Checkpoint name</th>
-			</tr>
-		</thead>
-		<tbody>
+	@if(scenario.checkpoints.size() == 0) {
+		<div class="row">
+			<div class="col-md-12">
+				<div class="alert alert-danger"><p>Sorry, the scenario has no checkpoints - you can not play it.</p></div>
+			</div>
+		</div>
+	} else {
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>Index</th>
+					<th>Checkpoint name</th>
+				</tr>
+			</thead>
+			<tbody>
 
-			@for(c <- sortedCheckpoints) {
-			<tr>
-				<td>@{c.checkpointIndex}</td>
-				<td>@c.name</td>
-				<td>
-					<a class="btn btn-info btn-xs" href="@routes.CheckpointController.viewCheckpointGET(c.id)"> <span class="glyphicon glyphicon-search"></span> View </a>
-				</td>
-			</tr>
-			}
+				@for(c <- sortedCheckpoints) {
+				<tr>
+					<td>@{c.checkpointIndex}</td>
+					<td>@c.name</td>
+					<td>
+						<a class="btn btn-info btn-xs" href="@routes.CheckpointController.viewCheckpointGET(c.id)"> <span class="glyphicon glyphicon-search"></span> View </a>
+					</td>
+				</tr>
+				}
 
-		</tbody>
-	</table>
-
+			</tbody>
+		</table>
+	}
 	<div class="row">
-		
 		<div class="col-sm-2">
 			<a class="btn btn-primary btn" @if(scenario.checkpoints.size()==0){disabled="disabled"} href="@routes.GameController.startGameGET(scenario.id)"> <span class="glyphicon glyphicon-play"></span> Play scenario</a>
 		</div>
-	
-		
 		<div class="col-sm-2">
 			<a class="btn btn-primary btn" href="@routes.ScenarioController.viewScenarioRankingGET(scenario.id)">View ranking</a>
 		</div>
