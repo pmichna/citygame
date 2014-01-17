@@ -115,6 +115,7 @@ public class UserAccountController extends Controller {
 		public String email;
 
 		@Constraints.Required(message = "Password required")
+		@Constraints.MaxLength(value = 20, message = "Password can not be longer than 20 characters")
 		public String password;
 
 		@Constraints.Required(message = "Alias required")
@@ -156,7 +157,8 @@ public class UserAccountController extends Controller {
 	public static class SaveChangesForm {
 		@Constraints.Required(message = "Email required")
 		public String email;
-
+		
+		@Constraints.MaxLength(value = 20, message = "Password can not be longer than 20 characters")
 		public String password;
 
 		@Constraints.Required

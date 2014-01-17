@@ -5,9 +5,15 @@
 		<div class="page-header">	
 			<h1>Edit account</h1>
 		</div>
-			@if(form.hasGlobalErrors) {
+			<!-- error in the form -->
+			@if(form.hasErrors) {
 				<div class="alert alert-danger">
-			        @form.globalError.message
+			        @for(errorList <- form.errors().values) {
+						@for(e <- errorList) {
+							@e.message()
+						}
+						<br/>
+					}
 				</div>
 			}
 			<div class="alert alert-info">
