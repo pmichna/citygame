@@ -1,9 +1,10 @@
 import controllers.GameController;
 import controllers.UserAccountController;
-import models.GAME_STATUS;
-import models.Game;
-import models.User;
+import models.*;
 import play.*;
+import play.libs.F.*;
+import play.mvc.Http.*;
+import play.mvc.*;
 
 public class Global extends GlobalSettings {
 	
@@ -23,4 +24,8 @@ public class Global extends GlobalSettings {
 	    	
 	    }
 	 }  
+	 public static Result hi(){
+		 return null;
+	 }
+	  
 }

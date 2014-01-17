@@ -29,7 +29,7 @@ public class GameController extends Controller {
 	private static int gamesPageSize = 10;
 	// time used in each game refresh
 	private static int refreshTime = 100;
-	
+
 	private static String orangeUser = play.Play.application().configuration()
 			.getString("application.orangeUser");
 	private static String orangePass = play.Play.application().configuration()
@@ -53,61 +53,66 @@ public class GameController extends Controller {
 				totalPageCount, gamesPageSize));
 	}
 
-	public static Game createAndStartGame(String userEmail, Long scenarioId){
+	public static Game createAndStartGame(String userEmail, Long scenarioId) {
 		java.util.Calendar cal = java.util.Calendar.getInstance();
 		java.util.Date utilDate = cal.getTime();
 		java.sql.Date sqlDate = new Date(utilDate.getTime());
-		User user = User.find.where().eq("email", userEmail)
-				.findUnique();
+		User user = User.find.where().eq("email", userEmail).findUnique();
 		Scenario scenario = Scenario.find.byId(scenarioId);
 		if (user == null || scenario == null)
+			return null;
+		if (scenario.checkpoints.size() == 0)
 			return null;
 		Game game = Game.createNewGame(user, scenario, sqlDate);
 		startGame(game);
 		return game;
-		
+
 	}
-	
-	public static void startGame(Game game){
+
+	public static void startGame(Game game) {
 		Thread t = new Thread(new GameThread(game));
 		t.start();
 	}
-	
+
 	private static void sendMessage(String phoneNumber, Checkpoint checkpoint) {
-		MessageController.sendMsg(phoneNumber, checkpoint.scenario.id + "*" + checkpoint.id + ": " + checkpoint.message);
+		MessageController.sendMsg(phoneNumber, checkpoint.scenario.id + "*"
+				+ checkpoint.id + ": " + checkpoint.message);
 	}
-	
+
 	private static void sendErrorLocationMessage(String phoneNumber) {
-		MessageController.sendMsg(phoneNumber, "Sorry - you are in a wrong location");
+		MessageController.sendMsg(phoneNumber,
+				"Sorry - you are in a wrong location");
 	}
-	
+
 	private static void sendErrorAnswerMessage(String phoneNumber) {
 		MessageController.sendMsg(phoneNumber, "Sorry - wrong answer");
 	}
-	
+
 	private static void sendEndMessage(String phoneNumber) {
 		MessageController.sendMsg(phoneNumber, "You finished the game");
 	}
-	
-	private static Boolean isInProximity(double lon1, double lat1, double lon2, double lat2) {
-		Logger.debug("calculating distance btw. lat1 = " + lat1 + ", lon1 = " + lon1 + "; lat2 = " + lat2 + ", lon2 = " + lon2);
+
+	private static Boolean isInProximity(double lon1, double lat1, double lon2,
+			double lat2) {
+		Logger.debug("calculating distance btw. lat1 = " + lat1 + ", lon1 = "
+				+ lon1 + "; lat2 = " + lat2 + ", lon2 = " + lon2);
 		int R = 6371; // km
-		double dLat = Math.toRadians(lat2-lat1);
-		double dLon = Math.toRadians(lon2-lon1);
+		double dLat = Math.toRadians(lat2 - lat1);
+		double dLon = Math.toRadians(lon2 - lon1);
 		lat1 = Math.toRadians(lat1);
 		lat2 = Math.toRadians(lat2);
 
-		double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-		        Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
-		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+		double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.sin(dLon / 2)
+				* Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
+		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 		double d = R * c;
 		Logger.info("Distance = " + d);
-		if(d < 0.25) { //km
+		if (d < 0.25) { // km
 			return true;
 		}
 		return false;
 	}
-	
+
 	private static class GameThread implements Runnable {
 
 		Game game;
@@ -124,28 +129,36 @@ public class GameController extends Controller {
 				while (game.status != GAME_STATUS.stopped) {
 					// if game is paused, do nothing
 					if (game.status != GAME_STATUS.paused) {
-						Logger.info("Thread for game id: " + game.id + " working");
-						if(game.sentCheckpoints.size() == 0) {
-							Checkpoint checkpointToSend = Game.findLowestNotSentCheckpoint(game.id);
+						Logger.info("Thread for game id: " + game.id
+								+ " working");
+						if (game.sentCheckpoints.size() == 0) {
+							Checkpoint checkpointToSend = Game
+									.findLowestNotSentCheckpoint(game.id);
 							sendMessage(game.user.phoneNumber, checkpointToSend);
 							game.sentCheckpoints.add(checkpointToSend);
 							game.save();
 						}
-						// Find events to process for this phone number and this scenario
+						// Find events to process for this phone number and this
+						// scenario
 						List<GameEvent> currentEvents = GameEvent.find.where()
 								.eq("userPhoneNumber", game.user.phoneNumber)
 								.eq("scenario.id", game.scenario.id).findList();
 						if (currentEvents.size() > 0) {
-							Logger.debug("events number:" + currentEvents.size());
+							Logger.debug("events number:"
+									+ currentEvents.size());
 						}
 						// Process events
 						for (GameEvent e : currentEvents) {
 							Logger.debug("events");
 							if (e.type == GAME_EVENT_TYPE.smsReceive) {
-								LocationController.locationControllerGET(game.user.phoneNumber);
-								Logger.debug("[event] Message being processed: " + e.message);
-								boolean checkAnswer = Checkpoint.hasAnswer(e.checkpoint.id, e.message);
-								Logger.debug("[event] Maching answer:" + checkAnswer);
+								LocationController
+										.locationControllerGET(game.user.phoneNumber);
+								Logger.debug("[event] Message being processed: "
+										+ e.message);
+								boolean checkAnswer = Checkpoint.hasAnswer(
+										e.checkpoint.id, e.message);
+								Logger.debug("[event] Maching answer:"
+										+ checkAnswer);
 								// if checkpoint does not match, search further
 								if (!checkAnswer) {
 									sendErrorAnswerMessage(game.user.phoneNumber);
@@ -155,32 +168,39 @@ public class GameController extends Controller {
 								// if answers match add points and mark it as
 								// answered
 								game.refresh();
-								if(!isInProximity(game.user.lastLongitude, game.user.lastLatitude, e.checkpoint.longitude, e.checkpoint.latitude)) {
+								if (!isInProximity(game.user.lastLongitude,
+										game.user.lastLatitude,
+										e.checkpoint.longitude,
+										e.checkpoint.latitude)) {
 									sendErrorLocationMessage(game.user.phoneNumber);
 									game.refresh();
 									continue;
 								}
-								if(!game.answeredCheckpoints.contains(e.checkpoint)) {
+								if (!game.answeredCheckpoints
+										.contains(e.checkpoint)) {
 									game.pointsCollected += e.checkpoint.points;
 									game.answeredCheckpoints.add(e.checkpoint);
 									game.save();
-									
+
 									// is the end of the game
-									if(game.answeredCheckpoints.size() == game.scenario.checkpoints.size())
-									{
+									if (game.answeredCheckpoints.size() == game.scenario.checkpoints
+											.size()) {
 										game.status = GAME_STATUS.stopped;
 										game.save();
 										sendEndMessage(game.user.phoneNumber);
 									} else {
-										Checkpoint checkpointToSend = Game.findLowestNotSentCheckpoint(game.id);
-										sendMessage(game.user.phoneNumber, checkpointToSend);
-										game.sentCheckpoints.add(checkpointToSend);
+										Checkpoint checkpointToSend = Game
+												.findLowestNotSentCheckpoint(game.id);
+										sendMessage(game.user.phoneNumber,
+												checkpointToSend);
+										game.sentCheckpoints
+												.add(checkpointToSend);
 									}
 								}
 							}
 						}
 						// remove all processed events
-						for(GameEvent ge: currentEvents) {
+						for (GameEvent ge : currentEvents) {
 							ge.delete();
 						}
 					}
@@ -198,31 +218,29 @@ public class GameController extends Controller {
 
 	@Security.Authenticated(Secured.class)
 	public static play.libs.F.Promise<Result> startGameGET(final Long scenarioId) {
-		final User user = User.find
-						.where()
-						.eq("email", session("email"))
-						.findUnique();
+		final User user = User.find.where().eq("email", session("email"))
+				.findUnique();
 		final Scenario scenario = Scenario.find.ref(scenarioId);
-		
-		
+
 		final String feedUrl = "https://api2.orange.pl/terminallocation/";
-		
+
 		final play.libs.F.Promise<Result> resultPromise = WS.url(feedUrl)
 				.setQueryParameter("msisdn", user.phoneNumber)
 				.setAuth(orangeUser, orangePass).get()
-				.map(new Function<WS.Response, Result>() {				
-					
+				.map(new Function<WS.Response, Result>() {
+
 					NodeList longitude = null;
 					NodeList latitude = null;
 
 					public Result apply(WS.Response response) {
-						if(user == null || scenario == null) {
+						if (user == null || scenario == null) {
 							return redirect(routes.Application.index());
 						}
-						if(!scenario.isPublic && !scenario.members.contains(user)) {
+						if (!scenario.isPublic
+								&& !scenario.members.contains(user)) {
 							return redirect(routes.Application.index());
 						}
-						//response.body.asXml();
+						// response.body.asXml();
 						DocumentBuilderFactory dbf = DocumentBuilderFactory
 								.newInstance();
 						DocumentBuilder db = null;
@@ -241,21 +259,30 @@ public class GameController extends Controller {
 							Logger.info(orangeUser);
 							Logger.info(orangePass);
 						}
-						if(latitude.getLength()==0 || longitude.getLength()==0){
+						if (latitude.getLength() == 0
+								|| longitude.getLength() == 0) {
 							Logger.error("Failed to get coordinates");
-							if(response.getBody().indexOf("<description>msisdn not allowed</description>")!=-1){
-								Logger.info("Msisdn not allowed for:" + user.phoneNumber);
+							if (response
+									.getBody()
+									.indexOf(
+											"<description>msisdn not allowed</description>") != -1) {
+								Logger.info("Msisdn not allowed for:"
+										+ user.phoneNumber);
 								User.setUserLocation(user.phoneNumber, false);
 								return ok(locationForbidden.render(user));
 							}
-							if(response.getBody().indexOf("<description>getLocation limit reached</description>")!=-1){
-								Logger.info("Msisdn limit reached for: "+ user.phoneNumber);
+							if (response
+									.getBody()
+									.indexOf(
+											"<description>getLocation limit reached</description>") != -1) {
+								Logger.info("Msisdn limit reached for: "
+										+ user.phoneNumber);
 							}
 							return ok("Failed to get coordinates");
 						}
 						User.setUserLocation(user.phoneNumber, true);
 						createAndStartGame(session("email"), scenarioId);
-						return redirect(routes.GameController.viewMyGamesGET(0));						
+						return redirect(routes.GameController.viewMyGamesGET(0));
 					}
 				});
 		return resultPromise;

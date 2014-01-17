@@ -97,9 +97,12 @@
 	</table>
 
 	<div class="row">
+		
 		<div class="col-sm-2">
-			<a class="btn btn-primary btn" href="@routes.GameController.startGameGET(scenario.id)"> <span class="glyphicon glyphicon-plus"></span> Play scenario</a>
+			<a class="btn btn-primary btn" @if(scenario.checkpoints.size()==0){disabled="disabled"} href="@routes.GameController.startGameGET(scenario.id)"> <span class="glyphicon glyphicon-play"></span> Play scenario</a>
 		</div>
+	
+		
 		<div class="col-sm-2">
 			<a class="btn btn-primary btn" href="@routes.ScenarioController.viewScenarioRankingGET(scenario.id)">View ranking</a>
 		</div>
