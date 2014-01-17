@@ -24,16 +24,19 @@ public class MessageController extends Controller {
 	private static String orangePass = play.Play.application().configuration()
 			.getString("application.orangePass");
 
-	public static Result receiveMsg(String from, String to, String msg) {
-		Logger.debug("Received message: " + msg);
+	public static Result receiveMsg(String from, String to, String message) {
+		Logger.debug("Received message: " + message);
 		Logger.debug("from: " + from);
-		Logger.debug("to: " + to);
+		Logger.debug("to: " + to);		
+		from = from.substring(2);
+		message = message.substring(3);
+		Logger.info("Received message: " + message + ", from: " + from + ", to: " + to);
 		if (User.find.where().eq("phoneNumber", from).findList().size() < 1) {
 			Logger.error("Couldn't find phone number");
 			return ok("<response><status>400</status></response>");
 		}
 		String delims = "[*]";
-		String[] tokens = msg.split(delims);
+		String[] tokens = message.split(delims);
 		if (tokens.length < 3) {
 			Logger.error("Message does not have proper format");
 			return ok("<response><status>400</status></response>");
