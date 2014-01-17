@@ -33,7 +33,7 @@ public class UserAccountController extends Controller {
 			return badRequest(createAccount.render(signupForm));
 		} else {
 			String email = signupForm.get().email;
-			String password = signupForm.get().password;
+			String password = signupForm.get().password1;
 			String alias = signupForm.get().alias;
 			String phoneNumber = signupForm.get().phoneNumber;
 			USER_PRIVILEGE privilege = USER_PRIVILEGE.regular;
@@ -92,7 +92,7 @@ public class UserAccountController extends Controller {
 			return badRequest(editAccount.render(editForm, user));
 		} else {
 			String newEmail = editForm.get().email;
-			String newPasswordNotHash = editForm.get().password;
+			String newPasswordNotHash = editForm.get().password1;
 			String newAlias = editForm.get().alias;
 			String newPhoneNumber = editForm.get().phoneNumber;
 			User.editUser(user.email, newEmail, newPasswordNotHash, newAlias,
@@ -116,7 +116,10 @@ public class UserAccountController extends Controller {
 
 		@Constraints.Required(message = "Password required")
 		@Constraints.MaxLength(value = 20, message = "Password can not be longer than 20 characters")
-		public String password;
+		public String password1;
+		
+		@Constraints.Required(message = "Confirm your password")
+		public String password2;
 
 		@Constraints.Required(message = "Alias required")
 		public String alias;
@@ -133,6 +136,10 @@ public class UserAccountController extends Controller {
 
 			if (!emailMatcher.matches()) {
 				return "Invalid email address";
+			}
+			
+			if(!password1.equals(password2)) {
+				return "Passwords do not match";
 			}
 
 			// check if email already registered
@@ -159,7 +166,9 @@ public class UserAccountController extends Controller {
 		public String email;
 		
 		@Constraints.MaxLength(value = 20, message = "Password can not be longer than 20 characters")
-		public String password;
+		public String password1;
+		
+		public String password2;
 
 		@Constraints.Required
 		public String alias;
@@ -176,6 +185,10 @@ public class UserAccountController extends Controller {
 
 			if (!emailMatcher.matches()) {
 				return "Invalid email address";
+			}
+			
+			if(!password1.equals(password2)) {
+				return "Passwords do not match";
 			}
 
 			String loggedEmail = session("email");

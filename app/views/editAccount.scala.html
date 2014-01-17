@@ -17,14 +17,17 @@
 				</div>
 			}
 			<div class="alert alert-info">
-				If you want to change your password, put it in the form. Otherwise, leave it blank.
+				If you want to change your password, put it in the form. Otherwise, leave the password fields blank.
 			</div>
 			@helper.form(routes.UserAccountController.editAccountPOST) {
 				<div class="form-group">
 					<input id="email" type="email" class="form-control" name="email" placeholder="Email" value="@user.email">
 				</div>
 				<div class="form-group">
-					<input type="password" class="form-control" name="password" placeholder="Password" >
+					<input type="password" class="form-control" name="password1" placeholder="Password" >
+				</div>
+				<div class="form-group">
+					<input type="password" class="form-control" name="password2" placeholder="Confirm password" >
 				</div>
 				<div class="form-group">
 					<input type="text" name="alias" class="form-control" placeholder="Alias" value="@user.alias">
