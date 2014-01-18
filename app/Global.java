@@ -1,10 +1,15 @@
+
 import controllers.GameController;
-import controllers.UserAccountController;
-import models.*;
+import controllers.routes;
+import models.GAME_STATUS;
+import models.Game;
+import models.User;
 import play.*;
 import play.libs.F.*;
 import play.mvc.Http.*;
 import play.mvc.*;
+import play.mvc.Controller;
+import static play.mvc.Results.*;
 
 public class Global extends GlobalSettings {
 	
@@ -21,11 +26,15 @@ public class Global extends GlobalSettings {
 	    			GameController.startGame(g);
 	    		}
 	    	}
-	    	
 	    }
 	 }  
-	 public static Result hi(){
-		 return null;
-	 }
+	 
+	
+	 public Promise<SimpleResult> onHandlerNotFound(RequestHeader request) {
+	        return Promise.<SimpleResult>pure(notFound(
+	            views.html.notFoundPage.render(request.uri())
+	        ));
+	    }
+	 
 	  
 }

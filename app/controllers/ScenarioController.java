@@ -76,10 +76,64 @@ public class ScenarioController extends Controller {
 				Scenario.findInvolvingUser(user.email, pageSize, pageNum),
 				pageNum,
 				totalPageCount,
-				pageSize
+				pageSize,
+				null
 			)
 		);
 	}
+	
+	@Security.Authenticated(Secured.class)
+	public static Result viewPrivateScenariosSearchGET(String searchTerm,int pageNum) {
+		User user = User.find
+						.where()
+						.eq("email", session("email"))
+						.findUnique();
+		int totalPageCount = Scenario.getTotalPrivateSearchPageCount(searchTerm,user.email, pageSize);
+		if(pageNum > totalPageCount-1) {
+			pageNum = 0;
+		}
+		return ok(viewPrivateScenarios.render(
+				user,
+				Scenario.findInvolvingUserSearch(searchTerm,user.email, pageSize, pageNum),
+				pageNum,
+				totalPageCount,
+				pageSize,
+				searchTerm
+			)
+		);
+	}
+	@Security.Authenticated(Secured.class)
+	public static Result viewPrivateScenariosSearchPOST() {
+		DynamicForm requestData = Form.form().bindFromRequest();
+		String searchTerm=requestData.get("searchTerm");
+		if(searchTerm==null || searchTerm.trim().length()==0)
+			return redirect(routes.ScenarioController.viewPrivateScenariosGET(0));
+		else
+			return redirect(routes.ScenarioController.viewPrivateScenariosSearchGET(searchTerm,0));
+		
+	}
+	
+	@Security.Authenticated(Secured.class)
+	public static Result viewPublicScenariosSearchGET(String searchTerm,int pageNum) {
+		User user = User.find
+						.where()
+						.eq("email", session("email"))
+						.findUnique();
+		int totalPageCount = Scenario.getTotalPublicAcceptedNotExpiredSearchPageCount(searchTerm, pageSize,new Date(System.currentTimeMillis()));
+		if(pageNum > totalPageCount-1) {
+			pageNum = 0;
+		}
+		return ok(viewPrivateScenarios.render(
+				user,
+				Scenario.findPublicAcceptedNotExpiredSearch(searchTerm,new Date(System.currentTimeMillis()), pageSize, pageNum),
+				pageNum,
+				totalPageCount,
+				pageSize,
+				searchTerm
+			)
+		);
+	}
+	
 	
 	@Security.Authenticated(Secured.class)
 	public static Result viewPublicScenariosGET(int pageNum) {
@@ -368,6 +422,10 @@ public class ScenarioController extends Controller {
 				return null;
 			}
 		}
+	}
+	
+	public static class SearchForm{
+		public String searchTerm;
 	}
 	
 	public static class Member {

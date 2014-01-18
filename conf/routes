@@ -19,6 +19,8 @@ GET		/scenarios/create									controllers.ScenarioController.createScenarioGET(
 POST	/scenarios/create									controllers.ScenarioController.createScenarioPOST()
 GET		/scenarios/edit/:scenario							controllers.ScenarioController.editScenarioGET(scenario: Long)
 POST	/scenarios/edit/:scenario							controllers.ScenarioController.editScenarioPOST(scenario: Long)
+GET		/scenarios/private/search/:search					controllers.ScenarioController.viewPrivateScenariosSearchGET(search: String,page: Integer ?= 0)
+POST	/scenarios/private/search/							controllers.ScenarioController.viewPrivateScenariosSearchPOST()
 GET		/scenarios/private									controllers.ScenarioController.viewPrivateScenariosGET(page: Integer ?= 0)
 GET		/scenarios/private/:scenario						controllers.ScenarioController.viewPrivateScenarioGET(scenario: Long)
 GET		/scenarios/public/									controllers.ScenarioController.viewPublicScenariosGET(page: Integer ?= 0)
