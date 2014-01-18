@@ -65,8 +65,6 @@ create table user (
   password_hash             varchar(60) not null,
   privilege                 varchar(7) not null,
   accepted_location         tinyint(1) default 0,
-  last_latitude             double,
-  last_longitude            double,
   constraint ck_user_privilege check (privilege in ('regular','admin')),
   constraint uq_user_email unique (email),
   constraint uq_user_alias unique (alias),

@@ -39,8 +39,6 @@ public class User extends Model {
     
     @Column
     public Boolean acceptedLocation;
-    public double lastLatitude=0;
-    public double lastLongitude=0;
     
     public User(String email, String alias, String password, String phoneNumber, USER_PRIVILEGE privilege) {
       this.email = email;
@@ -89,13 +87,6 @@ public class User extends Model {
     	user.save();
     	
     	return user;
-    }
-    
-    public static void setUserPosition(String number, double longitude, double latitude){
-    	User user = find.where().eq("phoneNumber", number).findUnique();
-    	user.lastLatitude = latitude;
-    	user.lastLongitude = longitude;
-    	user.save();
     }
     
     public static void setUserLocation(String number,boolean accepted){

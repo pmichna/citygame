@@ -25,6 +25,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.StringReader;
 import java.lang.Math;
 
+import java.awt.geom.Point2D;
+
 public class GameController extends Controller {
 	private static int gamesPageSize = 10;
 	// time used in each game refresh
@@ -112,6 +114,22 @@ public class GameController extends Controller {
 		}
 		return false;
 	}
+	
+	private static Point2D getLocation(String phoneNumber) {
+		String feedUrl = "https://api2.orange.pl/terminallocation/";
+	
+		Document doc = WS.url(feedUrl)
+					.setQueryParameter("msisdn", phoneNumber)
+					.setAuth(orangeUser, orangePass)
+					.get() //GET request
+					.get(100000) // get body with timeout
+					.asXml();
+		NodeList longitude = doc.getElementsByTagName("longitude");
+		NodeList latitude = doc.getElementsByTagName("latitude");
+		double longitudeDouble = Double.parseDouble(longitude.item(0).getTextContent());
+		double latitudeDouble = Double.parseDouble(latitude.item(0).getTextContent());
+		return new Point2D.Double(longitudeDouble, latitudeDouble);
+	}
 
 	private static class GameThread implements Runnable {
 
@@ -151,8 +169,8 @@ public class GameController extends Controller {
 						for (GameEvent e : currentEvents) {
 							Logger.debug("events");
 							if (e.type == GAME_EVENT_TYPE.smsReceive) {
-								LocationController
-										.locationControllerGET(game.user.phoneNumber);
+								Point2D location = getLocation(game.user.phoneNumber);
+								
 								Logger.debug("[event] Message being processed: "
 										+ e.message);
 								boolean checkAnswer = Checkpoint.hasAnswer(
@@ -167,9 +185,9 @@ public class GameController extends Controller {
 								}
 								// if answers match add points and mark it as
 								// answered
-								game.refresh();
-								if (!isInProximity(game.user.lastLongitude,
-										game.user.lastLatitude,
+								game.user.refresh();
+								if (!isInProximity(location.getX(),
+										location.getY(),
 										e.checkpoint.longitude,
 										e.checkpoint.latitude)) {
 									sendErrorLocationMessage(game.user.phoneNumber);
