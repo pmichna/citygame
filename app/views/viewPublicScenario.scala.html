@@ -34,7 +34,6 @@
 	</div>
 	<div class="row"></div>
 	<div class="row">
-		
 		<div class="col-sm-2">
 			<a class="btn btn-primary btn" @if(scenario.checkpoints.size()==0){disabled="disabled"} href="@routes.GameController.startGameGET(scenario.id)"> <span class="glyphicon glyphicon-play"></span> Play scenario</a>
 		</div>
@@ -42,5 +41,12 @@
 			<a class="btn btn-primary btn" href="@routes.ScenarioController.viewScenarioRankingGET(scenario.id)">View ranking</a>
 		</div>
 	</div>
+	@if(scenario.checkpoints.size() == 0) {
+		<div class="row">
+			<div class="col-md-12">
+				<div class="alert alert-danger"><p>Sorry, the scenario has no checkpoints - you can not play it.</p></div>
+			</div>
+		</div>
+	}
 </div><!-- /.container -->
 }
