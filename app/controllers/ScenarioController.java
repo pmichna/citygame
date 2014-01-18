@@ -123,7 +123,7 @@ public class ScenarioController extends Controller {
 		if(pageNum > totalPageCount-1) {
 			pageNum = 0;
 		}
-		return ok(viewPrivateScenarios.render(
+		return ok(viewPublicScenarios.render(
 				user,
 				Scenario.findPublicAcceptedNotExpiredSearch(searchTerm,new Date(System.currentTimeMillis()), pageSize, pageNum),
 				pageNum,
@@ -132,6 +132,17 @@ public class ScenarioController extends Controller {
 				searchTerm
 			)
 		);
+	}
+	
+	@Security.Authenticated(Secured.class)
+	public static Result viewPublicScenariosSearchPOST() {
+		DynamicForm requestData = Form.form().bindFromRequest();
+		String searchTerm=requestData.get("searchTerm");
+		if(searchTerm==null || searchTerm.trim().length()==0)
+			return redirect(routes.ScenarioController.viewPublicScenariosGET(0));
+		else
+			return redirect(routes.ScenarioController.viewPublicScenariosSearchGET(searchTerm,0));
+		
 	}
 	
 	
@@ -150,7 +161,8 @@ public class ScenarioController extends Controller {
 				Scenario.findPublicAcceptedNotExpired(new Date(System.currentTimeMillis()), pageSize, pageNum),
 				pageNum,
 				totalPageCount,
-				pageSize
+				pageSize,
+				null
 			)
 		);
 	}

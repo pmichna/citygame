@@ -23,6 +23,8 @@ GET		/scenarios/private/search/:search					controllers.ScenarioController.viewPr
 POST	/scenarios/private/search/							controllers.ScenarioController.viewPrivateScenariosSearchPOST()
 GET		/scenarios/private									controllers.ScenarioController.viewPrivateScenariosGET(page: Integer ?= 0)
 GET		/scenarios/private/:scenario						controllers.ScenarioController.viewPrivateScenarioGET(scenario: Long)
+GET		/scenarios/public/search/:search					controllers.ScenarioController.viewPublicScenariosSearchGET(search: String,page: Integer ?= 0)
+POST	/scenarios/public/search/							controllers.ScenarioController.viewPublicScenariosSearchPOST()
 GET		/scenarios/public/									controllers.ScenarioController.viewPublicScenariosGET(page: Integer ?= 0)
 GET		/scenarios/public/:scenario							controllers.ScenarioController.viewPublicScenarioGET(scenario: Long)
 GET		/scenarios/accept									controllers.ScenarioController.viewScenariosToAcceptGET(page: Integer ?= 0)
