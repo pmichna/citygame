@@ -384,6 +384,10 @@ public class ScenarioController extends Controller {
 		if(scenario.owner.id != user.id) {
 			return redirect(routes.Application.index());
 		}
+		if(Game.find.where().eq("scenario.id", scenarioId).eq("status", GAME_STATUS.playing).findRowCount() > 0) {
+			flash("error", "Sorry, someone is playing this scenario right now. Wait until he finishes.");
+			return redirect(routes.ScenarioController.viewPrivateScenariosGET(0));
+		}
 		List<Game> games = Game.find.where().eq("scenario.id", scenarioId).findList();
 		for(Game g: games) {
 			g.delete();
