@@ -89,7 +89,7 @@ public class User extends Model {
     	return user;
     }
     
-    public static void setUserLocation(String number,boolean accepted){
+    public static void setUserLocation(String number, boolean accepted){
     	User user = find.where().eq("phoneNumber", number).findUnique();
     	user.acceptedLocation = accepted;
     	user.save();
