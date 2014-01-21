@@ -63,9 +63,9 @@ public class UserAccountController extends Controller {
 		for(Game g: ownedGames) {
 			g.delete();
 		}
-		List<GameEvent> events = GameEvent.find.where().eq("userPhoneNumber", user.phoneNumber).findList();
-		for(GameEvent ge: events) {
-			ge.delete();
+		List<ReceivedMessage> receivedMessages = ReceivedMessage.find.where().eq("userPhoneNumber", user.phoneNumber).findList();
+		for(ReceivedMessage m: receivedMessages) {
+			m.delete();
 		}
 		List<Scenario> ownedScenarios = Scenario.find.where().eq("owner.email", email).findList();
 		for(Scenario s: ownedScenarios) {

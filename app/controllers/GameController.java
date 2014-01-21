@@ -158,68 +158,57 @@ public class GameController extends Controller {
 						}
 						// Find events to process for this phone number and this
 						// scenario
-						List<GameEvent> currentEvents = GameEvent.find.where()
+						List<ReceivedMessage> currentMessages = ReceivedMessage.find.where()
 								.eq("userPhoneNumber", game.user.phoneNumber)
 								.eq("scenario.id", game.scenario.id).findList();
-						if (currentEvents.size() > 0) {
-							Logger.debug("events number:"
-									+ currentEvents.size());
+						if (currentMessages.size() > 0) {
+							Logger.debug("events number:" + currentMessages.size());
 						}
 						// Process events
-						for (GameEvent e : currentEvents) {
+						for (ReceivedMessage m : currentMessages) {
 							Logger.debug("events");
-							if (e.type == GAME_EVENT_TYPE.smsReceive) {
-								Point2D location = getLocation(game.user.phoneNumber);
-								
-								Logger.debug("[event] Message being processed: "
-										+ e.message);
-								boolean checkAnswer = Checkpoint.hasAnswer(
-										e.checkpoint.id, e.message);
-								Logger.debug("[event] Maching answer:"
-										+ checkAnswer);
-								// if checkpoint does not match, search further
-								if (!checkAnswer) {
-									sendErrorAnswerMessage(game.user.phoneNumber);
-									game.refresh();
-									continue;
-								}
-								// if answers match add points and mark it as
-								// answered
-								game.user.refresh();
-								if (!isInProximity(location.getX(),
-										location.getY(),
-										e.checkpoint.longitude,
-										e.checkpoint.latitude)) {
-									sendErrorLocationMessage(game.user.phoneNumber);
-									game.refresh();
-									continue;
-								}
-								if (!game.answeredCheckpoints
-										.contains(e.checkpoint)) {
-									game.pointsCollected += e.checkpoint.points;
-									game.answeredCheckpoints.add(e.checkpoint);
-									game.save();
+							Point2D location = getLocation(game.user.phoneNumber);
+							
+							Logger.debug("[event] Message being processed: " + m.message);
+							boolean checkAnswer = Checkpoint.hasAnswer(m.checkpoint.id, m.message);
+							Logger.debug("[event] Matching answer:" + checkAnswer);
+							// if checkpoint does not match, search further
+							if (!checkAnswer) {
+								sendErrorAnswerMessage(game.user.phoneNumber);
+								game.refresh();
+								continue;
+							}
+							// if answers match add points and mark it as
+							// answered
+							game.user.refresh();
+							if (!isInProximity(location.getX(),
+									location.getY(),
+									m.checkpoint.longitude,
+									m.checkpoint.latitude)) {
+								sendErrorLocationMessage(game.user.phoneNumber);
+								game.refresh();
+								continue;
+							}
+							if (!game.answeredCheckpoints.contains(m.checkpoint)) {
+								game.pointsCollected += m.checkpoint.points;
+								game.answeredCheckpoints.add(m.checkpoint);
+								game.save();
 
-									// is the end of the game
-									if (game.answeredCheckpoints.size() == game.scenario.checkpoints
-											.size()) {
-										game.status = GAME_STATUS.stopped;
-										game.save();
-										sendEndMessage(game.user.phoneNumber);
-									} else {
-										Checkpoint checkpointToSend = Game
-												.findLowestNotSentCheckpoint(game.id);
-										sendMessage(game.user.phoneNumber,
-												checkpointToSend);
-										game.sentCheckpoints
-												.add(checkpointToSend);
-									}
+								// is the end of the game
+								if (game.answeredCheckpoints.size() == game.scenario.checkpoints.size()) {
+									game.status = GAME_STATUS.stopped;
+									game.save();
+									sendEndMessage(game.user.phoneNumber);
+								} else {
+									Checkpoint checkpointToSend = Game.findLowestNotSentCheckpoint(game.id);
+									sendMessage(game.user.phoneNumber, checkpointToSend);
+									game.sentCheckpoints.add(checkpointToSend);
 								}
 							}
 						}
 						// remove all processed events
-						for (GameEvent ge : currentEvents) {
-							ge.delete();
+						for (ReceivedMessage m : currentMessages) {
+							m.delete();
 						}
 					}
 					// Wait before next game loop iteration to not waste server

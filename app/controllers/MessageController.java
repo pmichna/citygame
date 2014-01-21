@@ -52,7 +52,7 @@ public class MessageController extends Controller {
 			return ok("<response><status>400</status></response>");
 		}
 		Logger.info("Message received");
-		GameEvent.createGameEvent(from, tokens[2], scenarioId, checkpointId);
+		ReceivedMessage.createReceivedMessage(from, tokens[2], scenarioId, checkpointId);
 		
 		return ok("<response><status>200</status></response>");
 	}
