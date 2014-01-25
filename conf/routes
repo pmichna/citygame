@@ -50,7 +50,7 @@ POST	/scenarios/:scenario/members/add					controllers.ScenarioController.addMemb
 GET		/scenarios/:scenario/delete/:member					controllers.ScenarioController.removeMemberGET(scenario:Long, member: Long)
 GET		/scenarios/:scenario/ranking						controllers.ScenarioController.viewScenarioRankingGET(scenario: Long)
 
-GET		/msgreceive/										controllers.MessageController.receiveMsg(from: String?="from", to:String?="to", message: String ?= "msg")
+GET		/msgreceive/										controllers.MessageController.receiveMsg(from: String?="from", to:String?="to", message: String?="msg")
 
 GET		/games/mygames										controllers.GameController.viewMyGamesGET(page: Integer ?= 0)
 GET		/games/pause/:gameId								controllers.GameController.pauseGameById(gameId: Long, page: Integer ?= 0)

@@ -109,7 +109,7 @@ public class GameController extends Controller {
 		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 		double d = R * c;
 		Logger.info("Distance = " + d);
-		if (d < 0.25) { // km
+		if (d < 1.25) { // km
 			return true;
 		}
 		return false;
@@ -149,10 +149,12 @@ public class GameController extends Controller {
 					if (game.status != GAME_STATUS.paused) {
 						Logger.info("Thread for game id: " + game.id
 								+ " working");
+						//check if user got information about first checkpoint
 						if (game.sentCheckpoints.size() == 0) {
 							Checkpoint checkpointToSend = Game
 									.findLowestNotSentCheckpoint(game.id);
 							sendMessage(game.user.phoneNumber, checkpointToSend);
+							new Event(game.user,game.scenario.name,EVENT_TYPE.game_started).save();
 							game.sentCheckpoints.add(checkpointToSend);
 							game.save();
 						}
@@ -172,36 +174,43 @@ public class GameController extends Controller {
 							Logger.debug("[event] Message being processed: " + m.message);
 							boolean checkAnswer = Checkpoint.hasAnswer(m.checkpoint.id, m.message);
 							Logger.debug("[event] Matching answer:" + checkAnswer);
-							// if checkpoint does not match, search further
+							// if answer does not match, search further
 							if (!checkAnswer) {
 								sendErrorAnswerMessage(game.user.phoneNumber);
+								new Event(game.user,m.message,EVENT_TYPE.wrong_answer).save();
 								game.refresh();
 								continue;
 							}
-							// if answers match add points and mark it as
-							// answered
+							//check if user is in checkpoint proximity
 							game.user.refresh();
 							if (!isInProximity(location.getX(),
 									location.getY(),
 									m.checkpoint.longitude,
 									m.checkpoint.latitude)) {
 								sendErrorLocationMessage(game.user.phoneNumber);
+								new Event(game.user,game.scenario.name,EVENT_TYPE.wrong_location).save();
 								game.refresh();
 								continue;
 							}
+							// if answers match add points and mark it as
+							// answered
 							if (!game.answeredCheckpoints.contains(m.checkpoint)) {
 								game.pointsCollected += m.checkpoint.points;
 								game.answeredCheckpoints.add(m.checkpoint);
+								game.completionPercentage=(game.answeredCheckpoints.size()*100)/game.scenario.checkpoints.size();
 								game.save();
 
 								// is the end of the game
 								if (game.answeredCheckpoints.size() == game.scenario.checkpoints.size()) {
 									game.status = GAME_STATUS.stopped;
+									game.completionPercentage=100;
 									game.save();
 									sendEndMessage(game.user.phoneNumber);
+									new Event(game.user,game.scenario.name,EVENT_TYPE.game_completed).save();
 								} else {
 									Checkpoint checkpointToSend = Game.findLowestNotSentCheckpoint(game.id);
 									sendMessage(game.user.phoneNumber, checkpointToSend);
+									new Event(game.user,game.scenario.name,EVENT_TYPE.correct_answer).save();
 									game.sentCheckpoints.add(checkpointToSend);
 								}
 							}
@@ -266,7 +275,9 @@ public class GameController extends Controller {
 							Logger.info(orangeUser);
 							Logger.info(orangePass);
 						}
-						if (latitude.getLength() == 0
+						if (latitude==null
+								|| longitude==null
+								|| latitude.getLength() == 0
 								|| longitude.getLength() == 0) {
 							Logger.error("Failed to get coordinates");
 							if (response
@@ -285,7 +296,14 @@ public class GameController extends Controller {
 								Logger.info("Msisdn limit reached for: "
 										+ user.phoneNumber);
 							}
-							return ok("Failed to get coordinates");
+							if(latitude==null || longitude==null){
+								Logger.info("Couldn't get longitude and/or latitude for:"
+										+ user.phoneNumber+". Check if orangeUser and orangePas are set in application.conf");
+								User.setUserLocation(user.phoneNumber, false);
+								return ok(locationForbidden.render(user));
+							}
+							Logger.error("Return body: "+response.getBody());
+							return ok(somethingWentWrong.render(user,response.getBody()));
 						}
 						User.setUserLocation(user.phoneNumber, true);
 						createAndStartGame(session("email"), scenarioId);

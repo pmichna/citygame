@@ -1,0 +1,13 @@
+@(user: User, error: String)
+
+@main("Location forbidden", user) {
+	<div class="alert alert-danger">
+		<strong>Oh snap!</strong> Something went wrong.
+		@if(error!=null){
+		<br />
+		<strong>Error message:</strong>
+		<br />
+		@error
+		}
+	</div>
+}

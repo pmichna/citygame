@@ -37,6 +37,7 @@ public class Game extends Model{
 
 	public Date startDate;
 	public int pointsCollected;
+	public int completionPercentage;
 	
 	public static Finder<Long,Game> find = new Finder<Long,Game>(
 	        Long.class, Game.class
@@ -49,6 +50,7 @@ public class Game extends Model{
 		this.status = GAME_STATUS.playing;
 		this.startDate = date;
 		this.pointsCollected = 0;
+		this.completionPercentage = 0;
 	}
 	
 	public static List<Game> findGames(User user,int pageSize, int pageNum) {
